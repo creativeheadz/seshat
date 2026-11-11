@@ -52,7 +52,9 @@ var packages = [
     ['markdown-it', 'markdown-it'],
     ['markdown-it-hashtag', 'markdown-it-hashtag'],
     ['markdown-it-imsize', 'markdown-it-imsize'],
-    ['markdown-it-math', 'markdown-it-math'],
+    // NOTE: markdown-it-math stays on vendored 4.0.0 bytes (6.x changed
+    // the plugin API; the npm package drags an abandoned babel chain).
+    // ['markdown-it-math', 'markdown-it-math'],
     ['markdown-it-sanitizer', 'markdown-it-sanitizer'],
     ['mathjax', 'MathJax'],
     ['mousetrap', 'mousetrap'],
@@ -81,6 +83,8 @@ var vendored = [
     ['localforage/dist/localforage.min.js', 'localforage/dist/localforage.min.js'],
     ['localforage/dist/localforage.nopromises.js', 'localforage/dist/localforage.nopromises.js'],
     ['localforage/dist/localforage.nopromises.min.js', 'localforage/dist/localforage.nopromises.min.js'],
+    ['markdown-it-math/dist/markdown-it-math.js', 'markdown-it-math/dist/markdown-it-math.js'],
+    ['markdown-it-math/dist/markdown-it-math.min.js', 'markdown-it-math/dist/markdown-it-math.min.js'],
 ];
 
 function mkdirp(dir) {
