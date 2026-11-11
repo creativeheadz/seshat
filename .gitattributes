@@ -1,0 +1,3 @@
+* text=auto
+# Vendored bytes must stay byte-exact (no CRLF normalization).
+app/vendor-src/** -text

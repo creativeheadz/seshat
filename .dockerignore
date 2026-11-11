@@ -1,0 +1,10 @@
+node_modules/
+app/vendor/
+dist/
+test-results/
+.git/
+.gitignore
+README.md
+DOSSIER.md
+ROADMAP.md
+PROMPTS.md
