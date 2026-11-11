@@ -168,6 +168,28 @@ test.describe('smoke', function() {
         expect(plaintext).toBe('in-page secret');
     });
 
+    // gh-932/gh-1016: canceling the discard dialog then saving used
+    // to ghost the note (stuck deleteData trashed it post-save).
+    test('canceling the discard dialog then saving keeps the note', async function({page}) {
+        await page.click('#header--add');
+        await page.fill('#editor--input--title', 'cancel-test');
+        await page.waitForSelector('#editor .CodeMirror');
+        await page.evaluate(function() {
+            var cm = document.querySelector('#editor .CodeMirror').CodeMirror;
+            cm.setValue('precious content');
+            cm.save();
+        });
+        await page.click('.editor--cancel');
+        await page.waitForSelector('#modal .modal-dialog');
+        await page.locator('#modal button').filter({hasText: /cancel/i}).first().click();
+        await page.click('.editor--save');
+
+        await page.waitForSelector('.list--item.-note');
+        await page.click('.list--item.-note >> nth=0');
+        await page.waitForSelector('.content.-note');
+        await expect(page.locator('.content.-note')).toContainText('precious content');
+    });
+
     test('imports a v0.7.51 fixture note and keeps it across reload', async function({page}) {
         await amd(page, ['localforage']).then(function() {
             return page.evaluate(async function(note) {

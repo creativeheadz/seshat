@@ -204,6 +204,11 @@ define([
 
         // Called when the cancel dialog was canceled
         onConfirmCancel: function() {
+            // The user chose to stay: a later save must not be mistaken
+            // for a canceled edit (gh-932/gh-1016 ghosted notes).
+            this.deleteData = false;
+            this.view.options.redirect = false;
+
             // Rebind keybindings again because TW bootstrap modal overrites ESC.
             this.view.trigger('bind:keys');
             this.view.options.isClosed = false;

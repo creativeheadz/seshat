@@ -39,38 +39,45 @@ without it), then tests, then the CVE sweep on a
 tested tree; sync decision, demo, and triage can
 overlap once the build is green.
 
-- [ ] Build: Bower deps to npm (bower still installs
-      today via https normalization per CI run 1, but
-      stays deprecated: vendor or drop the 4 git://
-      ones: Blob.js, Canvas-to-Blob, device.js,
-      remotestorage.js 0.12.1), Gulp 3 to Gulp 5 or
-      Vite keeping the same outputs.
-      Done when: clean checkout builds on Node 22
-      with two commands; CI green.
-- [ ] Tests: Karma/PhantomJS and Nightwatch to Vitest
-      plus Playwright smoke (encrypt/decrypt
-      round-trip incl. legacy vectors, v0.7.51
-      fixture import, note render).
-      Done when: suite green in CI on every push.
-- [ ] CVE sweep: Bootstrap 3.3.6 to 3.4.1,
-      markdown-it 7 to 14 with DOMPurify for
-      markdown-it-sanitizer, audit the xss chain,
-      full `npm audit` / BOM license pass.
-      Done when: zero known CVEs in shipped deps;
-      hostile-content render test passes.
+- [x] Build: Bower deps to npm (35 pinned packages,
+      7 vendored byte-exact incl. the 4 git:// ones),
+      Gulp 3 to Gulp 5 keeping the same outputs
+      (2026-11-11). Done: two-command `npm ci` plus
+      `gulp build`; CI green.
+- [x] Tests: Karma/PhantomJS and Nightwatch to Vitest
+      (15 unit: round-trip, frozen vectors, migrate)
+      plus Playwright smoke (boot, note CRUD, render,
+      encrypt, fixture import, gh-932 regression)
+      (2026-11-11). Done: suite green in CI.
+- [x] CVE sweep (2026-11-11): Bootstrap 3.4.1,
+      markdown-it 15 with DOMPurify for
+      markdown-it-sanitizer, jquery 3.7.1, underscore
+      1.13.8, sjcl 1.0.9 (legacy vectors hold),
+      codemirror 5.65, mathjax 2.7.9, prismjs 1.30,
+      requirejs 2.3.8. Audit 34 to 2: bootstrap 3.4.1
+      and mathjax 2.7.9 have no fixed release in
+      their lines (accepted: client-side only, own
+      notes; P2 rewrite removes both). xss chain
+      audited (cleanXSS kept, xss unflagged). BOM:
+      all MIT/BSD/Apache/MPL/public-domain.
+      Hostile-content e2e passes.
 - [ ] Dropbox decision: new app key plus refresh flow
       and a new receiver host (current key hardcoded
       in sync.js, receiver lived on dead laverna.cc,
       long-lived tokens dead since Sep 2021), or
       drop for WebDAV/NAS (fold bratkartoffeln's NAS
-      direction with credit).
+      direction with credit). Spike done 2026-11-11
+      (DOSSIER.md Decisions, recommends drop);
+      awaiting Andrei's call.
       Done when: sync works or the dead UI is gone.
-- [ ] Re-host the static demo (static-laverna to Pages).
-      Done when: demo URL opens a usable app.
-- [ ] Triage the 447 upstream issues: close dead and
-      duplicates with written explanations, keep
-      data-loss scares as P0 with fixture sketches.
-      Done when: backlog is a roadmap, not a pile.
+- [x] Re-host the static demo: gh-pages branch,
+      https://creativeheadz.github.io/seshat/
+      (2026-11-11). Done: URL opens a usable app.
+- [x] Triage the 447 upstream issues: `BACKLOG.md`
+      (2026-11-11) with verified dispositions; gh-932
+      pair fixed with regression test; data-loss
+      scares kept as P0 with fixture sketches.
+      Done: backlog is a roadmap, not a pile.
 - [ ] Tag a test release, then the first proper one.
 
 Non-goals for phase 1: framework rewrite, P2P sync,

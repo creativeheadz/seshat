@@ -132,6 +132,36 @@ framework (the 17k-line job), KaTeX for MathJax 2.6,
 PWA plus signed Tauri desktop, KDF uplift with the SJCL
 reader kept, guaranteed v0.7.51 import.
 
+## Decisions
+
+### Sync (spike 2026-11-11, awaiting Andrei)
+
+Dropbox dead five ways: implicit flow (long-lived tokens
+killed Sep 2021) with no refresh logic in sync.js;
+receiver was laverna.cc/dropbox.html (host dead, and the
+page 404s on vendor/dropbox/dropbox.js which never
+existed); one shared hardcoded app key; vendored SDK
+predates refresh support (no version string, no refresh
+symbols); saveAccessToken has a dead expression (line 178)
+and the flow was never exercised by tests.
+
+Restore cost: new Andrei-owned app key (quota/abuse risk
+on a shared key; per-user keys are setup friction),
+SDK major upgrade (UMD/requirejs fit unverified),
+PKCE/code-flow rewrite plus refresh plumbing, live
+testing against a real Dropbox account. 2 to 4 sessions
+plus credentials only Andrei can provide.
+
+Drop cost: delete module, adapter, sync (475 lines),
+dropbox.html, settings sync UI, config keys; r.js fails
+the build on dangling refs, suite proves the rest. One
+session. RemoteStorage stays as the unvalidated second
+backend (0.12 to 2.x revalidation already deferred).
+
+Recommendation: drop in phase 1, WebDAV/NAS in phase 2
+(bratkartoffeln fold with credit needs author contact).
+Local-first notes, the core value, are untouched.
+
 ## Log
 
 - 2026-11-11: surfaced in the non-security older-than-2y
