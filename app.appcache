@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# Time: Wed Nov 11 2026 15:26:24 GMT+0000 (Greenwich Mean Time)
+# Time: Wed Nov 11 2026 15:42:04 GMT+0000 (Greenwich Mean Time)
 
 CACHE:
 404.html
@@ -63,7 +63,6 @@ migrate.html
 robots.txt
 scripts/classes/sjcl.js
 scripts/classes/sjcl.worker.js
-scripts/helpers/Dropbox-sdk.min.js
 scripts/helpers/db.js
 scripts/helpers/migrate.js
 scripts/main.js
@@ -129,4 +128,4 @@ FALLBACK:
 SETTINGS:
 prefer-online
 
-# hash: 640e3ab59af55a55da08c9ead0cbf6355042f2afc516b7c8161b58c5f6ee747f
+# hash: 6a00184bfb07592e8c9057beea54ab735d4b01b2cc4c738ccb17bfca1867f1d5
