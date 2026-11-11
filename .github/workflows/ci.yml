@@ -46,6 +46,8 @@ jobs:
         run: npx vitest run
 
       - name: e2e tests
+        # No --with-deps: headless shell needs no apt packages, and the
+        # runners' archive mirror keeps flaking on DNS.
         run: |
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
           npm run test:e2e
