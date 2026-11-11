@@ -5,9 +5,9 @@
  * Require.js config example:
  * https://github.com/jrburke/r.js/blob/master/build/example.build.js
  */
-module.exports = function(gulp, plugins) {
-    return function() {
-        return gulp.src('./app/scripts/main.js')
+module.exports = function(gulp, plugins, argv) {
+    return function requireJs() {
+        var stream = gulp.src('./app/scripts/main.js')
         // Require.js optimizer
         .pipe(plugins.requirejsOptimize({
             name           : 'main',
@@ -72,10 +72,14 @@ module.exports = function(gulp, plugins) {
             wrapShim               : true,
             preserveLicenseComments: true,
             wrap                   : true
-        }))
-        .pipe(plugins.util.env.dev ? plugins.util.noop() : plugins.uglify({
-            preserveComments: 'license'
-        }))
-        .pipe(gulp.dest('./dist/scripts'));
+        }));
+
+        if (!argv.dev) {
+            stream = stream.pipe(plugins.uglify({
+                preserveComments: 'license'
+            }));
+        }
+
+        return stream.pipe(gulp.dest('./dist/scripts'));
     };
 };

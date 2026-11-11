@@ -5,12 +5,17 @@
  */
 module.exports = function(gulp, plugins) {
 
-    gulp.task('clean:dist', function() {
+    function cleanDist() {
         return plugins.del(['./dist']);
-    });
+    }
 
-    gulp.task('clean:release', function() {
+    function cleanRelease() {
         return plugins.del(['./release/*']);
-    });
+    }
+
+    return {
+        dist    : cleanDist,
+        release : cleanRelease
+    };
 
 };

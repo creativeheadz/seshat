@@ -1,10 +1,7 @@
-# Phase 0 CI skeleton for Seshat (GitHub Actions; Gitea deferred).
-#
-# EXPECTED RED: this workflow runs the real install/build/smoke commands
-# against the unrestored tree so the failure is on record. Phase 1
-# (build resuscitation) is what turns it green. Do not "fix" this file
-# by weakening steps into echo placeholders.
-name: ci-skeleton
+# Phase 1 CI gate for Seshat: install, build, smoke.
+# Green means: deps install on Node 22, lint passes, gulp build
+# succeeds, and the built app serves with its entry assets.
+name: ci
 
 on:
   push:
@@ -21,13 +18,23 @@ jobs:
           node-version: 22
 
       - name: npm dependencies
-        run: npm install
+        run: npm ci
 
       - name: "bower dependencies (deprecated but working)"
         run: npx --yes bower install
 
-      - name: "gulp build (known dead: Gulp 3 on Node 12+)"
-        run: npx --yes gulp build
+      - name: lint
+        run: npx gulp test
 
-      - name: smoke placeholder (runs once build passes)
-        run: 'echo "TODO phase 1 - serve built app, assert index loads"'
+      - name: gulp build
+        run: npx gulp build
+
+      - name: smoke test
+        run: |
+          (cd dist && python3 -m http.server 8901 &>/dev/null &)
+          sleep 2
+          curl -sf http://localhost:8901/index.html | grep -q "data-main='scripts/main'"
+          curl -sf -o /dev/null http://localhost:8901/scripts/main.js
+          curl -sf -o /dev/null http://localhost:8901/app.appcache
+          curl -sf -o /dev/null http://localhost:8901/locales/locales.json
+          test -f dist/app.appcache

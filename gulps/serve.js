@@ -1,26 +1,14 @@
 'use strict';
 
 /**
- * Live reload server.
+ * Live reload server (dev only; not part of the build).
  */
-module.exports = function(gulp, plugins) {
-
-    gulp.task('serve:watch', function() {
-        // Compile LESS files
-        gulp.watch('app/styles/**/*.less', ['less']);
-
-        gulp.watch([
-            'app/**/*.html',
-            'app/scripts/**/*.js',
-            'app/locales/**/*.json',
-        ]).on('change', plugins.browserSync.reload);
-    });
-
-    gulp.task('serve:start', function() {
-        return plugins.browserSync.init({
-            server : (plugins.util.env.root || 'app'),
-            port   : (plugins.util.env.port || 9000),
+module.exports = function(gulp, plugins, argv) {
+    return function serveStart(done) {
+        plugins.browserSync.init({
+            server : (argv.root || 'app'),
+            port   : (argv.port || 9000)
         });
-    });
-
+        done();
+    };
 };
