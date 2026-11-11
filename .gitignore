@@ -5,10 +5,10 @@ build.json
 
 # Compiled files
 app/styles/**/*.css
-dist/
-cordova/
-release/
-.tmp/
+/dist/
+/cordova/
+/release/
+/.tmp/
 
 # Frontend vendor tree (populated by `npm run vendor`; app/vendor-src/ is checked in)
 app/vendor
