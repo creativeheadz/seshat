@@ -145,3 +145,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Agent scratch
+ generated_images/
