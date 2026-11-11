@@ -26,8 +26,8 @@ define([
          */
         cleanXSS: function(str, unescape, stripTags) {
 
-            /* Unescape the string 2 times because
-             * data from Dropbox is always escaped + we escape them too.
+            /* Unescape the string 2 times because synced data
+             * arrives escaped + we escape it too.
              */
             if (unescape === true) {
                 str = _.runTimes(_.unescape, 2, str);

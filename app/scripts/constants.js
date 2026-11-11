@@ -6,24 +6,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 /*global define*/
-define(['underscore'], function (_) {
+define(function () {
     'use strict';
 
     var constants = {};
 
-    constants.VERSION = '0.7.51';
+    constants.VERSION = '0.8.0-rc1';
     constants.URL = location.origin + location.pathname.replace('index.html', '');
-
-    // List of hosts and urls where default dropbox API will work
-    constants.DEFAULTHOSTS = ['laverna.cc', 'laverna.github.io', 'localhost', 'localhost:9000', 'localhost:9100'];
-
-    constants.DROPBOX_KEY = '10iirspliqts95d';
-    constants.DROPBOX_SECRET = null;
-
-    // Default Dropbox API key will not work
-    if ( !_.contains(constants.DEFAULTHOSTS, location.host) ) {
-        constants.DROPBOXKEYNEED = true;
-    }
 
     return constants;
 });

@@ -134,7 +134,7 @@ reader kept, guaranteed v0.7.51 import.
 
 ## Decisions
 
-### Sync (spike 2026-11-11, awaiting Andrei)
+### Sync (spike 2026-11-11, decided: drop, same day)
 
 Dropbox dead five ways: implicit flow (long-lived tokens
 killed Sep 2021) with no refresh logic in sync.js;

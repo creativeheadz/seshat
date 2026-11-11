@@ -63,7 +63,6 @@ module.exports = function(gulp, plugins, argv) {
             './app/scripts/classes/sjcl.js',
             './app/scripts/classes/sjcl.worker.js',
 
-            './app/scripts/helpers/Dropbox-sdk.min.js',
             './app/scripts/helpers/db.js',
             './app/scripts/helpers/migrate.js',
             './app/scripts/migrate.js',
@@ -86,9 +85,6 @@ module.exports = function(gulp, plugins, argv) {
             './app/vendor/q/q.js',
             './app/vendor/underscore/underscore.js',
             './app/vendor/localforage/dist/localforage.js',
-            // NOTE: no bower dropbox package exists; the SDK is vendored
-            // as helpers/Dropbox-sdk.min.js (see main.js paths). Gulp 3
-            // silently skipped this glob; Gulp 5 errors on it.
             './app/vendor/sjcl/sjcl.js',
 
             // Remotestorage

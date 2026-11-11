@@ -38,7 +38,6 @@ module.exports = function() {
 
         files = files.filter(function(rel) {
             return rel !== 'app.appcache' &&
-                rel !== 'dropbox.html' &&
                 rel !== 'vendor/MathJax' &&
                 rel.indexOf('vendor/MathJax/') !== 0;
         });

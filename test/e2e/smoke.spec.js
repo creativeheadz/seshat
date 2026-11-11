@@ -190,6 +190,16 @@ test.describe('smoke', function() {
         await expect(page.locator('.content.-note')).toContainText('precious content');
     });
 
+    // Dropbox removal: sync settings render with no dropbox UI.
+    test('settings sync view renders without dropbox', async function({page}) {
+        await page.goto('/#/settings/sync');
+        var select = page.locator('#cloudStorage');
+        await select.waitFor({timeout: 20000});
+        await expect(select.locator('option')).toHaveCount(2);
+        await expect(select).toContainText('RemoteStorage');
+        await expect(page.locator('#group-dropboxKey')).toHaveCount(0);
+    });
+
     test('imports a v0.7.51 fixture note and keeps it across reload', async function({page}) {
         await amd(page, ['localforage']).then(function() {
             return page.evaluate(async function(note) {

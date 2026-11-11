@@ -24,20 +24,6 @@ define([
             'click .showField'        : 'showOnCheck',
         },
 
-        initialize: function() {
-            this.view.on('render', this.popover, this);
-        },
-
-        popover: function() {
-            var pop = this.view.$('.popover-dropbox').html();
-
-            this.view.$('.popover-key').popover({
-                trigger: 'click',
-                html   : true,
-                content: function() { return pop; }
-            });
-        },
-
         triggerChange: function(e) {
             var el   = $(e.target),
                 conf = { name: el.attr('name') };

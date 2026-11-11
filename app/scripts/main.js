@@ -61,7 +61,6 @@ requirejs.config({
         remotestorage         : '../vendor/remotestorage.js/release/stable/remotestorage',
         bluebird              : '../vendor/bluebird/js/browser/bluebird.min',
         tv4                   : '../vendor/tv4/tv4',
-        dropbox               : 'helpers/Dropbox-sdk.min',
 
         // Markdown
         'markdown-it'         : '../vendor/markdown-it/dist/browser/markdown-it.umd.min',
@@ -111,9 +110,6 @@ requirejs.config({
         },
 
         // Storage adapters
-        dropbox: {
-            exports: 'Dropbox'
-        },
         'remotestorage': {
             exports: 'RemoteStorage',
             deps: [

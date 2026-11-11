@@ -61,15 +61,11 @@ overlap once the build is green.
       audited (cleanXSS kept, xss unflagged). BOM:
       all MIT/BSD/Apache/MPL/public-domain.
       Hostile-content e2e passes.
-- [ ] Dropbox decision: new app key plus refresh flow
-      and a new receiver host (current key hardcoded
-      in sync.js, receiver lived on dead laverna.cc,
-      long-lived tokens dead since Sep 2021), or
-      drop for WebDAV/NAS (fold bratkartoffeln's NAS
-      direction with credit). Spike done 2026-11-11
-      (DOSSIER.md Decisions, recommends drop);
-      awaiting Andrei's call.
-      Done when: sync works or the dead UI is gone.
+- [x] Dropbox dropped 2026-11-11 (Andrei's call):
+      module, SDK, receiver page, settings UI, config
+      keys all removed; sync button hidden until a
+      working backend exists. Done: the dead UI is
+      gone; WebDAV/NAS is the Phase 2 direction.
 - [x] Re-host the static demo: gh-pages branch,
       https://creativeheadz.github.io/seshat/
       (2026-11-11). Done: URL opens a usable app.

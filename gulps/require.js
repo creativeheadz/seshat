@@ -37,7 +37,6 @@ module.exports = function(gulp, plugins, argv) {
                 'q',
                 'underscore',
                 'localforage',
-                'dropbox',
                 'classes/sjcl',
                 'sjcl',
                 'remotestorage',
@@ -62,8 +61,7 @@ module.exports = function(gulp, plugins, argv) {
 
                 'backbone.sync',
                 'backbone.noworker.sync',
-                'modules/remotestorage/module',
-                'modules/dropbox/module'
+                'modules/remotestorage/module'
             ],
             findNestedDependencies : true,
             generateSourceMaps     : true,

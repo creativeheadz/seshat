@@ -65,10 +65,8 @@ define([
                     modules2Load.push('modules/remotestorage/module');
                     break;
 
-                case 'dropbox':
-                    modules2Load.push('modules/dropbox/module');
-                    break;
-
+                // Dropbox removed in 0.8.0 (dead); stored
+                // cloudStorage=dropbox configs load no module.
                 default:
                     break;
             }

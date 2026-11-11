@@ -5,11 +5,7 @@ module.exports = function(gulp, plugins) {
         return gulp.src([
             './app/scripts/**/*.js',
             './app/scripts/*.js',
-            '!./app/scripts/**/*.min.js',
-            // 7 pre-existing warnings in Dropbox sync (snake_case API
-            // identifiers); owned by the sync-decision prompt, which
-            // rewrites or deletes this code. Remove with it.
-            '!./app/scripts/modules/dropbox/**'
+            '!./app/scripts/**/*.min.js'
         ])
         .pipe(plugins.jshint())
         .pipe(plugins.jshint.reporter('jshint-stylish'))

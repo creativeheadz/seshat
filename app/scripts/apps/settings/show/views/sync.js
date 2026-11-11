@@ -9,10 +9,9 @@
 define([
     'underscore',
     'marionette',
-    'constants',
     'apps/settings/show/formBehavior',
     'text!apps/settings/show/templates/sync.html'
-], function(_, Marionette, constants, FormBehavior, Tmpl) {
+], function(_, Marionette, FormBehavior, Tmpl) {
     'use strict';
 
     /**
@@ -29,8 +28,7 @@ define([
 
         serializeData: function() {
             return {
-                models         : this.collection.getConfigs(),
-                dropboxKeyNeed : constants.DROPBOXKEYNEED
+                models : this.collection.getConfigs()
             };
         }
     });

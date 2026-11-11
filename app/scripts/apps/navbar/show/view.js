@@ -178,7 +178,9 @@ define([
                 },
 
                 isSyncEnabled: function() {
-                    return this.configs.cloudStorage === 'dropbox';
+                    // No working sync backend in 0.8.x (Dropbox
+                    // dropped; RemoteStorage unvalidated).
+                    return false;
                 },
 
                 profileLink: function(profileName) {
