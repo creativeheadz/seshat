@@ -1,5 +1,11 @@
 # Laverna - note taking web app
 
+> **Seshat fork - revival in progress (Nov 2026).**
+> Upstream Laverna is dormant since 2018; this fork continues it as
+> Seshat. The build does not work on modern Node yet and the install
+> instructions below are legacy — see [ROADMAP.md](ROADMAP.md) for
+> the revival plan and current status.
+
 [![Join the chat at https://gitter.im/Laverna/laverna](https://badges.gitter.im/Laverna/laverna.svg)](https://gitter.im/Laverna/laverna?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/Laverna/laverna.svg?branch=dev)](https://travis-ci.org/Laverna/laverna) [![devDependency Status](https://david-dm.org/Laverna/laverna/dev-status.svg)](https://david-dm.org/Laverna/laverna#info=devDependencies) [![Code Climate](https://codeclimate.com/github/Laverna/laverna/badges/gpa.svg)](https://codeclimate.com/github/Laverna/laverna)
@@ -8,7 +14,7 @@ Laverna is a JavaScript note-taking web application with a Markdown editor and e
 
 The application stores all your notes in your browser databases such as indexedDB or localStorage, which is good for security reasons, because only you have access to them.
 
-**Demo**: https://laverna.cc/ OR http://laverna.github.io/static-laverna
+**Demo**: https://laverna.cc/ OR http://laverna.github.io/static-laverna (laverna.cc is dead; re-hosting the demo is a Phase 1 item)
 
 ## Features
 -----------
@@ -42,7 +48,7 @@ There are several ways to start using Laverna:
 
 ### Desktop app installation
 ---------------
-Download the latest [Laverna release][13] for your operating system. After downloading the archive, you need to unpack it. Then, in the unpacked folder you need to run an executable (laverna.exe for Windows, laverna for Linux and Mac).
+Download the latest [Laverna release][13] for your operating system (2017-era builds; new signed builds are a Phase 2 item). After downloading the archive, you need to unpack it. Then, in the unpacked folder you need to run an executable (laverna.exe for Windows, laverna for Linux and Mac).
 
 #### Arch Linux (or derived distributions)
 
@@ -51,7 +57,7 @@ The package can be found [here](https://aur.archlinux.org/packages/laverna/).
 For installation please use :
 
 ```bash
-$ pacaur -S laverna
+$ yay -S laverna
 ```
 
 For issue about installation please report [here](https://github.com/funilrys/PKGBUILD/issues/new) or contact [@funilrys](https://github.com/funilrys) on gitter [here](https://gitter.im/funilrys_/PKGBUILD)
@@ -77,6 +83,9 @@ Open in your favorite browser the index.html file which is located inside *laver
 
 ## Installation from source
 ---------------
+> **Legacy, currently broken**: this path needs Bower plus Gulp 3 and fails
+> on Node 12+. It will be rewritten once the Phase 1 build lands.
+
 To install, do the following:
 
 #### 1. Install Git

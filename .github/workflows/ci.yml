@@ -23,7 +23,7 @@ jobs:
       - name: npm dependencies
         run: npm install
 
-      - name: "bower dependencies (known dead: 4 git:// deps)"
+      - name: "bower dependencies (deprecated but working)"
         run: npx --yes bower install
 
       - name: "gulp build (known dead: Gulp 3 on Node 12+)"

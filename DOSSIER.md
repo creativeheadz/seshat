@@ -38,13 +38,15 @@ anywhere.
   Marionette 2.4 / Backbone 1.3 / jQuery 3.1 /
   Bootstrap 3.3.6. View layer extinct upstream.
 - Build dead on modern Node: Gulp 3.9.1 (Node 12+
-  primordials failure) and Bower (deprecated 2017) with
-  4 git:// deps unfetchable since GitHub killed the git
-  protocol in Jan 2022 (Blob.js, Canvas-to-Blob,
-  device.js, remotestorage.js 0.12.1). Registry still
-  answers, stock install cannot complete. Corroborated
-  by the harleyw fork, whose first commits fix
-  gulp/gracefs startup.
+  primordials failure, confirmed as `ReferenceError`
+  by CI run 1 on 2026-11-11; also corroborated by the
+  harleyw fork, whose first commits fix gulp/gracefs
+  startup). Bower (deprecated 2017) with 4 git:// deps
+  (Blob.js, Canvas-to-Blob, device.js,
+  remotestorage.js 0.12.1): CI run 1 proved bower
+  normalizes these to https and the install completes,
+  so the red is Gulp alone. Bower stays deprecated
+  regardless: npm-ify in Phase 1.
 - Dropbox sync dead three ways: no refresh-token flow
   (long-lived tokens killed Sep 2021), OAuth receiver
   page lived on laverna.cc (dead), one shared hardcoded
@@ -142,6 +144,10 @@ reader kept, guaranteed v0.7.51 import.
 - 2026-11-11: dossier written. Not yet cloned to
   Development/, no courtesy contact yet, no rename
   picked.
+- 2026-11-11: phase 0 CI run 1 went red at gulp
+  (primordials) with bower green; build findings
+  corrected above. In-tree copy now live with the
+  public fork (Vanity sync pending).
 
 ## Deferred (noted during deep-dive, out of first batch)
 

@@ -17,15 +17,20 @@ tree on 2026-11-11 unless noted.
       (2026-11-11; pushing to `github` only for now).
 - [ ] Create `creativeheadz/seshat` on Gitea and push
       (deferred 2026-11-11: github-only for now).
-- [ ] CI skeleton on GitHub that records the current
-      red state (`.github/workflows/ci.yml`).
-- [ ] Done when: `github` pushed, CI skeleton runs.
-      (Courtesy issue and Gitea remote deferred.)
-      No code changes expected in this phase
-      (docs-only commits fine). Note: a green build
-      on Node 22 is impossible before Phase 1 (Gulp 3
-      primordials failure on Node 12+, 4 Bower git://
-      deps unfetchable).
+- [x] CI skeleton on GitHub that records the current
+      red state (`.github/workflows/ci.yml`, run 1 on
+      2026-11-11: red at gulp with primordials, bower
+      green).
+- [x] README first pass: Seshat banner, legacy and
+      dead-end notes (2026-11-11); full install
+      rewrite waits for the Phase 1 green build.
+- [x] Done when: `github` pushed, CI skeleton runs
+      (met 2026-11-11, scoped). (Courtesy issue and
+      Gitea remote deferred.) No code changes
+      expected in this phase (docs-only commits
+      fine). Note: a green build on Node 22 is
+      impossible before Phase 1 (Gulp 3 primordials
+      failure, confirmed by CI run 1).
 
 ## Phase 1 - stabilize (first release)
 
@@ -34,8 +39,10 @@ without it), then tests, then the CVE sweep on a
 tested tree; sync decision, demo, and triage can
 overlap once the build is green.
 
-- [ ] Build: Bower deps to npm (vendor or drop the 4
-      git:// ones: Blob.js, Canvas-to-Blob, device.js,
+- [ ] Build: Bower deps to npm (bower still installs
+      today via https normalization per CI run 1, but
+      stays deprecated: vendor or drop the 4 git://
+      ones: Blob.js, Canvas-to-Blob, device.js,
       remotestorage.js 0.12.1), Gulp 3 to Gulp 5 or
       Vite keeping the same outputs.
       Done when: clean checkout builds on Node 22
