@@ -7,7 +7,7 @@ module.exports = function(gulp, plugins) {
         .pipe(plugins.less({
             paths: [
                 path.join(__dirname, 'less', 'includes'),
-                './app/bower_components/'
+                './app/vendor/'
             ]
         }))
         // Unique names for theme files

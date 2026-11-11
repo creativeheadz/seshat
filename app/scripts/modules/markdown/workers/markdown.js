@@ -7,7 +7,7 @@
  */
 /* global requirejs, importScripts, self */
 'use strict';
-importScripts('../../../../bower_components/requirejs/require.js');
+importScripts('../../../../vendor/requirejs/require.js');
 
 requirejs.config({
     baseUrl: '../../../',
@@ -15,18 +15,18 @@ requirejs.config({
         // Prismjs
         {
             name     : 'prism',
-            location : '../bower_components/prism',
+            location : '../vendor/prism',
             main     : 'bundle'
         },
     ],
     paths: {
-        q                    : '../bower_components/q/q',
-        underscore           : '../bower_components/underscore/underscore',
-        'markdown-it'        : '../bower_components/markdown-it/dist/markdown-it.min',
-        'markdown-it-san'    : '../bower_components/markdown-it-sanitizer/dist/markdown-it-sanitizer.min',
-        'markdown-it-hash'   : '../bower_components/markdown-it-hashtag/dist/markdown-it-hashtag.min',
-        'markdown-it-math'   : '../bower_components/markdown-it-math/dist/markdown-it-math.min',
-        'markdown-it-imsize' : '../bower_components/markdown-it-imsize/dist/markdown-it-imsize.min',
+        q                    : '../vendor/q/q',
+        underscore           : '../vendor/underscore/underscore',
+        'markdown-it'        : '../vendor/markdown-it/dist/markdown-it.min',
+        'markdown-it-san'    : '../vendor/markdown-it-sanitizer/dist/markdown-it-sanitizer.min',
+        'markdown-it-hash'   : '../vendor/markdown-it-hashtag/dist/markdown-it-hashtag.min',
+        'markdown-it-math'   : '../vendor/markdown-it-math/dist/markdown-it-math.min',
+        'markdown-it-imsize' : '../vendor/markdown-it-imsize/dist/markdown-it-imsize.min',
     },
     shim: {
         'prism/bundle': {

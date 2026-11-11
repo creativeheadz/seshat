@@ -8,10 +8,10 @@
 /* global requirejs */
 requirejs.config({
     paths: {
-        q           : '../bower_components/q/q',
-        underscore  : '../bower_components/underscore/underscore',
-        localforage : '../bower_components/localforage/dist/localforage',
-        sjcl        : '../bower_components/sjcl/sjcl',
+        q           : '../vendor/q/q',
+        underscore  : '../vendor/underscore/underscore',
+        localforage : '../vendor/localforage/dist/localforage',
+        sjcl        : '../vendor/sjcl/sjcl',
     }
 });
 

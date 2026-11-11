@@ -14,12 +14,12 @@ module.exports = function(gulp, plugins) {
 
         components.forEach(function(item) {
             files.push(
-                './app/bower_components/prism/components/prism-' + item + '.js'
+                './app/vendor/prism/components/prism-' + item + '.js'
             );
         });
 
         return gulp.src(files)
         .pipe(plugins.concat('bundle.js'))
-        .pipe(gulp.dest('./app/bower_components/prism'));
+        .pipe(gulp.dest('./app/vendor/prism'));
     };
 };

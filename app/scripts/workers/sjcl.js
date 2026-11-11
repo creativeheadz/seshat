@@ -7,15 +7,15 @@
  */
 /* global requirejs, importScripts, self */
 'use strict';
-importScripts('../../bower_components/requirejs/require.js');
+importScripts('../../vendor/requirejs/require.js');
 
 requirejs.config({
     baseUrl: '../',
 
     paths: {
-        q          : '../bower_components/q/q',
-        underscore : '../bower_components/underscore/underscore',
-        sjcl       : '../bower_components/sjcl/sjcl'
+        q          : '../vendor/q/q',
+        underscore : '../vendor/underscore/underscore',
+        sjcl       : '../vendor/sjcl/sjcl'
     },
 
     shim: {

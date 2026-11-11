@@ -39,8 +39,8 @@ module.exports = function() {
         files = files.filter(function(rel) {
             return rel !== 'app.appcache' &&
                 rel !== 'dropbox.html' &&
-                rel !== 'bower_components/MathJax' &&
-                rel.indexOf('bower_components/MathJax/') !== 0;
+                rel !== 'vendor/MathJax' &&
+                rel.indexOf('vendor/MathJax/') !== 0;
         });
 
         var hash = crypto.createHash('sha256');

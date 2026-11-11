@@ -18,73 +18,73 @@ requirejs.config({
         // Codemirror editor
         {
             name     : 'codemirror',
-            location : '../bower_components/codemirror',
+            location : '../vendor/codemirror',
             main     : 'lib/codemirror'
         },
         // Prismjs
         {
             name     : 'prism',
-            location : '../bower_components/prism',
+            location : '../vendor/prism',
             main     : 'bundle'
         },
         // Xregexp
         {
             name     : 'xregexp',
-            location : '../bower_components/xregexp/src',
+            location : '../vendor/xregexp/src',
             main     : 'xregexp'
         }
     ],
     paths: {
-        sjcl                  : '../bower_components/sjcl/sjcl',
-        text                  : '../bower_components/requirejs-text/text',
-        jquery                : '../bower_components/jquery/dist/jquery',
-        q                     : '../bower_components/q/q',
-        bootstrap             : '../bower_components/bootstrap/dist/js/bootstrap.min',
-        i18next               : '../bower_components/i18next/i18next',
-        i18nextXHRBackend     : '../bower_components/i18next-xhr-backend/i18nextXHRBackend',
+        sjcl                  : '../vendor/sjcl/sjcl',
+        text                  : '../vendor/requirejs-text/text',
+        jquery                : '../vendor/jquery/dist/jquery',
+        q                     : '../vendor/q/q',
+        bootstrap             : '../vendor/bootstrap/dist/js/bootstrap.min',
+        i18next               : '../vendor/i18next/i18next',
+        i18nextXHRBackend     : '../vendor/i18next-xhr-backend/i18nextXHRBackend',
 
         // Backbone
-        underscore            : '../bower_components/underscore/underscore',
-        backbone              : '../bower_components/backbone/backbone',
-        marionette            : '../bower_components/backbone.marionette/lib/core/backbone.marionette',
-        'backbone.radio'      : '../bower_components/backbone.radio/build/backbone.radio.min',
-        'backbone.babysitter' : '../bower_components/backbone.babysitter/lib/backbone.babysitter',
-        fuse                  : '../bower_components/fuse/src/fuse',
+        underscore            : '../vendor/underscore/underscore',
+        backbone              : '../vendor/backbone/backbone',
+        marionette            : '../vendor/backbone.marionette/lib/core/backbone.marionette',
+        'backbone.radio'      : '../vendor/backbone.radio/build/backbone.radio.min',
+        'backbone.babysitter' : '../vendor/backbone.babysitter/lib/backbone.babysitter',
+        fuse                  : '../vendor/fuse/src/fuse',
 
         // Mousetrap
-        'mousetrap'           : '../bower_components/mousetrap/mousetrap',
-        'mousetrap.pause'     : '../bower_components/mousetrap/plugins/pause/mousetrap-pause',
-        'mousetrap.global'    : '../bower_components/mousetrap/plugins/global-bind/mousetrap-global-bind',
+        'mousetrap'           : '../vendor/mousetrap/mousetrap',
+        'mousetrap.pause'     : '../vendor/mousetrap/plugins/pause/mousetrap-pause',
+        'mousetrap.global'    : '../vendor/mousetrap/plugins/global-bind/mousetrap-global-bind',
 
         // Storage adapters
-        localforage           : '../bower_components/localforage/dist/localforage',
-        remotestorage         : '../bower_components/remotestorage.js/release/stable/remotestorage',
-        bluebird              : '../bower_components/bluebird/js/browser/bluebird.min',
-        tv4                   : '../bower_components/tv4/tv4',
+        localforage           : '../vendor/localforage/dist/localforage',
+        remotestorage         : '../vendor/remotestorage.js/release/stable/remotestorage',
+        bluebird              : '../vendor/bluebird/js/browser/bluebird.min',
+        tv4                   : '../vendor/tv4/tv4',
         dropbox               : 'helpers/Dropbox-sdk.min',
 
         // Markdown
-        'markdown-it'         : '../bower_components/markdown-it/dist/markdown-it.min',
-        'markdown-it-san'     : '../bower_components/markdown-it-sanitizer/dist/markdown-it-sanitizer.min',
-        'markdown-it-hash'    : '../bower_components/markdown-it-hashtag/dist/markdown-it-hashtag.min',
-        'markdown-it-math'    : '../bower_components/markdown-it-math/dist/markdown-it-math.min',
-        'markdown-it-imsize'  : '../bower_components/markdown-it-imsize/dist/markdown-it-imsize.min',
-        'to-markdown'         : '../bower_components/to-markdown/src/to-markdown',
+        'markdown-it'         : '../vendor/markdown-it/dist/markdown-it.min',
+        'markdown-it-san'     : '../vendor/markdown-it-sanitizer/dist/markdown-it-sanitizer.min',
+        'markdown-it-hash'    : '../vendor/markdown-it-hashtag/dist/markdown-it-hashtag.min',
+        'markdown-it-math'    : '../vendor/markdown-it-math/dist/markdown-it-math.min',
+        'markdown-it-imsize'  : '../vendor/markdown-it-imsize/dist/markdown-it-imsize.min',
+        'to-markdown'         : '../vendor/to-markdown/src/to-markdown',
 
         // Others
-        xss                   : '../bower_components/xss/dist/xss',
-        mathjax               : '../bower_components/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
-        prettify              : '../bower_components/google-code-prettify/src/prettify',
-        dropzone              : '../bower_components/dropzone/dist/dropzone-amd-module',
-        toBlob                : '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
-        blobjs                : '../bower_components/Blob/Blob',
-        fileSaver             : '../bower_components/FileSaver/FileSaver',
-        enquire               : '../bower_components/enquire/dist/enquire.min',
-        hammerjs              : '../bower_components/hammerjs/hammer',
-        jHammer               : '../bower_components/jquery-hammerjs/jquery.hammer',
-        fastclick             : '../bower_components/fastclick/lib/fastclick',
-        devicejs              : '../bower_components/device.js/lib/device.min',
-        jszip                 : '../bower_components/jszip/dist/jszip',
+        xss                   : '../vendor/xss/dist/xss',
+        mathjax               : '../vendor/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
+        prettify              : '../vendor/google-code-prettify/src/prettify',
+        dropzone              : '../vendor/dropzone/dist/dropzone-amd-module',
+        toBlob                : '../vendor/blueimp-canvas-to-blob/js/canvas-to-blob',
+        blobjs                : '../vendor/Blob/Blob',
+        fileSaver             : '../vendor/FileSaver/FileSaver',
+        enquire               : '../vendor/enquire/dist/enquire.min',
+        hammerjs              : '../vendor/hammerjs/hammer',
+        jHammer               : '../vendor/jquery-hammerjs/jquery.hammer',
+        fastclick             : '../vendor/fastclick/lib/fastclick',
+        devicejs              : '../vendor/device.js/lib/device.min',
+        jszip                 : '../vendor/jszip/dist/jszip',
 
         // Aliases
         'modalRegion'         : 'views/modal',

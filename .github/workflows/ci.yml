@@ -20,9 +20,6 @@ jobs:
       - name: npm dependencies
         run: npm ci
 
-      - name: "bower dependencies (deprecated but working)"
-        run: npx --yes bower install
-
       - name: lint
         run: npx gulp test
 

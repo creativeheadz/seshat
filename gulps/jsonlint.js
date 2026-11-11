@@ -4,8 +4,8 @@ module.exports = function(gulp, plugins) {
     return function() {
         return gulp.src([
             'app/manifest.webapp',
-            'bower.json',
             'package.json',
+            'package-lock.json',
             'app/**/*.json'
         ])
         .pipe(plugins.jsonlint())

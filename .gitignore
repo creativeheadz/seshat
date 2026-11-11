@@ -10,8 +10,8 @@ cordova/
 release/
 .tmp/
 
-# Bower
-app/bower_components
+# Frontend vendor tree (populated by `npm run vendor`; app/vendor-src/ is checked in)
+app/vendor
 test/bower_components
 .bower-cache
 .bower-registry

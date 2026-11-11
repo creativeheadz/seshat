@@ -21,7 +21,7 @@ function maybeUglify(stream, plugins, argv) {
  * "Writable stream closed" as soon as another task runs concurrently).
  */
 module.exports = function(gulp, plugins, argv) {
-    var options = {base: './app/bower_components/'};
+    var options = {base: './app/vendor/'};
 
     function copyLicense() {
         return gulp.src([
@@ -39,7 +39,7 @@ module.exports = function(gulp, plugins, argv) {
 
             './app/scripts/modules/modules.json',
 
-            './app/bower_components/prism/themes/prism.css',
+            './app/vendor/prism/themes/prism.css',
             './app/images/**/*.+(png|jpg|gif|ico|icns)',
             './app/docs/**',
             './app/locales/**',
@@ -75,44 +75,44 @@ module.exports = function(gulp, plugins, argv) {
     function copyBower() {
         // Copy and minify Bower components
         return maybeUglify(gulp.src([
-            './app/bower_components/markdown-it*/dist/*.min.js',
+            './app/vendor/markdown-it*/dist/*.min.js',
 
-            './app/bower_components/backbone/backbone.js',
-            './app/bower_components/jquery/dist/jquery.js',
-            './app/bower_components/backbone.radio/build/backbone.radio.min.js',
-            './app/bower_components/prism/bundle.js',
-            './app/bower_components/requirejs/require.js',
-            './app/bower_components/modernizr/modernizr.js',
-            './app/bower_components/q/q.js',
-            './app/bower_components/underscore/underscore.js',
-            './app/bower_components/localforage/dist/localforage.js',
+            './app/vendor/backbone/backbone.js',
+            './app/vendor/jquery/dist/jquery.js',
+            './app/vendor/backbone.radio/build/backbone.radio.min.js',
+            './app/vendor/prism/bundle.js',
+            './app/vendor/requirejs/require.js',
+            './app/vendor/modernizr/modernizr.js',
+            './app/vendor/q/q.js',
+            './app/vendor/underscore/underscore.js',
+            './app/vendor/localforage/dist/localforage.js',
             // NOTE: no bower dropbox package exists; the SDK is vendored
             // as helpers/Dropbox-sdk.min.js (see main.js paths). Gulp 3
             // silently skipped this glob; Gulp 5 errors on it.
-            './app/bower_components/sjcl/sjcl.js',
+            './app/vendor/sjcl/sjcl.js',
 
             // Remotestorage
-            './app/bower_components/remotestorage.js/release/stable/remotestorage.js',
-            './app/bower_components/tv4/tv4.js',
-            './app/bower_components/bluebird/js/browser/bluebird.min.js',
+            './app/vendor/remotestorage.js/release/stable/remotestorage.js',
+            './app/vendor/tv4/tv4.js',
+            './app/vendor/bluebird/js/browser/bluebird.min.js',
         ], options), plugins, argv)
-        .pipe(gulp.dest('./dist/bower_components/'));
+        .pipe(gulp.dest('./dist/vendor/'));
     }
 
     function copyMathJax() {
         // Copy MathJax files
         return gulp.src([
-            './app/bower_components/MathJax/*.js',
-            './app/bower_components/MathJax/config/TeX-AMS-MML_HTMLorMML.js',
-            './app/bower_components/MathJax/images/**',
-            './app/bower_components/MathJax/extensions/**',
-            './app/bower_components/MathJax/fonts/HTML-CSS/TeX/woff/**',
-            './app/bower_components/MathJax/jax/element/**',
-            './app/bower_components/MathJax/jax/input/+(MathML|TeX)/**',
-            './app/bower_components/MathJax/jax/output/+(HTML-CSS|NativeMML)/**',
-            './app/bower_components/MathJax/localization/en/**'
+            './app/vendor/MathJax/*.js',
+            './app/vendor/MathJax/config/TeX-AMS-MML_HTMLorMML.js',
+            './app/vendor/MathJax/images/**',
+            './app/vendor/MathJax/extensions/**',
+            './app/vendor/MathJax/fonts/HTML-CSS/TeX/woff/**',
+            './app/vendor/MathJax/jax/element/**',
+            './app/vendor/MathJax/jax/input/+(MathML|TeX)/**',
+            './app/vendor/MathJax/jax/output/+(HTML-CSS|NativeMML)/**',
+            './app/vendor/MathJax/localization/en/**'
         ], options)
-        .pipe(gulp.dest('./dist/bower_components/'));
+        .pipe(gulp.dest('./dist/vendor/'));
     }
 
     return {
