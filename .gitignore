@@ -17,8 +17,8 @@ test/bower_components
 .bower-registry
 .bower-tmp
 
-# Test reports (Nightwatch)
-.reports
+# Test reports
+test-results/
 test/visual/screenshots
 
 # Old files that should not appear again if someone pushes them

@@ -9,8 +9,8 @@
   "scripts": {
     "start": "node ./server.js",
     "electron": "NODE_ENV=dev electron .",
-    "karma": "./node_modules/.bin/karma start",
-    "test:karma": "./node_modules/.bin/karma start --single-run",
+    "test": "vitest run",
+    "test:e2e": "npx gulp build && npx playwright test",
     "postinstall": "node scripts/vendor.js",
     "vendor": "node scripts/vendor.js"
   },
@@ -62,11 +62,12 @@
     "xss": "0.2.18"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "browser-sync": "^2.14.0",
-    "chai": "^3.5.0",
     "cordova-lib": "^6.3.0",
     "del": "^7.0.0",
     "dev-ip": "^1.0.1",
+    "fake-indexeddb": "^6.2.8",
     "gulp": "^5.0.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-clean-css": "^2.0.12",
@@ -77,9 +78,6 @@
     "gulp-jsonlint": "^1.1.2",
     "gulp-less": "^3.1.0",
     "gulp-load-plugins": "^1.2.4",
-    "gulp-mocha-phantomjs": "^0.11.0",
-    "gulp-mocha-selenium": "^1.0.0",
-    "gulp-nightwatch": "^0.3.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-requirejs-optimize": "^1.2.0",
@@ -87,18 +85,16 @@
     "gulp-uglify": "^1.5.4",
     "jshint": "^2.9.2",
     "jshint-stylish": "^2.2.0",
-    "karma": "^1.1.2",
-    "karma-coverage": "^1.1.1",
-    "karma-mocha": "^1.1.1",
-    "karma-phantomjs-launcher": "^1.0.1",
-    "karma-requirejs": "^1.0.0",
-    "nightwatch": "^0.9.6"
+    "less": "2.7.3",
+    "vitest": "^5.1.0"
   },
   "engines": {
     "node": ">=18.0.0"
   },
-  "optionalDependencies": {},
   "resolutions": {
     "underscore": "~1.7.0"
+  },
+  "overrides": {
+    "less": "2.7.3"
   }
 }

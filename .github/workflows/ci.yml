@@ -35,3 +35,11 @@ jobs:
           curl -sf -o /dev/null http://localhost:8901/app.appcache
           curl -sf -o /dev/null http://localhost:8901/locales/locales.json
           test -f dist/app.appcache
+
+      - name: unit tests
+        run: npx vitest run
+
+      - name: e2e tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
