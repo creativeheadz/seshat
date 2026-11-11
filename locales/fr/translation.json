@@ -172,8 +172,8 @@
         "api info li 2": "Le type de donnée doit être Files et datastores"
     },
     "help": {
-        "firststart title": "Bienvenue sur Laverna",
-        "firststart import": "Si vous avez déja utilisé Laverna auparavant, vous pouvez importer vos paramètres en cliquant sur le bouton 'importer' ci-dessous.",
+        "firststart title": "Bienvenue sur Seshat",
+        "firststart import": "Si vous avez déja utilisé Seshat auparavant, vous pouvez importer vos paramètres en cliquant sur le bouton 'importer' ci-dessous.",
         "firststart next": "Si vous n'avez jamais utilisé auparavant, cliquez sur le bouton 'suivant' et commencez le processus d'installation.",
         "firststart encryption": "Si vous voulez utiliser le chiffrement, veuillez fournir un mot de passe de chiffrement.",
         "firststart sync": "Comme nous ne stockons aucune donnée sur nos serveurs, vous devez activer la synchronisation avec l'un des services pour pouvoir visualiser vos notes sur d'autres terminaux.",

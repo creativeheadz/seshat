@@ -39,7 +39,7 @@ define([
             // Check for changes on file system
             this.checkChanges();
 
-            // Listen to Laverna events
+            // Listen to Seshat events
             this.listenTo(Radio.channel('notes'), 'sync:model destroy:model restore:model', this.onSave);
             this.listenTo(Radio.channel('notebooks'), 'sync:model destroy:model restore:model', this.onSave);
             this.listenTo(Radio.channel('tags'), 'sync:model destroy:model restore:model', this.onSave);
@@ -147,7 +147,7 @@ define([
         },
 
         /**
-         * Laverna triggered `change` event.
+         * Seshat triggered `change` event.
          */
         onSave: function(model) {
             FS.writeFile(model.storeName, model.attributes)

@@ -7,7 +7,7 @@
     "Open tasks": "タスク集",
     "Notebooks": "ノートブック集",
     "Settings": "設定",
-    "About": "Lavernaについて",
+    "About": "Seshatについて",
     "Save": "保存",
     "Save & Exit": "保存して終了",
     "Cancel": "キャンセル",
@@ -186,11 +186,11 @@
         "api info li 2": "アクセスタイプは **App Folder** です"
     },
     "help": {
-        "firststart title": "Lavernaへようこそ",
-        "firststart import": "既にLavernaをご利用の場合、下の'import'ボタンをクリックしてその設定を取り込むことができます。",
-        "firststart next": "Lavernaを初めて使う場合、'next'ボタンをクリックしてインストールを進めてください。",
+        "firststart title": "Seshatへようこそ",
+        "firststart import": "既にSeshatをご利用の場合、下の'import'ボタンをクリックしてその設定を取り込むことができます。",
+        "firststart next": "Seshatを初めて使う場合、'next'ボタンをクリックしてインストールを進めてください。",
         "firststart encryptiON": "暗号化機能を使う場合、パスワードを入力してください。",
-        "firststart sync": "Lavernaはサーバにデータを保管しないので、他のデバイスでもノートを使いたい場合は同期を機能を有効にしてください。",
+        "firststart sync": "Seshatはサーバにデータを保管しないので、他のデバイスでもノートを使いたい場合は同期を機能を有効にしてください。",
         "firststart backup": "もう少しで完了です。設定のバックアップを取れるようになりました。そして、最後のステップへ進んでください。"
     }
 }

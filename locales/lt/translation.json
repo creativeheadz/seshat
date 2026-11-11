@@ -173,9 +173,9 @@
         "api info li 2": "Type of data should be Files and datastores"
     },
     "help": {
-        "firststart title": "Sveiki atvykę į Laverna",
-        "firststart import": "Jeigu naudojotės Laverna anksčiau, tai galite importuoti senuosius nustatymus spausdami žemiau esantį mytuką „Imporuoti“",
-        "firststart next": "Jeigu niekada nesinaudojote Laverna, spauskite mygtuką „Toliau“, kad pradėtumėte įdiegimo procesą.",
+        "firststart title": "Sveiki atvykę į Seshat",
+        "firststart import": "Jeigu naudojotės Seshat anksčiau, tai galite importuoti senuosius nustatymus spausdami žemiau esantį mytuką „Imporuoti“",
+        "firststart next": "Jeigu niekada nesinaudojote Seshat, spauskite mygtuką „Toliau“, kad pradėtumėte įdiegimo procesą.",
         "firststart encryption": "Jeigu norite naudoti kodavimą, prašome nurodyti kodavimo slaptažodį.",
         "firststart sync": "Kadangi mes nesaugome jokių duomenų mūsų serveriuose, jums reikia įgalinti sinchronizaciją su vienu iš adapterių, kuris galėtų peržiūrėti jūsų užrašus kituose įrenginiuose.",
         "firststart backup": "Viskas yra beveik paruošta. Galite atsisiųsti savo nustatymų kopiją ir eiti į paskutinį žingsnį."

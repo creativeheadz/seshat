@@ -29,9 +29,9 @@ define([
 
         /**
          * Since module isn't ready yet, sync to /tmp folder (for now)
-         * (/tmp/laverna folder must exist)
+         * (/tmp/seshat folder must exist)
          */
-        path: '/tmp/laverna/',
+        path: '/tmp/seshat/',
 
         /**
          * Check if directories exist. If they don't, create them.

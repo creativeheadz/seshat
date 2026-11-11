@@ -1,5 +1,5 @@
 {
-    "name": "laverna",
+    "name": "seshat",
     "description": "Open source note taking web application",
     "version": "0.6.2",
     "launch_path": "/index.html",

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# Time: Wed Nov 11 2026 15:42:04 GMT+0000 (Greenwich Mean Time)
+# Time: Wed Nov 11 2026 16:25:43 GMT+0000 (Greenwich Mean Time)
 
 CACHE:
 404.html
@@ -7,8 +7,6 @@ LICENSE
 config.xml
 docs/howto.md
 favicon.ico
-images/icon/IconMenubarTemplate.png
-images/icon/IconMenubarTemplate@2x.png
 images/icon/icon-120x120.png
 images/icon/icon-128x128.png
 images/icon/icon-150x150.png
@@ -18,8 +16,6 @@ images/icon/icon-310x150.png
 images/icon/icon-310x310.png
 images/icon/icon-36x36.png
 images/icon/icon-48x48.png
-images/icon/icon-512x512.icns
-images/icon/icon-512x512.png
 images/icon/icon-70x70.png
 images/icon/icon-72x72.png
 images/icon/icon-76x76.png
@@ -128,4 +124,4 @@ FALLBACK:
 SETTINGS:
 prefer-online
 
-# hash: 6a00184bfb07592e8c9057beea54ab735d4b01b2cc4c738ccb17bfca1867f1d5
+# hash: 2bb71ac2b66f1ae1a3daa85242b8232d3e2018fd284e8352563a655f2d81f565
