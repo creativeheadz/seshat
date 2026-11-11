@@ -9,7 +9,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to 26.04, whose apt layout breaks
+    # `playwright install --with-deps` on @playwright/test 1.x.
+    # Revisit on the next Playwright major bump.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
