@@ -21,6 +21,7 @@ define([
         $body = $('body');
 
     rm.addRegions({
+        rail          : '#rail',
         sidebarNavbar : '#sidebar--navbar',
         sidebar       : '#sidebar--content',
         content       : '#content',

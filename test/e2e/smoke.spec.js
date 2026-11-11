@@ -210,6 +210,21 @@ test.describe('smoke', function() {
         }
     });
 
+    // Icon rail: persistent nav with active state.
+    test('icon rail navigates between sections', async function({page}) {
+        await expect(page.locator('.rail--item')).toHaveCount(6);
+        await page.click('.rail--item[title="Trash"]');
+        await page.waitForFunction(function() {
+            return window.location.hash.indexOf('trashed') !== -1;
+        });
+        await expect(page.locator('.rail--item.active').first())
+            .toHaveAttribute('href', '#/notes/f/trashed');
+        await page.click('.rail--item[title="All notes"]');
+        await page.waitForFunction(function() {
+            return window.location.hash === '#/notes' || window.location.hash === '';
+        });
+    });
+
     // Dropbox removal: sync settings render with no dropbox UI.
     test('settings sync view renders without dropbox', async function({page}) {
         await page.goto('/#/settings/sync');

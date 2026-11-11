@@ -31,11 +31,25 @@
     height   : 100%;
 }
 
-// Sidebar
+// Sidebar (shifted right of the persistent icon rail;
+// widths mirror make-cols above minus the rail)
 .layout--sidebar {
     &:extend(.layout--row);
-    left: 0;
+    left: @rail--width;
     border-right: 1px solid darken(#FFF, 10%);
+
+    @media (min-width: @screen-lg-min) {
+        width: ~"calc(25% - @{rail--width})";
+    }
+    @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+        width: ~"calc(33.33333333% - @{rail--width})";
+    }
+    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+        width: ~"calc(35% - @{rail--width})";
+    }
+    @media (max-width: @screen-xs-max) {
+        width: ~"calc(100% - @{rail--width})";
+    }
 }
 
 // Content

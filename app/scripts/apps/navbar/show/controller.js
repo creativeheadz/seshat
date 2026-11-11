@@ -12,8 +12,9 @@ define([
     'underscore',
     'backbone.radio',
     'marionette',
-    'apps/navbar/show/view'
-], function($, Q, _, Radio, Marionette, View) {
+    'apps/navbar/show/view',
+    'apps/navbar/rail/view'
+], function($, Q, _, Radio, Marionette, View, RailView) {
     'use strict';
 
     /**
@@ -77,6 +78,7 @@ define([
 
             // Render the view
             Radio.request('global', 'region:show', 'sidebarNavbar', this.view);
+            Radio.request('global', 'region:show', 'rail', new RailView());
 
             // Listen to view events
             this.listenTo(this.view, 'search:submit', this.navigateSearch, this);

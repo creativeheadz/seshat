@@ -1,0 +1,53 @@
+/**
+ * Icon rail (persistent slim navigation).
+ * Width must match the sidebar offset in core/layout.less.
+ */
+@rail--width: 54px;
+
+.layout--rail {
+    position : fixed;
+    left     : 0;
+    top      : 0;
+    bottom   : 0;
+    width    : @rail--width;
+    z-index  : 1030; // below backdrop (1031) and sidemenu (1032)
+    background-color: #fff;
+    border-right: 1px solid #ececea;
+}
+
+.rail--nav {
+    display        : flex;
+    flex-direction : column;
+    align-items    : center;
+    height         : 100%;
+    width          : 100%;
+    padding        : 10px 0;
+}
+
+.rail--item {
+    width           : 40px;
+    height          : 40px;
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    font-size       : 17px;
+    color           : #6b6f6e;
+    border-radius   : 10px;
+    margin          : 2px 0;
+}
+
+.rail--item:hover,
+.rail--item:focus {
+    background      : #f1f0eb;
+    color           : #222;
+    text-decoration : none;
+}
+
+.rail--item.active {
+    color      : @color--brand;
+    background : lighten(@color--brand, 52%);
+}
+
+.rail--spacer {
+    flex: 1 1 auto;
+}
