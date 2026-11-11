@@ -14,14 +14,14 @@ let argv        = require('minimist')(process.argv.slice(1)),
 
 // Show command line help
 if (argv.help || argv.h) {
-    console.log('Usage: laverna [options]\r\n');
+    console.log('Usage: seshat [options]\r\n');
     console.log('--help', 'Show this help');
     console.log('--dev ', 'Show developer tools automatically on start');
     console.log('--tray', 'Hide to tray on start');
     console.log(
         '--data-dir',
         'Directory where data is stored.',
-        'Example: laverna --data-dir=../data'
+        'Example: seshat --data-dir=../data'
     );
 
     return app.quit();
@@ -35,7 +35,7 @@ if (argv['data-dir'] && argv['data-dir'].trim()) {
     if (dataDir.search(/^\./) > - 1) {
 
         // Always store data in a separate directory
-        dataDir += (dataDir.search(/^\.{1,2}$/) > -1 ? '/laverna-data' : '');
+        dataDir += (dataDir.search(/^\.{1,2}$/) > -1 ? '/seshat-data' : '');
 
         dataDir = path.join(__dirname, dataDir);
     }
@@ -198,7 +198,7 @@ appHelper = {
             x      : this.state.x,
             y      : this.state.y,
 
-            title           : 'Laverna',
+            title           : 'Seshat',
             icon            : this.icon,
             autoHideMenuBar : true,
             backgroundColor : '#00a693',
@@ -232,7 +232,7 @@ appHelper = {
         // Slightly different menu on OS X
         if (process.platform === 'darwin') {
             this.menu[0] = {
-                label   : 'Laverna',
+                label   : 'Seshat',
                 submenu : this.menu[0].submenu
             };
         }
@@ -250,7 +250,7 @@ appHelper = {
         let icon = new Tray(this.icon),
             menu = Menu.buildFromTemplate(this.menuTray);
 
-        icon.setToolTip('Laverna');
+        icon.setToolTip('Seshat');
         icon.setContextMenu(menu);
 
         // Auto hide to tray on start

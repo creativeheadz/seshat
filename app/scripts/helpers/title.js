@@ -31,7 +31,7 @@ define([
             page : '',
             main : '',
             db   : '',
-            app  : 'Laverna'
+            app  : 'Seshat'
         },
 
         initialize: function() {

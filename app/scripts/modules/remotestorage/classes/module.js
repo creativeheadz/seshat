@@ -15,6 +15,8 @@ define([
     /**
      * RemoteStorage module.
      */
+    // Category name kept as 'laverna': renaming would orphan data
+    // already stored on remoteStorage servers.
     RemoteStorage.defineModule('laverna', function(prClient) {
         prClient.declareType('notes', {
             '$schema':     'http://json-schema.org/draft-03/schema#',

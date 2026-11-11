@@ -4,8 +4,8 @@ module.exports = function(gulp, plugins) {
     return function() {
         return gulp.src('./dist')
         .pipe(plugins.shell([
-            'mkdir -p ./release/laverna',
-            'cp -R ./dist ./release/laverna/dist',
+            'mkdir -p ./release/seshat',
+            'cp -R ./dist ./release/seshat/dist',
         ]));
     };
 };

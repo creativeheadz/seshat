@@ -113,7 +113,7 @@ define([
                 [JSON.stringify(this.configs)],
                 {type: 'text/plain;charset=utf8'}
             );
-            fileSaver(blob, 'laverna-settings.json');
+            fileSaver(blob, 'seshat-settings.json');
         },
 
         /**

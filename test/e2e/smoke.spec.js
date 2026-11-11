@@ -50,7 +50,7 @@ test.describe('smoke', function() {
     // Fresh contexts open the first-run wizard; seeding any notebook
     // makes the app auto-close it on reload (firstStart controller).
     async function dismissWizard(page) {
-        var wizard = page.locator('#modal:has-text("Welcome to Laverna")');
+        var wizard = page.locator('#modal:has-text("Welcome to Seshat")');
         if (await wizard.count() === 0) {
             return;
         }

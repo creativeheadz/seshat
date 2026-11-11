@@ -17,9 +17,9 @@ module.exports = function(gulp, plugins, pkg) {
 
         return gulp.src('./electron.js')
         // .pipe(replace('__dirname + \'/dist\'', '__dirname'))
-        .pipe(gulp.dest('./release/laverna'))
+        .pipe(gulp.dest('./release/seshat'))
         .pipe(plugins.electron({
-            src         : './release/laverna',
+            src         : './release/seshat',
             packageJson : pkg,
             release     : './release',
             cache       : './.tmp',

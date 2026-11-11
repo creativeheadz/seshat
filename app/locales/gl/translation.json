@@ -186,9 +186,9 @@
         "api info li 2": "O tipo de acceso ten que ser **App Folder**"
     },
     "help": {
-        "firststart title": "Benvido/as a Laverna",
-        "firststart import": "Se xa usaches Laverna antes podes importar a configuración anterior premendo o botón de 'importar' que está abaixo.",
-        "firststart next": "Se aínda non usaches Laverna, preme en 'seguinte' e comeza a súa instalación.",
+        "firststart title": "Benvido/as a Seshat",
+        "firststart import": "Se xa usaches Seshat antes podes importar a configuración anterior premendo o botón de 'importar' que está abaixo.",
+        "firststart next": "Se aínda non usaches Seshat, preme en 'seguinte' e comeza a súa instalación.",
         "firststart encryption": "Se queres usar un cifrado, introduce un contrasinal de cifrado.",
         "firststart sync": "Xa que non ofrecemos un servizo de almacenamento de datos nos nosos servidores, para ver as túas notas noutros dispositivos precisas activar a sincronización con un dos adaptadores que temos.",
         "firststart backup": "Xa case está todo listo. Podes descargar unha copia de seguridade da configuración e continuar co último destes pasos."

@@ -175,9 +175,9 @@
         "api info li 2": "Erişim tipi **Uygulama Dosyası** olmalı"
     },
     "help": {
-        "firststart title": "Laverna'ya hoş geldin!",
-        "firststart import": "Eğer daha önce Laverna kullanıysan, aşağıdaki 'veri aktara' tıklayarak önceki ayarlarını kullanabilirsin.",
-        "firststart next": "Eğer daha önce Laverna kullanıysan, 'ileri' butonuna tıklayarak yükleme işlemine bağlayabilirsin",
+        "firststart title": "Seshat'ya hoş geldin!",
+        "firststart import": "Eğer daha önce Seshat kullanıysan, aşağıdaki 'veri aktara' tıklayarak önceki ayarlarını kullanabilirsin.",
+        "firststart next": "Eğer daha önce Seshat kullanıysan, 'ileri' butonuna tıklayarak yükleme işlemine bağlayabilirsin",
         "firststart encryption": "Eğer şifrelemeyi kullanmak istiyorsan, lütfen şifrenizi tanımlayınız.",
         "firststart sync": "Sunucumuzda veri depolamadığımızdan beri, notlarını diğer cihazlarda görüntülemek için senkronizasyonu adaptörlerden biriyle çalışır kılman gerekiyor.",
         "firststart backup": "Herşey neredeyse hazır. Ayarlarının yedeğini indirdikten sonra sonra adıma geçebilirsin"

@@ -163,9 +163,9 @@
         "api info li 2": "Datatypen skal være Files and datastores"
     },
     "help": {
-        "firststart title": "Velkommen til Laverna",
-        "firststart import": "Hvis du har benyttet Laverna før, kan du importere dine data på knappen 'importer'.",
-        "firststart next": "Hvis ikke du har benyttet dig af Laverna før, kan du gå videre ved at trykke på knappen 'næste' og starte installationen.",
+        "firststart title": "Velkommen til Seshat",
+        "firststart import": "Hvis du har benyttet Seshat før, kan du importere dine data på knappen 'importer'.",
+        "firststart next": "Hvis ikke du har benyttet dig af Seshat før, kan du gå videre ved at trykke på knappen 'næste' og starte installationen.",
         "firststart encryption": "Hvis du vil kryptere dit indhold angiv venligst et kodeord.",
         "firststart sync": "Da vi ikke lagre nogen form for data på vores servere, skal du benytte en af synkroniseringstjenesterne for at se dit indhold på dine andre enheder.",
         "firststart backup": "Alt er næsten klart. Du kan derfor downloade en backup af dine indstillinger og forsætte til det sidste trin."

@@ -7,6 +7,6 @@ module.exports = function(gulp) {
             './server.js',
             './package.json'
         ], {base: './'})
-        .pipe(gulp.dest('./release/laverna'));
+        .pipe(gulp.dest('./release/seshat'));
     };
 };

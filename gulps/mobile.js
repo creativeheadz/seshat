@@ -53,7 +53,7 @@ module.exports = function(gulp, plug, pkg) {
         // Use different name for debugging
         .pipe(
             plug.util.env.dev ?
-                plug.replace('<name>Laverna', '<name>Laverna dev') :
+                plug.replace('<name>Seshat', '<name>Seshat dev') :
                 plug.util.noop()
         )
         .pipe(gulp.dest('./cordova/www'));

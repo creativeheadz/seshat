@@ -163,9 +163,9 @@
         "api info li 2": "Llojet e të dhënave duhet të jenë Kartela dhe depo të dhënash"
     },
     "help": {
-        "firststart title": "Mirë se vini te Laverna",
-        "firststart import": "Nëse e keni përdorur Laverna-n më parë, mund të importoni rregullimet tuaja të vjetra duke klikuar mbi butonin 'Importo' më poshtë.",
-        "firststart next": "Nëse s’e keni përdorur Laverna-n më parë, klikoni mbi butonin 'pasuesi' që të fillojë procesi i instalimit.",
+        "firststart title": "Mirë se vini te Seshat",
+        "firststart import": "Nëse e keni përdorur Seshat-n më parë, mund të importoni rregullimet tuaja të vjetra duke klikuar mbi butonin 'Importo' më poshtë.",
+        "firststart next": "Nëse s’e keni përdorur Seshat-n më parë, klikoni mbi butonin 'pasuesi' që të fillojë procesi i instalimit.",
         "firststart encryption": "Nëse dëshironi të përdorni fshehtëzim, ju lutemi, jepni fjalëkalim fshehtëzimesh.",
         "firststart sync": "Meqë nuk depozitojmë ndonjë të dhënë në shërbyesit tanë, lypset të aktivizoni njëkohësimin me një nga përshtatësit, që të jeni në gjendje të shihni shënimet tuaja në pajisje të tjera.",
         "firststart backup": "Gjithçka thuajse është gati. Mund të shkarkoni kopjeruajtjen e rregullimeve tuaja dhe të vazhdoni me hapin e fundit."

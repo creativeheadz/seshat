@@ -46,7 +46,7 @@ define([
             // Listen to RemoteStorage events
             RS.on('ready', this.onReady);
 
-            // Listen to Laverna events
+            // Listen to Seshat events
             this.listenTo(Radio.channel('notes'), 'sync:model destroy:model restore:model', this.onSave);
             this.listenTo(Radio.channel('notebooks'), 'sync:model destroy:model restore:model', this.onSave);
             this.listenTo(Radio.channel('tags'), 'sync:model destroy:model restore:model', this.onSave);

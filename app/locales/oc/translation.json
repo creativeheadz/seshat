@@ -186,9 +186,9 @@
         "api info li 2": "Tip d'accès deu èsser **App Folder**"
     },
     "help": {
-        "firststart title": "Benvengut a Laverna",
-        "firststart import": "S'avètz ja utilizat Laverna, podètz importar vòstres paramètres d'abans en clicant sul boton 'importar' çaijós.",
-        "firststart next": "S'avètz pas jamai utilizat Laverna, clicatz sul boton 'seguent' per començar lo  processús d'installacion.",
+        "firststart title": "Benvengut a Seshat",
+        "firststart import": "S'avètz ja utilizat Seshat, podètz importar vòstres paramètres d'abans en clicant sul boton 'importar' çaijós.",
+        "firststart next": "S'avètz pas jamai utilizat Seshat, clicatz sul boton 'seguent' per començar lo  processús d'installacion.",
         "firststart encryption": "Se volètz utilizar lo chiframent, mercés de fornir un senhal de chiframent.",
         "firststart sync": "Ja que gardem pas cap de donadas sus nòstres servidors, vos cal activar la sincronizacion amb un de los adaptadors per poder veire vòstras nòtas en d'aparelhs mai.",
         "firststart backup": "Tot es gaireben prèst. Podètz telecargar vòstra salvagarda de paramètres e anar a la darrièra etapa."

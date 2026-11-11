@@ -158,9 +158,9 @@
         "auth title": "Dropbox autentifikācija"
     },
     "help": {
-        "firststart title": "Laipni lūgti Laverna",
-        "firststart import": "Ja Jūs jau esat lietojis/-usi Laverna iepriekš, Jūs varat importēt Jūsu iepriekšējos iestatījumu klikšķinot 'importēt' pogu lejup.",
-        "firststart next": "Ja nekad neesat lietojis/-usi Laverna līdz šim, klikšķiniet uz 'nākamā' pogas, lai sāktu instalācijas procesu.",
+        "firststart title": "Laipni lūgti Seshat",
+        "firststart import": "Ja Jūs jau esat lietojis/-usi Seshat iepriekš, Jūs varat importēt Jūsu iepriekšējos iestatījumu klikšķinot 'importēt' pogu lejup.",
+        "firststart next": "Ja nekad neesat lietojis/-usi Seshat līdz šim, klikšķiniet uz 'nākamā' pogas, lai sāktu instalācijas procesu.",
         "firststart encryption": "Ja vēlaties izmantot šifrēšanu, lūdzu sniedziet šifrēšans paroli.",
         "firststart sync": "Tā kā mēs neglabājam jebkādus datus mūsu serveros, Jums vajag ieslēgt sinhronizāciju ar vienu no no adapteriem lai varētu skatīt savas piezīmes arī uz citām ierīcēm.",
         "firststart backup": "Viss ir gandrīz gatavs. Jūs varat lejupielādēt savu iestatījumu rezerves kopiju un pāriet uz nākamo soli."

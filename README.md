@@ -1,206 +1,124 @@
-# Laverna - note taking web app
+<p align="center">
+  <img src="assets/seshat-hero.jpg" alt="Seshat writing among the stars" width="800">
+</p>
 
-> **Seshat fork - revival in progress (Nov 2026).**
-> Upstream Laverna is dormant since 2018; this fork continues it as
-> Seshat. The build does not work on modern Node yet and the install
-> instructions below are legacy — see [ROADMAP.md](ROADMAP.md) for
-> the revival plan and current status.
+<h1 align="center">
+  <img src="assets/seshat-logo.png" alt="Seshat emblem" width="48" align="absmiddle">
+  Seshat
+</h1>
 
-[![Join the chat at https://gitter.im/Laverna/laverna](https://badges.gitter.im/Laverna/laverna.svg)](https://gitter.im/Laverna/laverna?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<p align="center">
+  <strong>Private, offline-first Markdown notes with client-side encryption.</strong><br>
+  No account. No server. Your notes never leave your machine unencrypted.
+</p>
 
-[![Build Status](https://travis-ci.org/Laverna/laverna.svg?branch=dev)](https://travis-ci.org/Laverna/laverna) [![devDependency Status](https://david-dm.org/Laverna/laverna/dev-status.svg)](https://david-dm.org/Laverna/laverna#info=devDependencies) [![Code Climate](https://codeclimate.com/github/Laverna/laverna/badges/gpa.svg)](https://codeclimate.com/github/Laverna/laverna)
+<p align="center">
+  <a href="https://github.com/creativeheadz/seshat/actions/workflows/ci.yml"><img src="https://github.com/creativeheadz/seshat/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/creativeheadz/seshat/releases"><img src="https://img.shields.io/github/v/release/creativeheadz/seshat?include_prereleases" alt="Release"></a>
+  <img src="https://img.shields.io/badge/license-MPL--2.0-blue" alt="MPL-2.0">
+</p>
 
-Laverna is a JavaScript note-taking web application with a Markdown editor and encryption support.  It's built to be an open source alternative to Evernote.
+<p align="center">
+  <strong><a href="https://creativeheadz.github.io/seshat/">Try the live demo</a></strong>
+  — it runs entirely in your browser; nothing is uploaded anywhere.
+</p>
 
-The application stores all your notes in your browser databases such as indexedDB or localStorage, which is good for security reasons, because only you have access to them.
-
-**Demo**: https://laverna.cc/ OR http://laverna.github.io/static-laverna (laverna.cc is dead; re-hosting the demo is a Phase 1 item)
+Seshat is an independent, renamed revival of [Laverna](https://github.com/Laverna/laverna),
+the open-source Evernote alternative that went dormant in 2018. Named after the
+Egyptian goddess of writing and wisdom, it keeps everything that made Laverna good
+and drags the engineering into the present: the tree builds on Node 22, ships a
+Vitest + Playwright suite green in CI, and has had its dependency CVEs swept
+(34 down to 2, both with no fixed release in their lines — see
+[ROADMAP.md](ROADMAP.md)).
 
 ## Features
------------
 
-* Markdown editor based on Pagedown
-* Manage your notes, even when you're offline
-* Secure client-side encryption
-* Synchronizes with cloud storage services (currently only with Dropbox and RemoteStorage)
-* Three editing modes: distraction free, preview, and normal mode
-* WYSIWYG control buttons
-* MathJax support
-* Syntax highlighting
-* No registration required
-* Web based
-* Keybindings
+- Markdown editor with live preview, distraction-free and normal modes
+- Client-side AES encryption (PBKDF2 key, random IV per note)
+- Fully offline: notes live in IndexedDB/localStorage, no account needed
+- Notebooks, tags, favorites, tasks, file attachments
+- Math (TeX), syntax highlighting, full-text search
+- Import/export (JSON backup, settings)
+- 30+ interface locales
 
-## Tools
+## Quick start
 
-On the front-end this project uses JavaScript and the [Marionette JS](http://marionettejs.com/) framework while [Node JS](https://nodejs.org/en/), [Bower](https://bower.io/), and [Gulp.js](http://gulpjs.com/) are used on the back-end.  The test runner used is [karma](https://karma-runner.github.io/1.0/index.html) however,
-contributors are free to utilize whatever testing tools they desire.
-
-
-## Installation
----------------
-There are several ways to start using Laverna:
-
-1. Open [laverna.cc][10] and start using it. No extra steps are needed.
-2. Use a desktop app.
-3. Use a prebuilt version from [Laverna/static-laverna][9] repository.
-4. Build it from the source code.
-
-### Desktop app installation
----------------
-Download the latest [Laverna release][13] for your operating system (2017-era builds; new signed builds are a Phase 2 item). After downloading the archive, you need to unpack it. Then, in the unpacked folder you need to run an executable (laverna.exe for Windows, laverna for Linux and Mac).
-
-#### Arch Linux (or derived distributions)
-
-The package can be found [here](https://aur.archlinux.org/packages/laverna/). 
-
-For installation please use :
+**Docker** (easiest local copy):
 
 ```bash
-$ yay -S laverna
+docker build -t seshat .
+docker run -d --name seshat -p 8905:80 seshat
 ```
 
-For issue about installation please report [here](https://github.com/funilrys/PKGBUILD/issues/new) or contact [@funilrys](https://github.com/funilrys) on gitter [here](https://gitter.im/funilrys_/PKGBUILD)
+then open http://localhost:8905.
 
-
-### Installation of a prebuilt version
-------------
-#### 1. Download
+**From source** (Node 18+):
 
 ```bash
-$ wget https://github.com/Laverna/static-laverna/archive/gh-pages.zip -O laverna.zip
+git clone https://github.com/creativeheadz/seshat.git
+cd seshat
+npm ci            # installs deps and vendors frontend libraries
+npx gulp build    # produces dist/
+cd dist && python3 -m http.server 8901
 ```
 
-#### 2. Unpack the downloaded archive
+then open http://localhost:8901.
+
+**Desktop and mobile**: the old Electron shell and Cordova builds are retired.
+A signed Tauri desktop app and a PWA are on the [roadmap](ROADMAP.md#phase-2---modernize);
+until then, any modern desktop or mobile browser works.
+
+## Security model
+
+- Notes are encrypted in your browser with AES-CCM (SJCL), keyed by PBKDF2
+  (10,000 iterations, configurable) stretched from your password.
+- Rendered Markdown is sanitized with DOMPurify; titles and inputs pass
+  through an XSS filter. A hostile-content test (scripts, event handlers,
+  `javascript:` and `data:` URLs) runs in CI on every push.
+- Sync backends see only ciphertext when encryption is on — but see below.
+
+## Sync status (honest version)
+
+Seshat is local-first today. The old Dropbox sync is **removed**: it relied on
+killed long-lived tokens, a dead receiver host, and a pre-refresh SDK.
+RemoteStorage ships but is **unvalidated** against modern servers. A WebDAV/NAS
+backend is the planned Phase 2 direction; see
+[BACKLOG.md](BACKLOG.md) and [DOSSIER.md](DOSSIER.md#decisions).
+
+Whatever you do: **export backups** (Settings → Import/Export). No sync means
+no second copy unless you make one.
+
+## Data compatibility
+
+Seshat reads Laverna v0.7.51 data: same IndexedDB/localStorage layout, same
+SJCL legacy reader (pinned by frozen decrypt vectors in the test suite), and
+the legacy migrator is covered too. Point it at an existing profile and your
+notes come along. (Back up first anyway — see above.)
+
+## Development
 
 ```bash
-$ unzip laverna.zip
+npm test          # Vitest unit suite
+npm run test:e2e  # rebuild + Playwright smoke (Chromium)
+npx gulp          # dev server with live reload on :9000
+npx gulp test     # lint gate (jshint + jsonlint)
 ```
 
-#### 3. Open index.html in a browser
-Open in your favorite browser the index.html file which is located inside *laverna* directory.
+`npm run test:e2e` needs `npx playwright install chromium` once. CI runs
+lint, build, smoke, unit, and e2e on every push. Please keep it green:
+prove behavior changes with a test or a run, keep MPL-2.0 headers on
+touched files, and never break reading v0.7.51 user data.
 
+## Acknowledgments
 
-## Installation from source
----------------
-> **Legacy, currently broken**: this path needs Bower plus Gulp 3 and fails
-> on Node 12+. It will be rewritten once the Phase 1 build lands.
-
-To install, do the following:
-
-#### 1. Install Git
-
-This project requires that you have the latest version of git installed. To do so, see [Installing Git][14] (first-time users of git might want to check out the next section for configuring git).
-
-**Note:** Windows users will have to set the PATH variable for git after installing it.
-
-
-
-#### 2. Clone repository:
-
-For those who plan on contributing to the project's development , hit the fork button at the top of the page first (others can go on to the next step). Open a terminal, or command line, and navigate to the desired location of where you want to download the repository. Then enter the following commands to clone the repo:
-
-```bash
-# clone the repository
-$ git clone git@github.com:Laverna/laverna.git
-# navigate to the project directory
-cd laverna
-```
-
-**3. Ensure you have the node.js platform installed.** (See OS-specific instructions on their [website][8]).
-
-**4. Ensure you have the bower and gulp packages installed** (locally and globally):
-
-```bash
-$ npm install bower
-$ npm install -g bower
-$ npm install gulp
-$ npm install -g gulp
-```
-
-#### 5. Install Laverna's dependencies:
-
-```bash
-$ npm install
-$ bower install
-$ cd test
-$ bower install
-$ cd ..
-```
-
-#### 6. Build minified version of Laverna:
-
-```bash
-$ gulp build
-```
-
-#### 7. Start Laverna:
-
-```bash
-$ gulp
-```
-
-## MacOS notes on accepting incoming connections
-Because currently Laverna does not sign it's Mac packages, if you want to avoid the "Accept incoming connections" warning message everytime the application is launched, you can run the following commands. Assuming your current direction contains the laverna application:
-
-```bash
-codesign -s - -f ./laverna.app/Contents/Frameworks/Electron\ Framework.framework
-codesign -s - -f ./laverna.app/Contents/Frameworks/Electron\ Helper\ EH.app 
-codesign -s - -f ./laverna.app/Contents/Frameworks/Electron\ Helper\ NP.app
-codesign -s - -f ./laverna.app/Contents/Frameworks/Electron\ Helper.app 
-codesign -s - -f ./laverna.app/Contents/Frameworks/Mantle.framework 
-codesign -s - -f ./laverna.app/Contents/Frameworks/ReactiveCocoa.framework 
-codesign -s - -f ./laverna.app/Contents/Frameworks/Squirrel.framework 
-codesign --verify -vv ./laverna.app
-```
-
-## Do you have questions?
----------------
-Please have a look in our [wiki][15].
-
-## Support
----------------
-
-* Hit star button on [github][6]
-* Like us on [alternativeto.net][5]
-* [Contribute][7]
-
-### Coding Style Guidelines
-
-For those wanting to contribute code, we ask that you use either plain JavaScript or the Marionette.js framework. (For more details on the preferred coding style see [.editorconfig](https://github.com/Laverna/laverna/blob/master/.editorconfig)). Also, all experimental changes are being pushed on the **dev** branch, so any feature changes are preferred to be done on either this branch or a branch that uses the dev branch as its parent.  
-
-
-## Donation:
------------
-
-* [Bitcoin][3]
-* [BountySource][12]
-
-## Security
---------------
-Laverna uses the [SJCL] [1] library implementing the AES algorithm. You can review the code at:
-
-* https://github.com/Laverna/laverna/blob/master/app/scripts/classes/encryption.js
-* https://github.com/Laverna/laverna/blob/master/app/scripts/apps/encryption/
+Seshat stands on [Laverna](https://github.com/Laverna/laverna) by
+wwebfor, wwwredfish, and some 200 contributors — including the translators
+behind its 30+ locales. Upstream was notified
+([courtesy note](https://github.com/Laverna/laverna/issues/1023)); new work
+ships under the Seshat name only. All original MPL-2.0 headers are intact.
 
 ## License
---------------
-Published under [MPL-2.0 License][11].
 
-Laverna uses a lot of other libraries and each of these [libraries use different licenses][2].
-
-[1]: http://bitwiseshiftleft.github.io/sjcl/
-[2]: https://github.com/Laverna/laverna/blob/master/bower.json
-[3]: http://blockchain.info/address/1Q68HfLjNvWbLFr3KGK6nfXg7vc3hpDr11
-[4]: https://www.gittip.com/Laverna/
-[5]: http://alternativeto.net/software/laverna/
-[6]: https://github.com/Laverna/laverna
-[7]: https://github.com/Laverna/laverna/blob/master/CONTRIBUTE.md
-[8]: http://nodejs.org
-[9]: https://github.com/Laverna/static-laverna/archive/gh-pages.zip
-[10]: https://laverna.cc/index.html
-[11]: https://www.mozilla.org/en-US/MPL/2.0/
-[12]: https://www.bountysource.com/teams/laverna
-[13]: https://github.com/Laverna/laverna/releases
-[14]: https://git-scm.com/book/en/v2
-[15]: https://github.com/Laverna/laverna/wiki
+[MPL-2.0](LICENSE). Shipped third-party libraries are MIT, BSD, Apache-2.0,
+MPL-2.0, or public domain — see the license BOM note in
+[ROADMAP.md](ROADMAP.md).

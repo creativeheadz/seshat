@@ -189,9 +189,9 @@
         "api info li 2": "Type of access should be **App Folder**"
     },
     "help": {
-        "firststart title": "欢迎使用 Laverna",
+        "firststart title": "欢迎使用 Seshat",
         "firststart import": "如果你以前使用过 Laveran，你可以点击下面的 '导入' 按钮导入你以前的配置。",
-        "firststart next": "如果你从未用过 Laverna, 点击 '下一步' 开始安装。",
+        "firststart next": "如果你从未用过 Seshat, 点击 '下一步' 开始安装。",
         "firststart encryption": "如果你想使用加密，请输入密码。",
         "firststart sync": "由于我们不在我们的服务器存储任何数据, 你需要启用一个同步方式以便在其他设备上查看你的笔记。",
         "firststart backup": "几乎所有的东西都准备好了。 你可以下载配置备份并且进行最后一步啦！"
