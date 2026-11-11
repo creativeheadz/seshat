@@ -8,10 +8,10 @@ tree on 2026-11-11 unless noted.
 
 ## Phase 0 - launch
 
-- [ ] File the 3-path courtesy issue on Laverna/laverna
-      (deferred 2026-11-11, lands before first release).
-- [ ] Two-week fuse from filing; log any reply the day
-      it lands.
+- [x] Courtesy notice on Laverna/laverna (informing,
+      not asking): gh-1023, filed 2026-11-11.
+- [ ] Log any upstream reply the day it lands (no fuse;
+      the fork proceeds regardless).
 - [x] Rename picked: Seshat (2026-11-11).
 - [x] Wire `origin` (Gitea) and `github` remotes
       (2026-11-11; pushing to `github` only for now).
