@@ -21,12 +21,14 @@ function maybeUglify(stream, plugins, argv) {
  * "Writable stream closed" as soon as another task runs concurrently).
  */
 module.exports = function(gulp, plugins, argv) {
-    var options = {base: './app/vendor/'};
+    // encoding:false throughout: gulp 5 decodes to UTF-8 by default,
+    // which mangles binary files (images, fonts) with U+FFFD stuffing.
+    var options = {base: './app/vendor/', encoding: false};
 
     function copyLicense() {
         return gulp.src([
             './LICENSE'
-        ], {base: './'})
+        ], {base: './', encoding: false})
         .pipe(gulp.dest('./dist'));
     }
 
@@ -46,7 +48,7 @@ module.exports = function(gulp, plugins, argv) {
             './app/.htaccess',
             './app/*.+(xml|ico|txt|webapp)',
             './app/styles/**/*.+(eot|svg|ttf|woff)',
-        ], {base: './app'})
+        ], {base: './app', encoding: false})
         .pipe(gulp.dest('./dist'));
     }
 
@@ -67,7 +69,7 @@ module.exports = function(gulp, plugins, argv) {
             './app/scripts/helpers/migrate.js',
             './app/scripts/migrate.js',
             './app/scripts/workers/localForage.js',
-        ], {base: './app'}), plugins, argv)
+        ], {base: './app', encoding: false}), plugins, argv)
         .pipe(gulp.dest('./dist'));
     }
 

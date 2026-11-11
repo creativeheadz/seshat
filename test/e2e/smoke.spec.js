@@ -6,6 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 const {test, expect} = require('@playwright/test');
+const fs = require('fs');
+const path = require('path');
 const fixtureNote = require('../fixtures/note-v0751.json');
 
 function trackErrors(page, errors, responses) {
@@ -188,6 +190,24 @@ test.describe('smoke', function() {
         await page.click('.list--item.-note >> nth=0');
         await page.waitForSelector('.content.-note');
         await expect(page.locator('.content.-note')).toContainText('precious content');
+    });
+
+    // Gulp 5 decodes to UTF-8 by default, which once mangled every
+    // shipped image and font with U+FFFD stuffing (copy streams now
+    // force encoding:false).
+    test('ships binary assets byte-exact', async function({page, request}) {
+        var files = [
+            'images/icon/icon-152x152.png',
+            'images/icon/icon-310x150.png',
+            'favicon.ico',
+        ];
+        for (var i = 0; i < files.length; i++) {
+            var res = await request.get('/' + files[i]);
+            expect(res.status()).toBe(200);
+            var body = Buffer.from(await res.body()),
+                src = fs.readFileSync(path.join(__dirname, '..', '..', 'app', files[i]));
+            expect(body.equals(src)).toBe(true);
+        }
     });
 
     // Dropbox removal: sync settings render with no dropbox UI.
