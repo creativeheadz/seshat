@@ -71,7 +71,8 @@
         display: none;
     }
     .layout--content {
-        width: 100%;
+        left  : @rail--width;
+        width : ~"calc(100% - @{rail--width})";
     }
 
     /**

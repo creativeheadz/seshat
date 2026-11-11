@@ -96,6 +96,9 @@ test.describe('smoke', function() {
 
     test('creates a note and renders markdown', async function({page}) {
         await page.click('#header--add');
+        // Fullscreen editor must clear the 54px icon rail (no overlap).
+        var titleBox = await page.locator('#editor--input--title').boundingBox();
+        expect(titleBox.x).toBeGreaterThanOrEqual(54);
         await page.fill('#editor--input--title', 'Smoke note');
         await page.waitForSelector('#editor .CodeMirror');
         await page.evaluate(function() {
