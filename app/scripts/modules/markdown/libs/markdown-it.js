@@ -1,16 +1,15 @@
-/* global define */
+/* global define, requirejs, window */
 define([
     'underscore',
     'q',
     'markdown-it',
     'prism/bundle',
-    'markdown-it-san',
     'markdown-it-hash',
     'markdown-it-math',
     'markdown-it-imsize',
     'modules/markdown/libs/markdown-it-task',
     'modules/markdown/libs/markdown-it-file',
-], function(_, Q, MarkdownIt, Prism, sanitizer, hash, math, imsize, task, file) {
+], function(_, Q, MarkdownIt, Prism, hash, math, imsize, task, file) {
     'use strict';
 
     /**
@@ -29,7 +28,7 @@ define([
                     return '';
                 }
 
-                return Prism.highlight(code, Prism.languages[lang]);
+                return Prism.highlight(code, Prism.languages[lang], lang);
             }
         });
 
@@ -44,7 +43,6 @@ define([
          */
         configure: function() {
             this.md
-            .use(sanitizer)
             .use(imsize)
             .use(math, {
                 inlineOpen       : '$',
@@ -102,7 +100,35 @@ define([
 
             return new Q(
                 this.md.render(_.unescape(model.content), env)
-            );
+            )
+            .then(function(html) {
+                return this.sanitize(html);
+            }.bind(this));
+        },
+
+        /**
+         * Sanitize rendered HTML with DOMPurify.
+         * No DOM exists inside WebWorkers, so the worker run skips this:
+         * the worker proxy (libs/markdown.js) sanitizes its results in
+         * the main thread instead. Lazy-loaded so the worker never
+         * fetches the module at all.
+         */
+        sanitize: function(html) {
+            if (typeof window === 'undefined' || !window.document) {
+                return html;
+            }
+
+            var defer = Q.defer();
+            requirejs(['dompurify'], function(DOMPurify) {
+                // DOMPurify default URI policy plus blob: (file embeds
+                // render as blob: object URLs). data: stays blocked.
+                defer.resolve(DOMPurify.sanitize(html, {
+                    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|matrix|blob):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+                }));
+            }, function(err) {
+                defer.reject(err);
+            });
+            return defer.promise;
         },
 
         /**

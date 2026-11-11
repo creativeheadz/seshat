@@ -19,7 +19,6 @@ module.exports = function(gulp, plugins, argv) {
             },
             exclude        : [
                 'markdown-it',
-                'markdown-it-san',
                 'markdown-it-hash',
                 'markdown-it-math',
                 'modules/markdown/libs/markdown-it-file',

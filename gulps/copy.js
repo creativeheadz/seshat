@@ -115,11 +115,22 @@ module.exports = function(gulp, plugins, argv) {
         .pipe(gulp.dest('./dist/vendor/'));
     }
 
+    // Pre-minified ES6+ bundles: uglify-js 2.x only speaks ES5,
+    // and re-minifying is pointless anyway. Plain copy.
+    function copyVendorMin() {
+        return gulp.src([
+            './app/vendor/markdown-it/dist/browser/markdown-it.umd.min.js',
+            './app/vendor/dompurify/dist/purify.min.js',
+        ], options)
+        .pipe(gulp.dest('./dist/vendor/'));
+    }
+
     return {
         license  : copyLicense,
         appFiles : copyAppFiles,
         excluded : copyExcluded,
         bower    : copyBower,
-        mathjax  : copyMathJax
+        mathjax  : copyMathJax,
+        vendorMin: copyVendorMin
     };
 };

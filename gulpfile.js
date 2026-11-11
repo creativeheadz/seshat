@@ -56,7 +56,8 @@ var copy = gulp.parallel(
     copyTasks.appFiles,
     copyTasks.excluded,
     copyTasks.bower,
-    copyTasks.mathjax
+    copyTasks.mathjax,
+    copyTasks.vendorMin
 );
 
 /**

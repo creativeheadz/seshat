@@ -60,7 +60,10 @@ define([
         promises: [],
 
         render: function(model) {
-            return this._emit('render', model);
+            // The worker has no DOM, so its HTML arrives unsanitized;
+            // sanitize here at the main-thread boundary.
+            return this._emit('render', model)
+            .then(MarkdownIt.prototype.sanitize);
         },
 
         parse: function(content) {

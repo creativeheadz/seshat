@@ -22,8 +22,7 @@ requirejs.config({
     paths: {
         q                    : '../vendor/q/q',
         underscore           : '../vendor/underscore/underscore',
-        'markdown-it'        : '../vendor/markdown-it/dist/markdown-it.min',
-        'markdown-it-san'    : '../vendor/markdown-it-sanitizer/dist/markdown-it-sanitizer.min',
+        'markdown-it'        : '../vendor/markdown-it/dist/browser/markdown-it.umd.min',
         'markdown-it-hash'   : '../vendor/markdown-it-hashtag/dist/markdown-it-hashtag.min',
         'markdown-it-math'   : '../vendor/markdown-it-math/dist/markdown-it-math.min',
         'markdown-it-imsize' : '../vendor/markdown-it-imsize/dist/markdown-it-imsize.min',

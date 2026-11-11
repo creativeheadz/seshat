@@ -98,7 +98,8 @@ test.describe('smoke', function() {
         await page.waitForSelector('#editor .CodeMirror');
         await page.evaluate(function() {
             document.querySelector('#editor .CodeMirror').CodeMirror
-                .setValue('# Hello\n\nrender *me*.');
+                .setValue('# Hello\n\nrender *me*.\n\n$x^2$\n\n```js\nvar a = 1;\n```\n\n' +
+                    '[blob](blob:fake-uuid)\n\n[data](data:text/html,<b>x</b>)\n');
         });
         await page.click('.editor--save');
 
@@ -107,8 +108,47 @@ test.describe('smoke', function() {
             .toContainText('Smoke note');
 
         await page.click('.list--item.-note >> nth=0');
+        var content = page.locator('.content.-note');
         await page.waitForSelector('.content.-note h1');
-        await expect(page.locator('.content.-note')).toContainText('Hello');
+        await expect(content).toContainText('Hello');
+        // math plugin path (markdown-it 15 + vendored math 4.0.0)
+        await expect(content.locator('.math.inline')).toHaveCount(1);
+        // prism 1.30 highlight path
+        await expect(content.locator('code .token')).not.toHaveCount(0);
+        // DOMPurify URL policy: blob: (file embeds) preserved,
+        // data:text/html neutered
+        await expect(content.locator('a[href^="blob:"]')).toHaveCount(1);
+        await expect(content.locator('a[href^="data:text/html"]')).toHaveCount(0);
+    });
+
+    test('renders hostile content inert', async function({page}) {
+        await page.click('#header--add');
+        await page.fill('#editor--input--title', 'Hostile <img src=x onerror="window.__pwned=1">');
+        await page.waitForSelector('#editor .CodeMirror');
+        await page.evaluate(function() {
+            window.__pwned = undefined;
+            document.querySelector('#editor .CodeMirror').CodeMirror.setValue(
+                '<script>window.__pwned="script"</script>\n\n' +
+                '<img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" onerror="window.__pwned=\'attr\'">\n\n' +
+                '[js](javascript:window.__pwned="href")\n\n' +
+                '<iframe src="data:text/html,<script>window.__pwned=\'frame\'</script>"></iframe>\n\n' +
+                'safe *text*.'
+            );
+        });
+        await page.click('.editor--save');
+
+        await page.click('.list--item.-note >> nth=0');
+        var content = page.locator('.content.-note');
+        await page.waitForSelector('.content.-note');
+        await expect(content).toContainText('safe text.');
+        expect(await page.evaluate(function() { return window.__pwned; })).toBeUndefined();
+        await expect(content.locator('script')).toHaveCount(0);
+        await expect(content.locator('iframe')).toHaveCount(0);
+        await expect(content.locator('[onerror]')).toHaveCount(0);
+        await expect(content.locator('a[href^="javascript:"]')).toHaveCount(0);
+        // hostile title renders as inert text too (save-path escaping)
+        await expect(page.locator('.list--item--title').first()).toContainText('Hostile');
+        expect(await page.locator('.list--item--title').first().locator('img').count()).toBe(0);
     });
 
     test('encrypt round-trips through the app crypto in-page', async function({page}) {

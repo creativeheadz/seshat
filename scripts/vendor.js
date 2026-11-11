@@ -39,6 +39,7 @@ var packages = [
     ['blueimp-canvas-to-blob', 'blueimp-canvas-to-blob'],
     ['bootstrap', 'bootstrap'],
     ['codemirror', 'codemirror'],
+    ['dompurify', 'dompurify'],
     ['dropzone', 'dropzone'],
     ['enquire.js', 'enquire'],
     ['fastclick', 'fastclick'],
@@ -55,7 +56,7 @@ var packages = [
     // NOTE: markdown-it-math stays on vendored 4.0.0 bytes (6.x changed
     // the plugin API; the npm package drags an abandoned babel chain).
     // ['markdown-it-math', 'markdown-it-math'],
-    ['markdown-it-sanitizer', 'markdown-it-sanitizer'],
+    // NOTE: markdown-it-sanitizer replaced by DOMPurify (abandoned).
     ['mathjax', 'MathJax'],
     ['mousetrap', 'mousetrap'],
     ['prismjs', 'prism'],
@@ -99,7 +100,12 @@ packages.forEach(function(pair) {
         process.exit(1);
     }
     mkdirp(to);
-    fs.cpSync(from, to, {recursive: true});
+    // Skip nested node_modules: requirejs paths point at top-level
+    // files only, and nested copies once smuggled a jquery 2.x into
+    // the tree (see overrides in package.json).
+    fs.cpSync(from, to, {recursive: true, filter: function(src) {
+        return path.basename(src) !== 'node_modules';
+    }});
     console.log('vendor: ' + pair[0] + ' -> app/vendor/' + pair[1]);
 });
 
