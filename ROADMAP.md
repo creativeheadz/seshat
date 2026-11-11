@@ -74,7 +74,8 @@ overlap once the build is green.
       pair fixed with regression test; data-loss
       scares kept as P0 with fixture sketches.
       Done: backlog is a roadmap, not a pile.
-- [ ] Tag a test release, then the first proper one.
+- [x] Test release v0.8.0-rc1 (2026-11-11); first
+      proper one (v0.8.0) after soak.
 
 Non-goals for phase 1: framework rewrite, P2P sync,
 Cordova mobile, new features. Stabilize first.
