@@ -74,3 +74,12 @@ attaches the `.deb` to the GitHub release (create the release first
 with `gh release create`, which pushes the tag). It also runs on
 manual dispatch for dry runs. macOS/Windows stay workstation-driven
 like Wegweiser: no secrets in CI, no surprise bills.
+
+## Debug install (Andrei's rig)
+
+`scripts/seshat-debug-update.sh` keeps a local install tracking the
+newest release, prereleases included: it compares the installed
+version against the GitHub releases API (no auth needed) and
+`dpkg -i`s a newer `*_amd64.deb` when one lands. Runs every
+30 minutes via cron; log at `~/.local/share/seshat-debug/update.log`.
+Restart the app after an upgrade to switch builds.
