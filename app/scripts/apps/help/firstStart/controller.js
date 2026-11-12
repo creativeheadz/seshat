@@ -12,7 +12,7 @@ define([
     'marionette',
     'backbone.radio',
     'apps/help/firstStart/view',
-    'fileSaver',
+    'helpers/fileSaver',
 ], function(_, Q, Marionette, Radio, View, fileSaver) {
     'use strict';
 
@@ -81,8 +81,9 @@ define([
                     [JSON.stringify(configs)],
                     {type: 'text/plain;charset=utf8'}
                 );
-                fileSaver(blob, 'seshat-settings.json');
-
+                return fileSaver(blob, 'seshat-settings.json');
+            })
+            .fin(function() {
                 window.location.reload();
             });
         },

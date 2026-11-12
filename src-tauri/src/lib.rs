@@ -1,4 +1,5 @@
-//! Obsidian vault import: folder pick + recursive markdown read.
+//! Desktop shell commands: Obsidian vault import (folder pick +
+//! recursive markdown read) and saving exported files.
 //!
 //! One IPC call carries the whole vault scan to the frontend, which
 //! maps files to notes (see `modules/importExport/vault/`). Binary
@@ -135,10 +136,77 @@ fn import_vault() -> Result<Option<VaultScan>, String> {
     }))
 }
 
+/// Decodes `%XX` escapes (the file name travels in a header).
+fn percent_decode(input: &str) -> String {
+    let bytes = input.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+
+    while i < bytes.len() {
+        if bytes[i] == b'%' && i + 2 < bytes.len() && input.is_char_boundary(i + 3) {
+            if let Ok(byte) = u8::from_str_radix(&input[i + 1..i + 3], 16) {
+                out.push(byte);
+                i += 3;
+                continue;
+            }
+        }
+        out.push(bytes[i]);
+        i += 1;
+    }
+
+    String::from_utf8_lossy(&out).into_owned()
+}
+
+/// Saves bytes the frontend produced (a backup, exported settings)
+/// to a place the user picks.
+///
+/// The webview has no download manager, so the browser route (a blob
+/// link) does nothing here. The body is the file itself; the
+/// suggested name comes in the `x-file-name` header. Returns the
+/// path written, or `None` when the dialog is cancelled.
+#[tauri::command]
+fn save_file(request: tauri::ipc::Request<'_>) -> Result<Option<String>, String> {
+    let bytes: Vec<u8> = match request.body() {
+        tauri::ipc::InvokeBody::Raw(bytes) => bytes.clone(),
+        // Older WebKitGTK cannot post a raw body; the bytes then
+        // arrive as a JSON array of numbers.
+        tauri::ipc::InvokeBody::Json(value) => {
+            serde_json::from_value(value.clone()).map_err(|e| e.to_string())?
+        }
+    };
+
+    let suggested = request
+        .headers()
+        .get("x-file-name")
+        .and_then(|v| v.to_str().ok())
+        .map(percent_decode)
+        .unwrap_or_default();
+
+    // A name only: never a path from the page
+    let name = Path::new(&suggested)
+        .file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .filter(|n| !n.is_empty())
+        .unwrap_or_else(|| "seshat-export".to_string());
+
+    let path = match rfd::FileDialog::new()
+        .set_title("Save")
+        .set_file_name(&name)
+        .save_file()
+    {
+        Some(path) => path,
+        None => return Ok(None),
+    };
+
+    std::fs::write(&path, bytes).map_err(|e| format!("{}: {}", path.display(), e))?;
+
+    Ok(Some(path.to_string_lossy().into_owned()))
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![import_vault])
+    .invoke_handler(tauri::generate_handler![import_vault, save_file])
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(

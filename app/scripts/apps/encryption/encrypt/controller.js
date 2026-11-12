@@ -288,7 +288,7 @@ define([
                 data: this.rawData
             });
 
-            this.view.once('confirm:download', this.downloadBackup, this);
+            this.listenTo(this.view, 'confirm:download', this.downloadBackup);
             this.view.once('next:step', defer.resolve, defer);
             Radio.request('global', 'region:show', 'brand', this.view);
 

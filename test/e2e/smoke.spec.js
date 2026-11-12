@@ -457,6 +457,53 @@ test.describe('smoke', function() {
         await expect(page.locator('body')).toHaveClass(/-preview/);
     });
 
+    // The desktop webview has no download manager: a blob link does
+    // nothing there, so exports and the encryption backup were lost
+    // without a word. They go to the shell's save_file command.
+    test('desktop exports go through the shell instead of a download', async function({page}) {
+        await page.addInitScript(function() {
+            window.__saved = [];
+            window.__TAURI_INTERNALS__ = {
+                invoke: function(cmd, payload, options) {
+                    if (cmd !== 'save_file') {
+                        return Promise.reject(new Error('unexpected: ' + cmd));
+                    }
+                    window.__saved.push({
+                        isBytes : payload instanceof Uint8Array,
+                        text    : new TextDecoder().decode(payload).slice(0, 2),
+                        size    : payload.length,
+                        name    : decodeURIComponent(options.headers['x-file-name']),
+                    });
+                    return Promise.resolve('/tmp/' + options.headers['x-file-name']);
+                }
+            };
+        });
+        await page.reload();
+        await page.waitForSelector('#header--add', {timeout: 20000});
+        await dismissWizard(page);
+
+        // Settings: a JSON file
+        await page.goto('/#/settings/importExport');
+        await page.waitForSelector('#do-export', {timeout: 20000});
+        await page.click('#do-export');
+        await expect.poll(function() {
+            return page.evaluate(function() { return window.__saved.length; });
+        }).toBe(1);
+
+        // Everything: a zip
+        await page.click('#export-data');
+        await expect.poll(function() {
+            return page.evaluate(function() { return window.__saved.length; });
+        }, {timeout: 20000}).toBe(2);
+
+        var saved = await page.evaluate(function() { return window.__saved; });
+        expect(saved[0].name).toBe('seshat-settings.json');
+        expect(saved[0].isBytes).toBe(true);
+        expect(saved[0].size).toBeGreaterThan(10);
+        expect(saved[1].name).toMatch(/\.zip$/);
+        expect(saved[1].text).toBe('PK');
+    });
+
     // Vault importer: stubbed Tauri scan must interpolate the summary
     // counts (i18n.t without values blanks {{...}} placeholders).
     test('vault import reports interpolated counts', async function({page}) {
