@@ -240,6 +240,26 @@ test.describe('smoke', function() {
         await expect(page.locator('#modal')).toContainText('not a Seshat backup', {timeout: 30000});
     });
 
+    // Settings tabs are loaded by name at run time. The Editor tab
+    // was left out of the build and showed a blank page in every
+    // release; a missing tab fails this as a 404 (see afterEach).
+    test('every settings tab opens in the built app', async function({page}) {
+        var tabs = ['general', 'editor', 'encryption', 'keybindings', 'sync',
+            'profiles', 'modules', 'importExport'];
+
+        for (var i = 0; i < tabs.length; i++) {
+            await page.goto('/#/settings/' + tabs[i]);
+            await expect(
+                page.locator('.container-fluid.-settings form').locator('input, select, button').first(),
+                'settings tab "' + tabs[i] + '" is empty'
+            ).toBeAttached({timeout: 20000});
+        }
+
+        // and the tab that was missing has its controls
+        await page.goto('/#/settings/editor');
+        await expect(page.locator('#editMode')).toBeVisible();
+    });
+
     // Dropbox removal: sync settings render with no dropbox UI.
     test('settings sync view renders without dropbox', async function({page}) {
         await page.goto('/#/settings/sync');

@@ -5,6 +5,18 @@
  * Require.js config example:
  * https://github.com/jrburke/r.js/blob/master/build/example.build.js
  */
+var fs   = require('fs'),
+    path = require('path');
+
+var settingsViews = fs.readdirSync(
+    path.join(__dirname, '..', 'app', 'scripts', 'apps', 'settings', 'show', 'views')
+)
+.filter(function(name) { return /\.js$/.test(name); })
+.sort()
+.map(function(name) {
+    return 'apps/settings/show/views/' + name.replace(/\.js$/, '');
+});
+
 module.exports = function(gulp, plugins, argv) {
     return function requireJs() {
         var stream = gulp.src('./app/scripts/main.js')
@@ -44,17 +56,12 @@ module.exports = function(gulp, plugins, argv) {
                 'bluebird',
                 'mathjax',
             ],
-            include        : [
-                // Because settings views are loaded dynamically
-                'apps/settings/show/views/encryption',
-                'apps/settings/show/views/general',
-                'apps/settings/show/views/importExport',
-                'apps/settings/show/views/keybindings',
-                'apps/settings/show/views/profiles',
-                'apps/settings/show/views/showView',
-                'apps/settings/show/views/sync',
-                'apps/settings/show/views/modules',
-
+            // Settings tabs are loaded by name at run time
+            // ('apps/settings/show/views/' + tab), so the optimizer
+            // cannot see them: every file in that folder is included.
+            // The list used to be written out by hand and missed
+            // `editor`, which left that tab blank in every build.
+            include        : settingsViews.concat([
                 'apps/settings/module/app',
                 'apps/settings/module/controller',
                 'views/loader',
@@ -62,7 +69,7 @@ module.exports = function(gulp, plugins, argv) {
                 'backbone.sync',
                 'backbone.noworker.sync',
                 'modules/remotestorage/module'
-            ],
+            ]),
             findNestedDependencies : true,
             generateSourceMaps     : true,
             useStrict              : true,
