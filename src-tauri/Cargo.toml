@@ -1,6 +1,6 @@
 [package]
 name = "seshat"
-version = "0.8.0-rc1"
+version = "0.8.0-rc2"
 description = "Seshat desktop shell (Tauri)"
 authors = ["Seshat project"]
 license = "MPL-2.0"

@@ -57,15 +57,16 @@ npx tauri build --bundles app,dmg
 
 then notarize + staple the `.dmg`/`.app` with `notarytool`/`stapler`
 (see Wegweiser `documentation/macos-signing.md` for the full dance).
-Pending Andrei's call on reusing his personal Developer ID for Seshat.
+Decided 2026-11-12: Seshat is signed with the same identities as
+Wegweiser, under Old Forge Technologies.
 
 **Windows** (unverified: signer unreachable while writing this).
 Build on OLDFORGE-SIGNER (needs a Rust toolchain first), then sign
 the exes/MSI/MSIX through the Azure Artifact Signing account from
 Wegweiser `documentation/agent-code-signing.md`, or set
 `bundle.windows.signCommand` in `tauri.conf.json` to invoke the
-signer CLI. Pending Andrei's call on reusing the wegweiser-agent
-certificate profile.
+signer CLI. Decided 2026-11-12: the same certificate profile as the
+Wegweiser agent (Old Forge Technologies).
 
 ## CI
 
@@ -93,7 +94,7 @@ commit, the script builds that commit, bundles a `.deb` and
   `*/30 * * * * /path/to/repo/scripts/seshat-debug-update.sh`.
 - `--status` shows the installed and the latest commit; `--force`
   rebuilds regardless.
-- About shows the running build as `0.8.0-rc1+<commit>`.
+- About shows the running build as `0.8.0-rc2+<commit>`.
 
 A warm build takes about a minute; the first one compiles the Rust
 shell from cold. Log at `~/.local/share/seshat-debug/update.log`,

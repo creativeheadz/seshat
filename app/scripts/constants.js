@@ -11,7 +11,7 @@ define(function () {
 
     var constants = {};
 
-    constants.VERSION = '0.8.0-rc1';
+    constants.VERSION = '0.8.0-rc2';
     constants.URL = location.origin + location.pathname.replace('index.html', '');
 
     return constants;

@@ -134,6 +134,28 @@ reader kept, guaranteed v0.7.51 import.
 
 ## Decisions
 
+### Obsidian vault (decided 2026-11-12: one-time copy)
+
+Importing a vault copies it once into Seshat's own store. No
+link back, no watching the folder, no writing to it: Seshat is
+not a front end for an Obsidian vault (Andrei: "I don't want to
+be a vehicle for Obsidian"). What follows from that: a second
+import of the same vault must not double every note, and
+attachments are worth copying in. Nothing else about the
+importer needs to track Obsidian.
+
+### Signing (decided 2026-11-12: Wegweiser's identities)
+
+macOS and Windows builds are signed as Old Forge Technologies,
+with the identities and certificate profile Wegweiser already
+uses. Details in TAURI.md. Prereleases stay Linux-only, so this
+is exercised at v0.8.0 final.
+
+### Roadmap home (decided 2026-11-12: DocuVault)
+
+The working queue is the Seshat board in DocuVault Tasks, as for
+Tigris and Wegweiser. ROADMAP.md stays as the public outline.
+
 ### Sync (spike 2026-11-11, decided: drop, same day)
 
 Dropbox dead five ways: implicit flow (long-lived tokens

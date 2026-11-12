@@ -1,5 +1,8 @@
 # Roadmap
 
+The working queue lives on the Seshat board in DocuVault
+Tasks; this file is the public outline.
+
 Revival plan for the Seshat fork of Laverna (renamed
 2026-11-11; do not ship new work under the Laverna
 name). Dossier: `DOSSIER.md`. Working prompts per
@@ -155,26 +158,27 @@ it, as in Phase 1.
       WebKit (workers are switched off by an old Safari
       workaround in app.js). Re-enable and test in the
       real window.
-- [ ] Signing: macOS and Windows, pending Andrei's call
-      on which identities to reuse (see TAURI.md).
+- [ ] Signing: macOS and Windows, with Wegweiser's
+      identities under Old Forge Technologies (decided
+      2026-11-12, see TAURI.md). Exercised at v0.8.0
+      final; prereleases are Linux only.
 - [ ] Full bundle matrix at v0.8.0 final (AppImage, RPM,
       MSI, NSIS reject the -rc suffix).
 
 ### 2c - Obsidian vault
 
-- [ ] Decide: stay a one-time copy, or become a link.
-      Today it is a copy, and importing twice duplicates
-      every note. A re-import that updates instead of
-      duplicating needs a stable key per file (its path).
+- [x] Decided 2026-11-12: a one-time copy, never a link
+      (DOSSIER.md). Seshat is not a front end for a vault.
+- [ ] A second import of the same vault must not double
+      every note: skip what is already here, and say so.
 - [ ] Attachments: counted and skipped today.
 
 ### 2d - release
 
 - [ ] Translate the strings added with the redesign
       (five, English fallback in 30 locales).
-- [ ] v0.8.0-rc2 with everything above the line; refresh
-      the demo on gh-pages, which still shows the old
-      interface.
+- [x] v0.8.0-rc2 with everything above the line, and the
+      demo on gh-pages refreshed from it (2026-11-12).
 - [ ] v0.8.0 after soak.
 - [ ] Create `creativeheadz/seshat` on Gitea and push
       (carried over from Phase 0).
