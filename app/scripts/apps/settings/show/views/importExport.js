@@ -52,7 +52,7 @@ define([
         templateHelpers: function() {
             return {
                 isTauri: typeof window !== 'undefined' &&
-                    !!window.__TAURI__,
+                    !!window.__TAURI_INTERNALS__,
             };
         },
 

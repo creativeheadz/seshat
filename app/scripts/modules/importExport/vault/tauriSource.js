@@ -15,10 +15,10 @@ define([
      * Vault source backed by the Tauri shell: opens the native
      * folder picker and reads the whole vault in one IPC call.
      * Resolves null when the user cancels. Never loaded outside
-     * Tauri (the UI gates on window.__TAURI__).
+     * Tauri (the UI gates on window.__TAURI_INTERNALS__).
      */
     function pick() {
-        return Q.when(window.__TAURI__.core.invoke('import_vault'))
+        return Q.when(window.__TAURI_INTERNALS__.invoke('import_vault'))
         .then(function(scan) {
             if (!scan) {
                 return null;
