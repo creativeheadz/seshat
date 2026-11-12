@@ -61,6 +61,11 @@ define([
         childViewContainer :  '.list',
         childViewOptions   :  {},
 
+        // Marionette's own sort support renumbers every row each time
+        // one is added or removed (quadratic over a list). The list
+        // is re-rendered on reset anyway; `resort` covers the rest.
+        sort               :  false,
+
         emptyView          :  EmptyView,
         emptyViewOptions   :  function() {
             return {args: this.options.args};
@@ -72,13 +77,18 @@ define([
             }
         },
 
+        // One listener for every star, instead of one per row
+        events: {
+            'click .favorite': 'toggleFavorite'
+        },
+
         collectionEvents: {
             'page:next'     : 'nextPage',
             'page:previous' : 'previousPage'
         },
 
         initialize: function() {
-            _.bindAll(this, 'toNextNote', 'toPreviousNote', 'regroup', 'filterRows');
+            _.bindAll(this, 'toNextNote', 'toPreviousNote', 'regroup', 'filterRows', 'resort');
 
             this.configs = Radio.request('configs', 'get:object');
 
@@ -93,7 +103,12 @@ define([
             // that adds, removes or reorders a row.
             this.regroupSoon = _.debounce(this.regroup, 0);
             this.listenTo(this, 'render:collection add:child remove:child', this.regroupSoon);
-            this.listenTo(this.collection, 'sort', this.regroupSoon);
+
+            // After the handlers of the event that caused the sort
+            // (a reset renders the list itself)
+            this.listenTo(this.collection, 'sort', function() {
+                _.defer(this.resort);
+            });
 
             Radio.channel('appNote').reply('list:count', this.getCount, this);
 
@@ -121,6 +136,30 @@ define([
 
         onRender: function() {
             this.regroup();
+        },
+
+        toggleFavorite: function(e) {
+            var model = this.collection.get($(e.currentTarget).closest('[data-id]').attr('data-id'));
+
+            if (model) {
+                Radio.request('notes', 'save', model, model.toggleFavorite());
+            }
+            return false;
+        },
+
+        /**
+         * The collection was sorted (a star was toggled). Rows are
+         * drawn again only if their order really changed.
+         */
+        resort: function() {
+            if (this.isDestroyed || !this.$childViewContainer) {
+                return;
+            }
+
+            if (_.isEqual(this.collection.pluck('id'), this.order)) {
+                return this.regroup();
+            }
+            this.resortView();
         },
 
         getCount: function() {
@@ -225,6 +264,7 @@ define([
             });
 
             this.shown = shown;
+            this.order = this.collection.pluck('id');
 
             // Enter looks through every note, not only this list
             if (this.words.length) {

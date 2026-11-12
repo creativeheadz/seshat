@@ -14,7 +14,8 @@ define([
     'devicejs',
     'regions/regionManager',
     'marionette',
-    'i18next'
+    'i18next',
+    'helpers/childViews'
 ], function(_, $, Backbone, Radio, Device) {
     'use strict';
 

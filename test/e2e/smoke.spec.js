@@ -441,6 +441,11 @@ test.describe('smoke', function() {
         // side by side: both on show, so no switch
         await expect(page.locator('.editor--preview')).toBeVisible();
         await expect(page.locator('.editor--read')).toBeHidden();
+        // and the preview follows the typing (after a pause)
+        await page.evaluate(function() {
+            document.querySelector('#editor .CodeMirror').CodeMirror.setValue('## Typed just now');
+        });
+        await expect(page.locator('.editor--preview h2')).toHaveText('Typed just now');
 
         // Start the app again from the list and open a new note
         await page.goto('/#/notes');

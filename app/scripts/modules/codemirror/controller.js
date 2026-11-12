@@ -195,15 +195,46 @@ define([
          * has to be measured again before it can take the cursor.
          */
         onReading: function(reading) {
-            if (!reading && this.editor) {
-                this.editor.refresh();
-                this.editor.focus();
+            if (!this.editor) {
+                return;
             }
+
+            if (reading) {
+                return this.updatePreview();
+            }
+            this.editor.refresh();
+            this.editor.focus();
         },
+
+        /**
+         * The rendered note is on screen in side-by-side mode and
+         * while the Preview switch is on.
+         */
+        isPreviewShown: function() {
+            this.$body = this.$body || $('body');
+            return this.$body.hasClass('-preview') || this.$body.hasClass('editor--reading');
+        },
+
+        /**
+         * Rendering a note (Markdown, sanitising, replacing the
+         * preview's DOM) costs far more than a keystroke. It is done
+         * when typing pauses, and not at all while the preview is out
+         * of sight; showing the preview renders it.
+         */
+        previewSoon: _.debounce(function() {
+            if (this.editor && this.isPreviewShown()) {
+                this.updatePreview();
+            }
+        }, 150),
 
         changeMode: function(mode) {
             window.dispatchEvent(new Event('resize'));
             this.view.trigger('change:mode', mode);
+
+            // Side by side puts the preview on screen
+            if (mode === 'preview' && this.editor) {
+                this.updatePreview();
+            }
         },
 
         /**
@@ -228,8 +259,8 @@ define([
          */
         onChange: function() {
 
-            // Update the preview
-            this.updatePreview();
+            // Update the preview, once typing pauses and if it shows
+            this.previewSoon();
 
             // Trigger autosave
             this.autoSave();
@@ -268,6 +299,11 @@ define([
          * Synchronize the editor's scroll position with the preview's.
          */
         onScroll: _.debounce(function(e) {
+
+            // Only side by side has a preview to keep in step
+            if (!this.isPreviewShown() || !this.$body.hasClass('-preview')) {
+                return;
+            }
 
             // Don't do any computations
             if (!e.doc.scrollTop) {

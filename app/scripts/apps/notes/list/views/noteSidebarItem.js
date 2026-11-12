@@ -41,14 +41,6 @@ define([
 
         className: 'list-group list--group',
 
-        ui: {
-            favorite : '.favorite',
-        },
-
-        events: {
-            'click @ui.favorite': 'toggleFavorite'
-        },
-
         modelEvents: {
             'change'            : 'render',
             'change:trash'      : 'remove',
@@ -57,11 +49,6 @@ define([
 
         initialize: function() {
             this.options.args.page = this.model.collection.state.currentPage;
-        },
-
-        toggleFavorite: function() {
-            Radio.request('notes', 'save', this.model, this.model.toggleFavorite());
-            return false;
         },
 
         onChangeFocus: function() {

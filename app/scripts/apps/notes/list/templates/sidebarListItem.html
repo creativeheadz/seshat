@@ -1,6 +1,1 @@
-<a href="#{{ link() }}" class="list--item -note list-group-item {{ isActive() }}" id="note-{{ id }}" data-id="{{ id }}">
-    <span class="list--item--title -note">{= cleanXSS(title, false, true) }</span>
-    <time class="list--item--date">{{ when() }}</time>
-    <span class="list--item--text">{{ getContent() }}</span>
-    <span class="favorite list--item--favorite icon-star-empty <% if (isFavorite === 1) {%>icon-favorite<% } %>" role="button" title="{{ i18n('actionsRotateStar') }}"></span>
-</a>
+<a href="#{{ link() }}" class="list--item -note list-group-item {{ isActive() }}" id="note-{{ id }}" data-id="{{ id }}"><span class="list--item--title -note">{= cleanXSS(title, false, true) }</span><time class="list--item--date">{{ when() }}</time><span class="list--item--text">{{ getContent() }}</span><span class="favorite list--item--favorite icon-star-empty <% if (isFavorite === 1) {%>icon-favorite<% } %>" role="button" title="{{ i18n('actionsRotateStar') }}"></span></a>

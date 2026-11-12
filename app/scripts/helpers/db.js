@@ -65,23 +65,22 @@ define([
          * @type object data
          */
         findAll: function(data) {
-            var defer = Q.defer(),
-                self  = this;
+            var defer      = Q.defer(),
+                conditions = data.options.conditions,
+                models     = [];
 
-            // Find all keys of objects
-            this.getDb(data.options).keys(function(err, keys) {
-                if (!keys || !keys.length) {
-                    return defer.resolve([]);
+            // One cursor over the store. This used to list the keys
+            // and then open a transaction per record.
+            this.getDb(data.options).iterate(function(item) {
+                if (item && (!conditions || _.isMatch(item, conditions))) {
+                    models.push(item);
                 }
-
-                // Return all found objects
-                return self.findByKeys(keys, data)
-                .then(function(res) {
-                    defer.resolve(res);
-                })
-                .fail(function(e) {
-                    defer.reject(e);
-                });
+                // returning anything would stop the cursor
+            }, function(err) {
+                if (err) {
+                    return defer.reject(err);
+                }
+                defer.resolve(models);
             });
 
             return defer.promise;
