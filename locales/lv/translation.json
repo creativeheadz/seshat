@@ -1,5 +1,12 @@
 {
     "Search": "Meklēt",
+    "Nothing here yet": "Šeit vēl nekā nav",
+    "Compact list": "Kompakts saraksts",
+    "Theme": "Motīvs",
+    "Same as the system": "Tāpat kā sistēmā",
+    "Day": "Diena",
+    "Night": "Nakts",
+    "vault duplicates": "{{duplicates}} jau ir šeit, atstātas kā ir",
     "All notes": "Piezīmes",
     "Favourites": "Izlase",
     "Favorite": "Izlase",

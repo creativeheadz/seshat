@@ -1,5 +1,12 @@
 {
     "Search": "Kërkoni",
+    "Nothing here yet": "Ende asgjë këtu",
+    "Compact list": "Listë kompakte",
+    "Theme": "Temë",
+    "Same as the system": "Njësoj si sistemi",
+    "Day": "Ditë",
+    "Night": "Natë",
+    "vault duplicates": "{{duplicates}} gjenden tashmë këtu, u lanë siç janë",
     "All notes": "Krejt shënimet",
     "Favourites": "Të parapëlqyera",
     "Favorite": "Të parapëlqyera",

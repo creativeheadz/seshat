@@ -1,5 +1,12 @@
 {
     "Search": "검색",
+    "Nothing here yet": "아직 아무것도 없습니다",
+    "Compact list": "간결한 목록",
+    "Theme": "테마",
+    "Same as the system": "시스템과 동일",
+    "Day": "낮",
+    "Night": "밤",
+    "vault duplicates": "{{duplicates}}개는 이미 있어 그대로 두었습니다",
     "All notes": "모든 노트",
     "Favourites": "즐겨찾기",
     "Favorite": "즐겨찾기",

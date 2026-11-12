@@ -1,5 +1,12 @@
 {
     "Search": "بحث",
+    "Nothing here yet": "لا شيء هنا بعد",
+    "Compact list": "قائمة مضغوطة",
+    "Theme": "السمة",
+    "Same as the system": "مثل النظام",
+    "Day": "نهار",
+    "Night": "ليل",
+    "vault duplicates": "{{duplicates}} موجودة مسبقًا، تُركت كما هي",
     "All notes": "كل الملاحظات",
     "Favourites": "المفضلة",
     "Favorite": "مفضلة",

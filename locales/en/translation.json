@@ -127,6 +127,7 @@
     "import data summary": "{{notes}} notes, {{collections}} collections imported",
     "vault import summary": "{{notes}} notes in {{notebooks}} notebooks ({{skipped}} skipped)",
     "unresolved links": "{{unresolved}} wikilinks left as text",
+    "vault duplicates": "{{duplicates}} already here, left as they are",
     "Enabled": "Enabled",
     "Disabled": "Disabled",
     "Untitled": "Untitled",

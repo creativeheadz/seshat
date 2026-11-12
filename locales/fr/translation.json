@@ -1,5 +1,12 @@
 {
     "Search": "Chercher",
+    "Nothing here yet": "Rien ici pour l'instant",
+    "Compact list": "Liste compacte",
+    "Theme": "Thème",
+    "Same as the system": "Comme le système",
+    "Day": "Jour",
+    "Night": "Nuit",
+    "vault duplicates": "{{duplicates}} déjà présentes, laissées telles quelles",
     "All notes": "Toutes les notes",
     "Favourites": "Favoris",
     "Favorite": "Favori",

@@ -1,5 +1,12 @@
 {
     "Search": "Zoeken",
+    "Nothing here yet": "Nog niets hier",
+    "Compact list": "Compacte lijst",
+    "Theme": "Thema",
+    "Same as the system": "Zelfde als het systeem",
+    "Day": "Dag",
+    "Night": "Nacht",
+    "vault duplicates": "{{duplicates}} bestonden al en zijn ongemoeid gelaten",
     "All notes": "Inbox",
     "Favourites": "Favorieten",
     "Trash": "Prullenbak",
