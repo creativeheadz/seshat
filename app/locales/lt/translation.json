@@ -1,5 +1,12 @@
 {
     "Search": "Paieška",
+    "Nothing here yet": "Čia dar nieko nėra",
+    "Compact list": "Kompaktiškas sąrašas",
+    "Theme": "Tema",
+    "Same as the system": "Kaip sistemoje",
+    "Day": "Diena",
+    "Night": "Naktis",
+    "vault duplicates": "{{duplicates}} jau yra, palikta kaip buvo",
     "All notes": "Visi užrašai",
     "Favourites": "Mėgstamiausi",
     "Favorite": "Mėgstamiausi",

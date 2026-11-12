@@ -1,5 +1,12 @@
 {
     "Search": "Ara",
+    "Nothing here yet": "Henüz burada bir şey yok",
+    "Compact list": "Sıkışık liste",
+    "Theme": "Tema",
+    "Same as the system": "Sistemle aynı",
+    "Day": "Gündüz",
+    "Night": "Gece",
+    "vault duplicates": "{{duplicates}} zaten vardı, oldukları gibi bırakıldı",
     "All notes": "Bütün notlar",
     "Favourites": "Sık kullanılanlar",
     "Favorite": "Sık kullanılan",

@@ -1,5 +1,12 @@
 {
     "Search": "Søg",
+    "Nothing here yet": "Intet her endnu",
+    "Compact list": "Kompakt liste",
+    "Theme": "Tema",
+    "Same as the system": "Samme som systemet",
+    "Day": "Dag",
+    "Night": "Nat",
+    "vault duplicates": "{{duplicates}} findes allerede og er ladt uændret",
     "All notes": "Alle noter",
     "Favourites": "Foretrukne",
     "Favorite": "Favorit",

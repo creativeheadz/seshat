@@ -1,5 +1,12 @@
 {
     "Search": "検索",
+    "Nothing here yet": "まだ何もありません",
+    "Compact list": "コンパクト表示",
+    "Theme": "テーマ",
+    "Same as the system": "システムと同じ",
+    "Day": "昼",
+    "Night": "夜",
+    "vault duplicates": "{{duplicates}} 件は既にあるため、そのままにしました",
     "All notes": "すべてのノート",
     "Favourites": "お気に入り集",
     "Favorite": "お気に入り",

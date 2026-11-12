@@ -193,10 +193,14 @@ it, as in Phase 1.
 
 ### 2d - release
 
-- [ ] Translate the strings added with the redesign
-      (five, English fallback in 30 locales).
+- [x] The strings added with the redesign are translated
+      in all 30 other locales (2026-11-12). Machine
+      written, not yet read by native speakers; a wrong
+      one is a one-line fix in `app/locales`.
 - [x] v0.8.0-rc2 with everything above the line, and the
       demo on gh-pages refreshed from it (2026-11-12).
+      Found after the tag: Settings > Editor is blank in
+      rc1 and rc2 (fixed on master). Goes out with rc3.
 - [ ] v0.8.0 after soak.
 - [ ] Create `creativeheadz/seshat` on Gitea and push
       (carried over from Phase 0).
