@@ -293,9 +293,12 @@ define([
                 },
 
                 isSyncEnabled: function() {
-                    // No working sync backend in 0.8.x (Dropbox
-                    // dropped; RemoteStorage unvalidated).
-                    return false;
+                    // The rsync backend, in the desktop app. (Dropbox
+                    // is gone; RemoteStorage is unvalidated and shows
+                    // its own widget.)
+                    return typeof window !== 'undefined' && !!window.__TAURI_INTERNALS__ &&
+                        this.configs.cloudStorage === 'rsync' &&
+                        String(this.configs.syncRemote || '').trim().length > 0;
                 },
 
                 profileLink: function(profileName) {

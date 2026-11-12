@@ -47,6 +47,11 @@ define([
                     modules2Load.push('modules/remotestorage/module');
                     break;
 
+                // A folder rsync can reach; desktop only
+                case 'rsync':
+                    modules2Load.push('modules/sync/module');
+                    break;
+
                 // Dropbox removed in 0.8.0 (dead); stored
                 // cloudStorage=dropbox configs load no module.
                 default:

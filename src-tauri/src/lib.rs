@@ -1,6 +1,6 @@
 //! Desktop shell commands: Obsidian vault import (folder pick +
 //! recursive markdown read), saving exported files, and opening
-//! links outside the app.
+//! links outside the app. Sync transport lives in `sync.rs`.
 //!
 //! One IPC call carries the whole vault scan to the frontend, which
 //! maps files to notes (see `modules/importExport/vault/`). Binary
@@ -8,6 +8,8 @@
 
 use serde::Serialize;
 use std::path::{Path, PathBuf};
+
+mod sync;
 
 /// Directories never descended into.
 const SKIP_DIRS: &[&str] = &[".obsidian", ".git", ".trash", "node_modules"];
@@ -256,7 +258,15 @@ fn is_app_url(url: &tauri::Url) -> bool {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![import_vault, save_file, open_external])
+    .invoke_handler(tauri::generate_handler![
+      import_vault,
+      save_file,
+      open_external,
+      sync::sync_list,
+      sync::sync_read,
+      sync::sync_write,
+      sync::sync_transfer
+    ])
     // Whatever the page does, the window never leaves the app: a
     // navigation to anywhere else goes to the system browser.
     .plugin(

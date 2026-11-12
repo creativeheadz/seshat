@@ -26,6 +26,12 @@ define([
             'appProfiles'        : JSON.stringify(['notes-db']),
             'appLang'            : '',
             'cloudStorage'       : '0',
+
+            // Sync over rsync (desktop): where to, and the SSH port
+            // if it is not 22. No password or key is ever stored;
+            // SSH uses the user's own configuration and agent.
+            'syncRemote'         : '',
+            'syncPort'           : '',
             'pagination'         : '10',
             'sortnotes'          : 'created',
             'theme'              : 'auto',

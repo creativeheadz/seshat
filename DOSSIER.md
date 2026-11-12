@@ -160,6 +160,30 @@ is exercised at v0.8.0 final.
 The working queue is the Seshat board in DocuVault Tasks, as for
 Tigris and Wegweiser. ROADMAP.md stays as the public outline.
 
+### Sync, second round (decided and built 2026-11-12)
+
+Andrei: "Restic/rsync compatible webspace. Lets start with
+hetzner", desktop apps only, keep both versions on a
+conflict. WebDAV was the earlier direction; rsync over SSH
+replaces it because the storage he already has speaks it
+and it needs no credentials inside the app.
+
+Shape: the remote is a folder, one JSON file per record
+(`<profile>/<store>/<id>.json` holding the record as
+stored, a revision hash and up to 50 ancestor hashes).
+The shell keeps a mirror folder in app data and runs
+`rsync -rtc`, never `--delete`, SSH in batch mode with the
+user's own configuration. The page decides what each
+record becomes (`modules/sync/engine.js`); the shell only
+moves files and checks every argument before it reaches a
+command line (`src-tauri/src/sync.rs`).
+
+Not built: encryption settings do not travel, so a second
+device cannot open an encrypted profile and stops instead;
+attachments; Windows. Not yet run against the real box.
+The app data must not share an account or key with the
+restic backups on the same box: a sub-account of its own.
+
 ### Sync (spike 2026-11-11, decided: drop, same day)
 
 Dropbox dead five ways: implicit flow (long-lived tokens

@@ -88,18 +88,54 @@ until then, any modern desktop or mobile browser works.
 - Rendered Markdown is sanitized with DOMPurify; titles and inputs pass
   through an XSS filter. A hostile-content test (scripts, event handlers,
   `javascript:` and `data:` URLs) runs in CI on every push.
-- Sync backends see only ciphertext when encryption is on — but see below.
+- With encryption on, sync sends records as they are stored: titles, text,
+  a note's tags and notebook names leave the machine as ciphertext only.
+  The tag list itself is not sent at all, because a tag's id is a plain hash
+  of its name. Still readable on the remote: how many notes and notebooks
+  there are, their ids, sizes and timestamps, which notebook id a note
+  belongs to, and its favourite, trash and task-count fields. Anything
+  synced before encryption was turned on stays there in the clear until it
+  is overwritten, and old tag files never are: start an encrypted profile
+  with an empty remote folder.
 
 ## Sync status (honest version)
 
-Seshat is local-first today. The old Dropbox sync is **removed**: it relied on
-killed long-lived tokens, a dead receiver host, and a pre-refresh SDK.
-RemoteStorage ships but is **unvalidated** against modern servers. A WebDAV/NAS
-backend is the planned Phase 2 direction; see
-[BACKLOG.md](BACKLOG.md) and [DOSSIER.md](DOSSIER.md#decisions).
+**Desktop app, new and not yet proven on real hardware:** sync to a folder
+that rsync can reach, which means a storage box over SSH (Hetzner and the
+like) or a folder on the same machine. Settings → Sync, choose "Storage box
+or folder (rsync)", give it `user@host:folder` and the SSH port.
 
-Whatever you do: **export backups** (Settings → Import/Export). No sync means
-no second copy unless you make one.
+- The remote is a plain folder: one small JSON file per note, notebook and
+  tag. No server software, no account with us.
+- SSH runs with your own keys, agent and known hosts. Seshat never asks
+  for, sees or stores a password or key, and refuses a host your SSH does
+  not already trust. Set the connection up in a terminal first.
+- Nothing is ever deleted on the remote. A note you delete travels as a
+  note marked deleted.
+- A note changed on two devices between syncs is kept twice: the other
+  device's version under the original title, yours as "(conflict copy)".
+- It runs at start, shortly after a save, every ten minutes and on
+  "Sync now".
+
+What it does not do yet:
+
+- **Encrypted profiles on a second device.** Encryption settings (salt,
+  iteration count) are not synced, so a second device set up on its own
+  cannot read the first one's notes. It notices and stops without taking or
+  sending anything. Until this is built, sync with encryption on is an
+  off-site copy for one device.
+- Attachments (images and files inside notes) are not synced.
+- Windows (no rsync there), the browser build and the phone.
+- It is tested through the real app with a stand-in for rsync, and the
+  rsync side separately against a local folder. It has not yet run against
+  a real storage box from a real window.
+
+The old Dropbox sync is **removed**: it relied on killed long-lived tokens, a
+dead receiver host, and a pre-refresh SDK. RemoteStorage ships but is
+**unvalidated** against modern servers. See [DOSSIER.md](DOSSIER.md#decisions).
+
+Whatever you do: **export backups** (Settings → Import/Export). Sync is a
+second copy of the current state, not a history: a mistake syncs too.
 
 ## Data compatibility
 

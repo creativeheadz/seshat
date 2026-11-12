@@ -218,10 +218,20 @@ it, as in Phase 1.
 
 ### 2e - sync
 
-- [ ] WebDAV or NAS sync, the direction decided when
-      Dropbox was dropped (DOSSIER.md). Until then notes
-      live on one machine and Export data is the backup.
-      RemoteStorage is still in the tree, unvalidated.
+- [x] Sync over rsync/SSH to a storage box or a local
+      folder (desktop, 2026-11-12): one file per record,
+      nothing deleted remotely, both versions kept on a
+      conflict, ciphertext only when encryption is on.
+      Tested through the app with a stand-in shell and
+      against real rsync locally.
+- [ ] First run against a real storage box from the real
+      window (Hetzner, port 23).
+- [ ] Encryption settings travel too, so a second device
+      can open an encrypted profile. Today it refuses.
+- [ ] Attachments.
+- [ ] Windows (no rsync), and a listing cache for large
+      profiles.
+- RemoteStorage is still in the tree, unvalidated.
 
 ### 2f - speed, when it is needed
 

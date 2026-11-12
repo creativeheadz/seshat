@@ -1,11 +1,45 @@
 <div class="form-group">
     <label class="col-sm-2 control-label" for="cloudStorage">
-        <i class="fa fa-cloud"></i> {{ i18n('Cloud storage') }}
+        {{ i18n('Cloud storage') }}
     </label>
     <div class="col-sm-10">
         <select class="form-control" name="cloudStorage" id="cloudStorage">
             <option value="0">{{ i18n('No') }}</option>
             <option value="remotestorage"<%if(models.cloudStorage === 'remotestorage'){ %> selected<% } %>>RemoteStorage</option>
+            <% if (isDesktop) { %>
+            <option value="rsync"<%if(models.cloudStorage === 'rsync'){ %> selected<% } %>>{{ i18n('sync.rsync') }}</option>
+            <% } %>
         </select>
     </div>
 </div>
+
+<% if (isDesktop) { %>
+<div id="sync--rsync" class="<%if(models.cloudStorage !== 'rsync'){ %>hidden<% } %>">
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="syncRemote">{{ i18n('sync.address') }}</label>
+        <div class="col-sm-10">
+            <input type="text" id="syncRemote" name="syncRemote" class="form-control"
+                value="{{models.syncRemote}}" placeholder="user@host:seshat"
+                autocomplete="off" autocapitalize="off" spellcheck="false" />
+            <p class="help-block">{{ i18n('sync.address help') }}</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="syncPort">{{ i18n('sync.port') }}</label>
+        <div class="col-sm-10">
+            <input type="number" id="syncPort" name="syncPort" class="form-control"
+                value="{{models.syncPort}}" placeholder="22" min="1" max="65535" />
+            <p class="help-block">{{ i18n('sync.port help') }}</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-10">
+            <button type="button" id="sync--now" class="btn btn-default"<% if (!isActive) { %> disabled<% } %>>
+                <i class="icon-arrows"></i> {{ i18n('sync.now') }}
+            </button>
+            <p class="help-block" id="sync--status"><% if (!isActive) { %>{{ i18n('sync.save first') }}<% } %></p>
+        </div>
+    </div>
+</div>
+<% } %>

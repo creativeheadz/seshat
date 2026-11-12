@@ -68,6 +68,29 @@ Wegweiser `documentation/agent-code-signing.md`, or set
 signer CLI. Decided 2026-11-12: the same certificate profile as the
 Wegweiser agent (Old Forge Technologies).
 
+## Sync (rsync)
+
+`src-tauri/src/sync.rs` gives the page four commands: `sync_list`,
+`sync_read` and `sync_write` work on a mirror folder under the app's
+data directory (`sync/<profile>/<store>/<id>.json`), and
+`sync_transfer` runs rsync between that mirror and the remote the
+user typed in Settings.
+
+- rsync and ssh come from the system; the app bundles neither. No
+  shell is involved: the arguments are passed as a list.
+- SSH runs with `BatchMode=yes`, so it uses the user's keys, agent and
+  `known_hosts` and fails instead of prompting. An unknown host is an
+  error, not a question.
+- The remote, profile, store and file names are checked before use: a
+  remote may not begin with `-` or carry anything rsync would read as
+  an option.
+- No `--delete`, in either direction.
+- `sync/<profile>/state/` holds what this device last agreed with the
+  remote. It is never transferred.
+
+`cargo test` in `src-tauri` runs these against the real rsync with a
+local folder as the remote.
+
 ## CI
 
 `.github/workflows/desktop.yml` builds Linux on `v*` tags and
@@ -75,6 +98,9 @@ attaches the `.deb` to the GitHub release (create the release first
 with `gh release create`, which pushes the tag). It also runs on
 manual dispatch for dry runs. macOS/Windows stay workstation-driven
 like Wegweiser: no secrets in CI, no surprise bills.
+
+`.github/workflows/ci.yml` has a `shell` job that compiles the shell
+and runs `cargo test` on every push.
 
 ## Debug install (Andrei's rig)
 

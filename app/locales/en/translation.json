@@ -1,5 +1,19 @@
 {
     "Search": "Search",
+    "conflict copy": "conflict copy",
+    "sync": {
+        "rsync": "Storage box or folder (rsync)",
+        "address": "Sync to",
+        "address help": "user@host:folder for a storage box reached over SSH, or the full path of a folder on this computer. SSH uses your own keys and settings; Seshat never stores a password.",
+        "port": "SSH port",
+        "port help": "Leave empty for 22. Hetzner storage boxes use 23 for rsync.",
+        "now": "Sync now",
+        "save first": "Save to switch sync on.",
+        "summary": "received {{pulled}}, sent {{pushed}}, copies kept {{conflicts}}",
+        "failed": "sync failed ({{step}}): {{message}}",
+        "encrypted there": "The notes there are encrypted and encryption is off on this device. Nothing was received or sent.",
+        "other key": "The notes there were encrypted with a different password or different encryption settings. Nothing was received or sent."
+    },
     "Nothing here yet": "Nothing here yet",
     "Compact list": "Compact list",
     "Theme": "Theme",

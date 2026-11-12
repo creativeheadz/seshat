@@ -1,6 +1,7 @@
-# Phase 1 CI gate for Seshat: install, build, smoke.
-# Green means: deps install on Node 22, lint passes, gulp build
-# succeeds, and the built app serves with its entry assets.
+# CI gate for Seshat.
+# build: deps install on Node 22, lint passes, gulp build succeeds,
+# the built app serves with its entry assets, unit and browser tests.
+# shell: the desktop shell compiles and its own tests pass.
 name: ci
 
 on:
@@ -51,3 +52,40 @@ jobs:
         run: |
           npx playwright install chromium
           npm run test:e2e
+
+  shell:
+    # The desktop shell's own tests: what the page may ask rsync to
+    # do (src-tauri/src/sync.rs), run against the real rsync.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: system dependencies
+        run: |
+          for i in 1 2 3; do
+            sudo apt-get update && break || sleep 30
+          done
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential \
+            curl wget file libssl-dev libayatana-appindicator3-dev \
+            librsvg2-dev rsync openssh-client
+
+      # The shell embeds the built app, so it has to exist to compile
+      - name: npm dependencies
+        run: npm ci
+
+      - name: gulp build
+        run: npx gulp build
+
+      - name: cargo test
+        working-directory: src-tauri
+        run: cargo test
