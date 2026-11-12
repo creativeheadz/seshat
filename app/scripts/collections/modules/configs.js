@@ -11,10 +11,10 @@ define([
     'q',
     'marionette',
     'backbone.radio',
-    'sjcl',
+    'helpers/kdf',
     'collections/modules/module',
     'collections/configs'
-], function(_, Q, Marionette, Radio, sjcl, ModuleObject, Configs) {
+], function(_, Q, Marionette, Radio, Kdf, ModuleObject, Configs) {
     'use strict';
 
     /**
@@ -98,8 +98,9 @@ define([
                 return saveFunc(model, data);
             }
 
-            // Always save passwords as sha256
-            return new Q(Radio.request('encrypt', 'sha256', data.value))
+            // A password is never stored, only a salted, stretched
+            // check value made from it (helpers/kdf.js)
+            return Kdf.hash(data.value)
             .then(function(result) {
                 data.value = result;
                 return saveFunc(model, data);
@@ -124,6 +125,8 @@ define([
 
             // Convert configs to a key = value object.
             objects = (_.isArray(objects) ? _.indexBy(objects, 'name') : objects);
+
+            this._strengthen(objects);
 
             // Backup encryption configs
             this._backupEncryption(objects);
@@ -400,16 +403,35 @@ define([
             }
 
             var pass = this.getConfig('encryptPass');
-            pass     = pass ? pass.toString() : pass;
 
-            // Password salt was saved
-            if (pass === object.value) {
+            // No password until now
+            if (!pass || !pass.length) {
+                return true;
+            }
+
+            // The stored check value itself was saved back
+            if (pass.toString() === String(object.value)) {
                 return false;
             }
 
-            // Additional check to make sure it's not the same password
-            var salt = sjcl.hash.sha256.hash(object.value);
-            return (salt.toString() !== pass);
+            // The same password typed again is not a change
+            return !Kdf.verifySync(object.value, pass);
+        },
+
+        /**
+         * Encryption is being switched on for a profile that still
+         * carries the old default of 10,000 PBKDF2 iterations. Nothing
+         * is encrypted yet, so the stronger default costs nothing.
+         * A count the user chose is left alone.
+         */
+        _strengthen: function(objects) {
+            if (objects.encrypt && Number(objects.encrypt.value) === 1 &&
+                !Number(this.getConfig('encrypt')) &&
+                !objects.encryptIter &&
+                String(this.getConfig('encryptIter')) === '10000') {
+
+                objects.encryptIter = {name: 'encryptIter', value: String(Kdf.ITERATIONS)};
+            }
         },
 
         /**

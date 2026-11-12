@@ -56,6 +56,11 @@ define([
         onAuth: function(pwd) {
             Radio.request('encrypt', 'save:secureKey', pwd)
             .then(function() {
+                // Profiles from before 0.8.0-rc3 keep a weak password
+                // check; replace it now that the password is known
+                return Radio.request('encrypt', 'upgrade:password', pwd);
+            })
+            .then(function() {
                 Radio.trigger('appEncrypt', 'auth:success');
 
                 if (document.location.hash.search('auth') !== -1) {

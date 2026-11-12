@@ -12,8 +12,9 @@ define([
     'marionette',
     'backbone.radio',
     'classes/sjcl.worker',
-    'sjcl'
-], function(Q, _, Marionette, Radio, Sjcl, sjcl) {
+    'sjcl',
+    'helpers/kdf'
+], function(Q, _, Marionette, Radio, Sjcl, sjcl, Kdf) {
     'use strict';
 
     /**
@@ -59,6 +60,7 @@ define([
                 // Check auth/password
                 'check:auth'       : this.checkAuth,
                 'check:password'   : this.checkPassword,
+                'upgrade:password' : this.upgradeVerifier,
                 'save:secureKey'   : this.saveSecureKey,
                 'delete:secureKey' : this.deleteSecureKey,
 
@@ -130,26 +132,84 @@ define([
          * @return promise
          */
         checkPassword: function(password) {
-            var pwd = this.configs.encryptPass;
-
-            return new Q(this.sjcl.sha256(password))
-            .then(function(hash) {
-                return hash.toString() === pwd.toString();
-            });
+            // Accepts the stretched verifier and, for profiles made
+            // before it existed, the bare SHA-256 (helpers/kdf.js)
+            return Kdf.verify(password, this.configs.encryptPass);
         },
 
         /**
-         * Generate PBKDF2 and save it. It will be used to encrypt/decrypt data.
+         * Replaces a pre-0.8.0-rc3 verifier (a bare SHA-256 of the
+         * password) with a salted, stretched one. Called after an
+         * unlock, when the password is known to be right.
          *
-         * @return promise
+         * Careful by design: the stored verifier is read afresh (this
+         * object's configs may be a backup copy during a password
+         * change), the new verifier is made with one implementation
+         * and checked with the other, and nothing is written unless
+         * both agree. If anything fails the old verifier stays, and
+         * still works.
          */
-        saveSecureKey: function(password) {
-            var self  = this;
+        upgradeVerifier: function(password) {
+            var self = this;
 
-            return new Q(this.sjcl.deriveKey({
-                configs : this.configs,
-                password: password
-            }))
+            return new Q(Radio.request('configs', 'get:all', {}))
+            .then(function(collection) {
+                var model = collection && collection.get('encryptPass');
+
+                if (!model || !Kdf.isLegacy(model.get('value')) ||
+                    !_.isEmpty(collection.get('encryptBackup').get('value'))) {
+                    return false;
+                }
+
+                return Kdf.verify(password, model.get('value'))
+                .then(function(isRight) {
+                    return isRight ? Kdf.hash(password) : null;
+                })
+                .then(function(verifier) {
+                    if (!verifier || !Kdf.verifySync(password, verifier)) {
+                        return false;
+                    }
+
+                    return new Q(Radio.request('configs', 'save', model, {value: verifier}))
+                    .then(function() {
+                        if (Kdf.isLegacy(self.configs.encryptPass)) {
+                            self.configs.encryptPass = verifier;
+                        }
+                        return true;
+                    });
+                });
+            })
+            .fail(function(e) {
+                console.error('Could not upgrade the password check:', e);
+                return false;
+            });
+        },
+
+        saveSecureKey: function(password) {
+            var self    = this,
+                configs = this.configs,
+                salt    = configs.encryptSalt,
+                derived;
+
+            // The same PBKDF2 as classes/sjcl.js deriveKey, through
+            // WebCrypto when the browser has it: a fraction of the
+            // time, and off the main thread.
+            if (Number(configs.encrypt) && (typeof salt === 'string' || _.isArray(salt))) {
+                // (SJCL's cachedPbkdf2 falls back to 1,000 the same way)
+                derived = Kdf.derive(password, salt, Number(configs.encryptIter) || 1000, 256)
+                .then(function(bits) {
+                    var key = bits.slice(0, Number(configs.encryptKeySize) / 32);
+                    return {key: key, hexKey: sjcl.codec.hex.fromBits(key)};
+                });
+            }
+            else {
+                derived = new Q(this.sjcl.deriveKey({
+                    configs : configs,
+                    password: password
+                }));
+            }
+
+            return derived
             .then(function(keys) {
                 self.keys.key    = keys.key;
                 self.keys.hexKey = keys.hexKey;

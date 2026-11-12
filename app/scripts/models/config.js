@@ -8,8 +8,9 @@
 /*global define*/
 define([
     'underscore',
-    'backbone'
-], function(_, Backbone) {
+    'backbone',
+    'helpers/kdf'
+], function(_, Backbone, Kdf) {
     'use strict';
 
     var Config = Backbone.Model.extend({
@@ -86,6 +87,9 @@ define([
                 ) &&
                 (
                     typeof data.value !== 'object' &&
+                    // already a verifier (an import, an upgrade), not
+                    // a password someone typed
+                    !Kdf.isVerifier(data.value) &&
                     data.value !== this.get('value').toString()
                 )
             );

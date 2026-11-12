@@ -728,6 +728,137 @@ test.describe('smoke', function() {
         expect(await page.evaluate(function() { return window.__opened.length; })).toBe(1);
     });
 
+    // ---- the stored password check ----
+
+    function encryptionConfigs(page) {
+        return page.evaluate(async function() {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            var configs = {}, cipher = {};
+            await localforage.createInstance({name: 'notes-db', storeName: 'configs'})
+                .iterate(function(config) { configs[config.name] = config.value; });
+            await localforage.createInstance({name: 'notes-db', storeName: 'notes'})
+                .iterate(function(note) { cipher[note.id] = note.encryptedData; });
+            return {
+                pass   : configs.encryptPass,
+                iter   : String(configs.encryptIter),
+                salt   : JSON.stringify(configs.encryptSalt),
+                cipher : cipher,
+            };
+        });
+    }
+
+    // Until 0.8.0-rc2 the app kept SHA-256(password), unsalted, to
+    // check a password against. Whoever held the database or an
+    // export could try passwords at SHA-256 speed.
+    test('a new setup stores a salted, stretched password check', async function({page}) {
+        test.setTimeout(120000);
+        await seedPlainNotes(page, [{id: 'kdf-1', title: 'One', content: 'text'}]);
+
+        await setPassword(page, 'new-setup-pass');
+        await leaveBackupScreen(page);
+        await unlock(page, 'new-setup-pass');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+
+        var configs = await encryptionConfigs(page),
+            sha256  = await page.evaluate(function() {
+                var sjcl = window.requirejs('sjcl');
+                return {
+                    hex   : sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash('new-setup-pass')),
+                    words : sjcl.hash.sha256.hash('new-setup-pass').join(','),
+                };
+            });
+
+        expect(configs.pass).toMatch(/^pbkdf2-sha256\$600000\$[0-9a-f]{32}\$[0-9a-f]{64}$/);
+        expect(configs.pass).not.toContain(sha256.hex);
+        expect(String(configs.pass)).not.toBe(sha256.words);
+        // and the key itself is stretched 600,000 times in a new setup
+        expect(configs.iter).toBe('600000');
+    });
+
+    // What happens to a profile encrypted by 0.8.0-rc2 or earlier:
+    // 10,000 iterations and the SHA-256 check. It must open as it
+    // always did, and come out with the stronger check and nothing
+    // else changed. (Also run once against the real rc2 build.)
+    test('an older encrypted profile unlocks and gets the stronger check', async function({page}) {
+        test.setTimeout(120000);
+
+        var notes = [
+            {id: 'old-1', title: 'Unzipping', content: '### Unzipping\n\nRun `unzip -o file.zip`.\n\n#ops'},
+            {id: 'old-2', title: 'Unicode', content: 'Gr\u00fc\u00dfe, \u65e5\u672c\u8a9e, \ud83d\ude80, & < >.'},
+        ];
+        await seedPlainNotes(page, notes);
+
+        // Encrypt at the old iteration count...
+        await page.goto('/#/settings/encryption');
+        await page.waitForSelector('#useEncryption');
+        await page.check('#useEncryption');
+        await page.fill('#encryptPass', 'old-profile-pass');
+        await page.fill('#encryptIter', '10000');
+        await page.click('.settings--save');
+        await page.waitForSelector('#encryption-password input[name="password"]', {timeout: 20000});
+        await page.fill('#encryption-password input[name="password"]', 'old-profile-pass');
+        await page.click('#encryption-password input[type="submit"]');
+        await leaveBackupScreen(page);
+        await unlock(page, 'old-profile-pass');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+
+        // ...and put back the check an old build would have stored
+        await page.evaluate(async function() {
+            var sjcl = window.requirejs('sjcl'),
+                localforage = await new Promise(function(resolve, reject) {
+                    window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+                });
+            var configs = localforage.createInstance({name: 'notes-db', storeName: 'configs'}),
+                current = await configs.getItem('encryptPass');
+            current.value = sjcl.hash.sha256.hash('old-profile-pass');
+            await configs.setItem('encryptPass', current);
+        });
+        var before = await encryptionConfigs(page);
+        expect(before.iter).toBe('10000');
+        expect(before.pass).toHaveLength(8);
+
+        // A new session: a wrong password opens nothing, changes nothing
+        await page.evaluate(function() { window.sessionStorage.clear(); });
+        await page.goto('/#/notes');
+        await page.reload();
+        await unlock(page, 'not-the-password');
+        await page.waitForTimeout(2000);
+        await expect(page.locator('.list--item.-note:visible')).toHaveCount(0);
+        expect((await encryptionConfigs(page)).pass).toEqual(before.pass);
+
+        // The right one opens the same notes
+        await page.fill('.-auth input[name="password"]', 'old-profile-pass');
+        await page.click('.-auth button[type="submit"]');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        expect(await decryptedNotes(page)).toEqual(notes);
+
+        // The check was replaced; the key settings and every
+        // encrypted note are exactly as they were
+        await expect.poll(async function() {
+            return typeof (await encryptionConfigs(page)).pass;
+        }, {timeout: 20000}).toBe('string');
+        var after = await encryptionConfigs(page);
+        expect(after.pass).toMatch(/^pbkdf2-sha256\$600000\$[0-9a-f]{32}\$[0-9a-f]{64}$/);
+        expect(after.iter).toBe('10000');
+        expect(after.salt).toBe(before.salt);
+        expect(after.cipher).toEqual(before.cipher);
+
+        // And it keeps working: next session, wrong then right
+        await page.evaluate(function() { window.sessionStorage.clear(); });
+        await page.goto('/#/notes');
+        await page.reload();
+        await unlock(page, 'old-profile-pas');
+        await page.waitForTimeout(2000);
+        await expect(page.locator('.list--item.-note:visible')).toHaveCount(0);
+        await page.fill('.-auth input[name="password"]', 'old-profile-pass');
+        await page.click('.-auth button[type="submit"]');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        expect(await decryptedNotes(page)).toEqual(notes);
+        expect((await encryptionConfigs(page)).pass).toBe(after.pass);
+    });
+
     // "All my notes are gone" (gh-683, gh-670, gh-440): an address
     // naming a profile that does not exist used to create an empty
     // database and show an empty list, with nothing to say why.

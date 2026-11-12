@@ -45,7 +45,9 @@ define([
             'encrypt'            : '0',
             'encryptPass'        : '',
             'encryptSalt'        : '',
-            'encryptIter'        : '10000',
+            // PBKDF2 rounds for new setups (OWASP's 2023 figure for
+            // HMAC-SHA256); profiles keep whatever they were made with
+            'encryptIter'        : '600000',
             'encryptTag'         : '128',
             'encryptKeySize'     : '256',
             'encryptBackup'      : {},

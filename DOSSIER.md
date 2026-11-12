@@ -61,6 +61,10 @@ anywhere.
   (Electron 1.7 era), unsigned, which is the macOS
   Gatekeeper complaint (#1014). No electron dep in the
   main package.json.
+- (2026-11-12: "sound" was too kind. The password check
+  was an unsalted SHA-256 kept beside the data and in
+  exports, a way round the PBKDF2 below; fixed, see
+  ROADMAP.md Phase 2a.)
 - Crypto is sound: AES-CCM via SJCL, PBKDF2 (10k
   iterations default, user-configurable), random IV per
   note. Keep SJCL as the legacy reader; uplift KDF for

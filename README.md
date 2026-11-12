@@ -74,8 +74,17 @@ until then, any modern desktop or mobile browser works.
 
 ## Security model
 
-- Notes are encrypted in your browser with AES-CCM (SJCL), keyed by PBKDF2
-  (10,000 iterations, configurable) stretched from your password.
+- Notes are encrypted in your browser with AES-CCM (SJCL), keyed by
+  PBKDF2-HMAC-SHA256 stretched from your password: 600,000 iterations
+  for a new setup, configurable. A profile encrypted earlier keeps the
+  count it was made with (10,000 by default) until you raise it under
+  Settings, Encryption, which re-encrypts the notes.
+- To check a password the app stores a salted PBKDF2 value, never the
+  password or a plain hash of it. Up to 0.8.0-rc2 it stored an unsalted
+  SHA-256, also inside exported settings and backups; treat export files
+  made by those versions as you would the password. The stored value is
+  replaced the first time a newer build unlocks the profile, after which
+  older builds can no longer open it.
 - Rendered Markdown is sanitized with DOMPurify; titles and inputs pass
   through an XSS filter. A hostile-content test (scripts, event handlers,
   `javascript:` and `data:` URLs) runs in CI on every push.

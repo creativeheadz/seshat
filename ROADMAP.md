@@ -138,19 +138,22 @@ it, as in Phase 1.
       (gh-864): covered by the migrate unit test.
 - [ ] Desktop unlock with a bad or empty key (gh-808):
       needs the real window.
-- [ ] Key derivation. Looked into on 2026-11-12: the
-      iteration count (PBKDF2 at 10,000, low for 2026) is
-      the smaller half. To check a password the app keeps
-      its plain, unsalted SHA-256 in the configs store,
-      and writes it into exported settings and backups.
-      Whoever holds either can test passwords at SHA-256
-      speed and never touch PBKDF2. A real uplift is a
-      verifier derived through the KDF, more iterations
-      through WebCrypto (measured: 0.1 s for 600,000,
-      same key as SJCL, which stays as the fallback and
-      the reader), and exports without the verifier. It
-      changes how an existing profile is verified, so it
-      waits for Andrei's go-ahead and a verified backup.
+- [x] Key derivation (2026-11-12). The app kept a plain,
+      unsalted SHA-256 of the password to check it
+      against, in the configs store and in every export:
+      a way round PBKDF2 for anyone holding either. The
+      check is now a salted PBKDF2 value at 600,000
+      rounds; an old one is accepted and replaced on the
+      next unlock. New setups stretch the key 600,000
+      times too (10,000 before), through WebCrypto where
+      there is one, with SJCL as the fallback and reader.
+      Proven against a profile made by the real rc2
+      build: unlocks, notes identical, ciphertext
+      untouched. One way: rc2 and older cannot open an
+      upgraded profile.
+- [ ] Existing profiles stay at the iteration count they
+      were encrypted with. Raising it is a manual step
+      (Settings, Encryption); consider offering it.
 - [x] Checked 2026-11-12, nothing to fix: after turning
       encryption off each note keeps an `encryptedData`
       field, but it is empty, not old ciphertext, and
