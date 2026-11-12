@@ -1,5 +1,6 @@
 //! Desktop shell commands: Obsidian vault import (folder pick +
-//! recursive markdown read) and saving exported files.
+//! recursive markdown read), saving exported files, and opening
+//! links outside the app.
 //!
 //! One IPC call carries the whole vault scan to the frontend, which
 //! maps files to notes (see `modules/importExport/vault/`). Binary
@@ -203,10 +204,72 @@ fn save_file(request: tauri::ipc::Request<'_>) -> Result<Option<String>, String>
     Ok(Some(path.to_string_lossy().into_owned()))
 }
 
+/// Addresses that belong in the system browser or mail client.
+fn is_external(url: &str) -> bool {
+    let lower = url.to_ascii_lowercase();
+    lower.starts_with("https://") || lower.starts_with("http://") || lower.starts_with("mailto:")
+}
+
+/// Hands an address to the system's default application. The
+/// address is passed as one argument, never through a shell.
+fn open_in_system(url: &str) -> Result<(), String> {
+    if !is_external(url) {
+        return Err("only web and mail addresses can be opened".to_string());
+    }
+
+    #[cfg(target_os = "macos")]
+    let mut command = std::process::Command::new("open");
+    #[cfg(target_os = "windows")]
+    let mut command = {
+        let mut command = std::process::Command::new("rundll32");
+        command.arg("url.dll,FileProtocolHandler");
+        command
+    };
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    let mut command = std::process::Command::new("xdg-open");
+
+    let mut child = command.arg(url).spawn().map_err(|e| e.to_string())?;
+
+    // Reap the helper when it exits
+    std::thread::spawn(move || {
+        let _ = child.wait();
+    });
+
+    Ok(())
+}
+
+/// Opens a link from a note (or About) outside the app.
+///
+/// The window is the app: following a link inside it would replace
+/// the notes with a web page and leave no way back.
+#[tauri::command]
+fn open_external(url: String) -> Result<(), String> {
+    open_in_system(&url)
+}
+
+/// Pages the window itself may show.
+fn is_app_url(url: &tauri::Url) -> bool {
+    matches!(url.scheme(), "tauri" | "about" | "blob" | "data")
+        || matches!(url.host_str(), Some("localhost") | Some("tauri.localhost"))
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![import_vault, save_file])
+    .invoke_handler(tauri::generate_handler![import_vault, save_file, open_external])
+    // Whatever the page does, the window never leaves the app: a
+    // navigation to anywhere else goes to the system browser.
+    .plugin(
+      tauri::plugin::Builder::<tauri::Wry>::new("stay-in-app")
+        .on_navigation(|_webview, url| {
+          if is_app_url(url) {
+            return true;
+          }
+          let _ = open_in_system(url.as_str());
+          false
+        })
+        .build(),
+    )
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(

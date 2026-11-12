@@ -142,10 +142,15 @@ it, as in Phase 1.
 
 ### 2b - desktop shell
 
-- [ ] Audit the other browser assumptions the download
-      bug belonged to: links that should open in the
-      system browser, attachment drag and drop, the file
-      pickers for import, printing.
+- [x] Links: a link in a note used to replace the app
+      with the web page (no way back), and About's links
+      did nothing. They open in the system browser now,
+      and the window refuses to navigate away from the
+      app whatever the page does (2026-11-12; the shell
+      side is compiled and unit-stubbed, not yet clicked
+      in the real window).
+- [ ] The rest of that audit: attachment drag and drop,
+      the file pickers for import, printing.
 - [ ] Storage and encryption run on the main thread in
       WebKit (workers are switched off by an old Safari
       workaround in app.js). Re-enable and test in the
@@ -174,7 +179,14 @@ it, as in Phase 1.
 - [ ] Create `creativeheadz/seshat` on Gitea and push
       (carried over from Phase 0).
 
-### 2e - speed, when it is needed
+### 2e - sync
+
+- [ ] WebDAV or NAS sync, the direction decided when
+      Dropbox was dropped (DOSSIER.md). Until then notes
+      live on one machine and Export data is the backup.
+      RemoteStorage is still in the tree, unvalidated.
+
+### 2f - speed, when it is needed
 
 - [ ] Every list switch re-reads all notes and, with
       encryption on, decrypts them again. One decrypted

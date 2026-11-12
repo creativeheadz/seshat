@@ -41,6 +41,7 @@ define([
         'helpers/title',
         'helpers/i18next',
         'helpers/theme',
+        'helpers/externalLinks',
         'helpers/keybindings',
 
         // Classes

@@ -666,6 +666,48 @@ test.describe('smoke', function() {
         expect(await readBack()).toEqual(expected);
     });
 
+    // In the desktop window a link in a note must not replace the app
+    // with a web page; it goes to the shell, which opens the browser.
+    test('desktop links open outside the app', async function({page}) {
+        await page.addInitScript(function() {
+            window.__opened = [];
+            window.__TAURI_INTERNALS__ = {
+                invoke: function(cmd, args) {
+                    if (cmd !== 'open_external') {
+                        return Promise.reject(new Error('unexpected: ' + cmd));
+                    }
+                    window.__opened.push(args.url);
+                    return Promise.resolve();
+                }
+            };
+        });
+        await page.reload();
+        await page.waitForSelector('#header--add', {timeout: 20000});
+        await dismissWizard(page);
+
+        await page.click('#header--add');
+        await page.fill('#editor--input--title', 'Links');
+        await page.waitForSelector('#editor .CodeMirror');
+        await page.evaluate(function() {
+            document.querySelector('#editor .CodeMirror').CodeMirror
+                .setValue('[a site](https://example.org/page) and #sometag');
+        });
+        await page.click('.editor--save');
+        await page.click('.list--item.-note >> nth=0');
+        await page.waitForSelector('.content.-note .prose a');
+
+        var before = page.url();
+        await page.locator('.content.-note .prose a', {hasText: 'a site'}).click();
+        expect(await page.evaluate(function() { return window.__opened; }))
+            .toEqual(['https://example.org/page']);
+        expect(page.url()).toBe(before);
+
+        // links inside the app still work
+        await page.locator('.content.-note .prose a', {hasText: '#sometag'}).click();
+        await expect(page.locator('#header--title')).toHaveText('sometag');
+        expect(await page.evaluate(function() { return window.__opened.length; })).toBe(1);
+    });
+
     // The desktop webview has no download manager: a blob link does
     // nothing there, so exports and the encryption backup were lost
     // without a word. They go to the shell's save_file command.
