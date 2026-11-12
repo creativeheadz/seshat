@@ -13,9 +13,10 @@ define([
     'backbone.radio',
     'behaviors/content',
     'helpers/when',
+    'helpers/hashtags',
     'text!apps/notes/show/templates/item.html',
     'mousetrap'
-], function(_, $, Marionette, Radio, Behavior, When, Tmpl, Mousetrap) {
+], function(_, $, Marionette, Radio, Behavior, When, Hashtags, Tmpl, Mousetrap) {
     'use strict';
 
     /**
@@ -156,6 +157,11 @@ define([
         serializeData: function() {
             // var content = Radio.request('markdown', 'render', this.model);
             return _.extend(this.model.toJSON(), {
+                // Saved tags, plus any only written in the text
+                tags     : _.union(
+                    this.model.get('tags') || [],
+                    Hashtags.extract(this.model.get('content'))
+                ),
                 content  : this.options.content || this.model.get('content'),
                 notebook : this.options.notebook.toJSON(),
                 uri      : Radio.request('uri', 'link:profile', '/')

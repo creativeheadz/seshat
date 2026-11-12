@@ -11,8 +11,9 @@ define([
     'underscore',
     'backbone.radio',
     'marionette',
+    'helpers/hashtags',
     'apps/notes/list/views/noteSidebar'
-], function ($, _, Radio, Marionette, Sidebar) {
+], function ($, _, Radio, Marionette, Hashtags, Sidebar) {
     'use strict';
 
     /**
@@ -71,6 +72,40 @@ define([
                 args      : this.options
             });
             Radio.request('global', 'region:show', 'sidebar', this.view);
+
+            this.indexTags(notes);
+        },
+
+        /**
+         * Once per profile: tags that notes carry in their text but
+         * that are missing from the tag list are added to it. Notes
+         * imported before the importer read hashtags are the case in
+         * point. Only the tag list is written; no note is touched.
+         */
+        indexTags: function(notes) {
+            var filter = this.options.filter;
+
+            // Wait for a list of all notes that has something in it
+            if (Number(this.configs.tagsIndexed) || (filter && filter !== 'active') || !notes.length) {
+                return;
+            }
+            this.configs.tagsIndexed = '1';
+
+            var profile = this.options.profile,
+                tags    = _.uniq(_.flatten(notes.map(function(note) {
+                    return Hashtags.extract(note.get('content'));
+                })));
+
+            _.defer(function() {
+                Radio.request('tags', 'add', tags, {profile: profile})
+                .then(function() {
+                    return Radio.request('configs', 'save:object',
+                        {name: 'tagsIndexed', value: '1'}, null, {profile: profile});
+                })
+                .fail(function(e) {
+                    console.error('Tag index:', e);
+                });
+            });
         },
 
         /**

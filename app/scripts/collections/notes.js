@@ -12,8 +12,9 @@ define([
     'backbone.radio',
     'collections/pageable',
     'models/note',
+    'helpers/hashtags',
     'fuse',
-], function(_, Backbone, Radio, PageableCollection, Note, Fuse) {
+], function(_, Backbone, Radio, PageableCollection, Note, Hashtags, Fuse) {
     'use strict';
 
     var Notes = PageableCollection.extend({
@@ -69,13 +70,19 @@ define([
          * Returns notes to which a specified tag was attached.
          */
         tagFilter: function(tagName) {
+            tagName = String(tagName || '').toLowerCase();
+
             return this.filter(function(note) {
-                if (note.get('tags').length > 0) {
-                    return (
-                        (_.indexOf(note.get('tags'), tagName) !== -1) &&
-                        note.get('trash') === 0
-                    );
+                if (note.get('trash') !== 0) {
+                    return false;
                 }
+
+                // The field is filled when a note is saved in the
+                // editor. Notes that came in another way (a vault
+                // import, an old backup) may only have the tag in
+                // their text, where the page links it all the same.
+                return _.indexOf(note.get('tags') || [], tagName) !== -1 ||
+                    Hashtags.has(note.get('content'), tagName);
             });
         },
 

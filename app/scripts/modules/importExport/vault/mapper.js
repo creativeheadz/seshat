@@ -7,8 +7,9 @@
  */
 /* global define */
 define([
-    'underscore'
-], function(_) {
+    'underscore',
+    'helpers/hashtags'
+], function(_, Hashtags) {
     'use strict';
 
     /**
@@ -139,7 +140,11 @@ define([
                 title        : title.length ? title : 'Untitled',
                 content      : parsed.body,
                 notebookPath : this.notebookPath(file.path),
-                tags         : this.normalizeTags(parsed.attrs.tags),
+                // Frontmatter tags plus the ones written in the text
+                tags         : _.union(
+                    this.normalizeTags(parsed.attrs.tags),
+                    Hashtags.extract(parsed.body)
+                ),
                 created      : file.mtime || Date.now(),
             };
         },

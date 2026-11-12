@@ -18,7 +18,7 @@ define([
      * - source() resolves {files: [{path, content, mtime?}], skipped: []}
      *   or null when the user cancels.
      * - writer: {findNotebook(name, parentId), saveNotebook(attrs),
-     *   saveNote(attrs)}; attrs carry pre-minted ids.
+     *   saveNote(attrs), saveTags(names)?}; attrs carry pre-minted ids.
      * - opts: {onProgress({done, total}), batchSize}.
      */
     function ensureNotebooks(specs, writer) {
@@ -123,6 +123,12 @@ define([
                 if ((i + 1) % opts.batchSize === 0) {
                     chain = chain.delay(0);
                 }
+            });
+
+            // The tag list (Notebooks & tags) is a store of its own
+            chain = chain.then(function() {
+                var tags = _.uniq(_.flatten(_.pluck(specs, 'tags')));
+                return writer.saveTags && tags.length ? writer.saveTags(tags) : null;
             });
 
             return chain.then(function() {

@@ -457,6 +457,60 @@ test.describe('smoke', function() {
         await expect(page.locator('body')).toHaveClass(/-preview/);
     });
 
+    // A note that reached the store without going through the editor
+    // (a vault import) has its tags in the text only. The page links
+    // them, so the link has to lead somewhere.
+    test('a tag written in the text finds the note', async function({page}) {
+        await page.evaluate(async function() {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            var notes = localforage.createInstance({name: 'notes-db', storeName: 'notes'});
+            await notes.setItem('imported', {
+                id: 'imported', type: 'notes', title: 'Imported view',
+                content: 'Body.\n\n**Tags:** #database #dashboard',
+                taskAll: 0, taskCompleted: 0, created: Date.now(), updated: Date.now(),
+                notebookId: '0', tags: [], isFavorite: 0, trash: 0, files: [],
+            });
+            await notes.setItem('other', {
+                id: 'other', type: 'notes', title: 'No tags', content: 'plain',
+                taskAll: 0, taskCompleted: 0, created: Date.now() - 1000, updated: Date.now(),
+                notebookId: '0', tags: [], isFavorite: 0, trash: 0, files: [],
+            });
+        });
+        await page.reload();
+        await page.waitForSelector('#note-imported', {timeout: 20000});
+        await page.click('#note-imported');
+        await page.waitForSelector('.content.-note .prose');
+
+        // listed beside the note as well as linked in the text
+        await expect(page.locator('.note--tags a')).toHaveText(['#database', '#dashboard']);
+
+        await page.locator('.content.-note .prose a', {hasText: '#dashboard'}).click();
+        await expect(page.locator('#header--count')).toHaveText('1');
+        await expect(page.locator('.list--item--title')).toHaveText(['Imported view']);
+
+        // and the tag list has learnt both tags, without the note being rewritten
+        await expect.poll(function() {
+            return page.evaluate(async function() {
+                var localforage = await new Promise(function(resolve, reject) {
+                    window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+                });
+                var names = [];
+                await localforage.createInstance({name: 'notes-db', storeName: 'tags'})
+                    .iterate(function(tag) { names.push(tag.name); });
+                return names.sort().join(',');
+            });
+        }).toBe('dashboard,database');
+        expect(await page.evaluate(async function() {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            var note = await localforage.createInstance({name: 'notes-db', storeName: 'notes'}).getItem('imported');
+            return note.tags.length;
+        })).toBe(0);
+    });
+
     // The desktop webview has no download manager: a blob link does
     // nothing there, so exports and the encryption backup were lost
     // without a word. They go to the shell's save_file command.

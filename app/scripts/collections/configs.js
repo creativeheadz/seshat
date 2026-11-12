@@ -29,6 +29,10 @@ define([
             'pagination'         : '10',
             'sortnotes'          : 'created',
             'theme'              : 'auto',
+
+            // '1' once tags written in notes' text have been added
+            // to the tag list (see apps/notes/list/controller.js)
+            'tagsIndexed'        : '0',
             'sortnotebooks'      : 'name',
             'navbarNotebooksMax' : '5',
             'useDefaultConfigs'  : '1',

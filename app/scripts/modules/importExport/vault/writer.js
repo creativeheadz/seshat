@@ -50,6 +50,10 @@ define([
             saveNote: function(attrs) {
                 return Q.when(Radio.request('notes', 'save:raw', attrs, {profile: profile}));
             },
+
+            saveTags: function(names) {
+                return Q.when(Radio.request('tags', 'add', names, {profile: profile}));
+            },
         };
     }
 
