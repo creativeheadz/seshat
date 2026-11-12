@@ -301,6 +301,7 @@ test.describe('smoke', function() {
         await page.goto('/#/notes');
         await page.waitForSelector('#header--add', {timeout: 20000});
         await page.waitForSelector('.list--item.-note', {timeout: 20000});
-        await expect(page.locator('.list--item--title').first()).toContainText('Welcome');
+        await expect(page.locator('.list--item--title').filter({hasText: 'Welcome'})).toHaveCount(1);
+        await expect(page.locator('.list--item--title').filter({hasText: 'Second'})).toHaveCount(1);
     });
 });
