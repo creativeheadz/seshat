@@ -34,7 +34,7 @@ define([
             'useDefaultConfigs'  : '1',
 
             // Editor settings
-            'editMode'           : 'preview',
+            'editMode'           : 'normal',
             'indentUnit'         : '4',
 
             // Encryption settings

@@ -110,6 +110,17 @@
     }
 }
 
+// Formatting marks do nothing while the rendered note is on show
+.editor--reading:not(.-preview) .btn--wysiwyg {
+    opacity        : 0.35;
+    pointer-events : none;
+}
+
+.editor--read.btn.active {
+    background : var(--accent-soft);
+    color      : var(--accent);
+}
+
 /**
  * Source | preview switch on small screens
  */

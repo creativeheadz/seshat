@@ -377,6 +377,81 @@ test.describe('smoke', function() {
         expect(paper).toBe('#0e121e');
     });
 
+    // ---- editor: one column, preview in place ----
+
+    function editorValue(page) {
+        return page.evaluate(function() {
+            return document.querySelector('#editor .CodeMirror').CodeMirror.getValue();
+        });
+    }
+
+    // `##Title` is not a heading in Markdown (no space). The button
+    // used to turn it into `### itle`.
+    test('heading button repairs hashes typed without a space', async function({page}) {
+        await page.click('#header--add');
+        await page.waitForSelector('#editor .CodeMirror');
+        await page.evaluate(function() {
+            var cm = document.querySelector('#editor .CodeMirror').CodeMirror;
+            cm.setValue('##Title\nPlain');
+            cm.setCursor({line: 0, ch: 0});
+        });
+        await page.click('.btn--wysiwyg[data-action="heading"]');
+        expect(await editorValue(page)).toBe('## Title\nPlain');
+
+        await page.evaluate(function() {
+            document.querySelector('#editor .CodeMirror').CodeMirror.setCursor({line: 1, ch: 0});
+        });
+        await page.click('.btn--wysiwyg[data-action="heading"]');
+        expect(await editorValue(page)).toBe('## Title\n# Plain');
+        // and once more goes a level deeper, keeping every letter
+        await page.click('.btn--wysiwyg[data-action="heading"]');
+        expect(await editorValue(page)).toBe('## Title\n## Plain');
+    });
+
+    test('preview switch shows the rendered note in place of the source', async function({page}) {
+        await page.click('#header--add');
+        await page.waitForSelector('#editor .CodeMirror');
+        // One column by default: no second pane beside the source
+        await expect(page.locator('.editor--preview')).toBeHidden();
+        await page.evaluate(function() {
+            document.querySelector('#editor .CodeMirror').CodeMirror
+                .setValue('## A heading\n\n##Not a heading\n\n#tagged');
+        });
+        // The source colours the tag and sizes the real heading
+        await expect(page.locator('#editor .cm-hashtag')).toHaveText('#tagged');
+        await expect(page.locator('#editor .cm-header-2').first()).toBeVisible();
+
+        await page.click('.editor--read');
+        await expect(page.locator('.editor--preview h2')).toHaveText('A heading');
+        await expect(page.locator('.editor--preview h2')).toHaveCount(1);
+        await expect(page.locator('#editor .CodeMirror')).toBeHidden();
+
+        await page.click('.editor--read');
+        await expect(page.locator('#editor .CodeMirror')).toBeVisible();
+        await expect(page.locator('.editor--preview')).toBeHidden();
+    });
+
+    test('a layout picked from the menu is the one the editor opens in next', async function({page}) {
+        await page.click('#header--add');
+        await page.waitForSelector('#editor .CodeMirror');
+        await expect(page.locator('body')).not.toHaveClass(/editor--fullscreen/);
+        await page.click('.header.-form .dropdown-toggle');
+        await page.click('.editor--mode a[data-mode="preview"]');
+        await expect(page.locator('body')).toHaveClass(/-preview/);
+        // side by side: both on show, so no switch
+        await expect(page.locator('.editor--preview')).toBeVisible();
+        await expect(page.locator('.editor--read')).toBeHidden();
+
+        // Start the app again from the list and open a new note
+        await page.goto('/#/notes');
+        await page.reload();
+        await page.waitForSelector('#header--add', {timeout: 20000});
+        await expect(page.locator('body')).not.toHaveClass(/-preview/);
+        await page.click('#header--add');
+        await page.waitForSelector('#editor .CodeMirror');
+        await expect(page.locator('body')).toHaveClass(/-preview/);
+    });
+
     // Vault importer: stubbed Tauri scan must interpolate the summary
     // counts (i18n.t without values blanks {{...}} placeholders).
     test('vault import reports interpolated counts', async function({page}) {

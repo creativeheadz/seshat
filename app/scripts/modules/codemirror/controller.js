@@ -77,6 +77,7 @@ define([
             // Events
             this.listenTo(this.view, 'editor:action', this.onViewAction);
             this.listenTo(Radio.channel('notesForm'), 'set:mode', this.changeMode);
+            this.listenTo(Radio.channel('notesForm'), 'set:reading', this.onReading);
             this.listenTo(Radio.channel('editor'), 'focus', this.focus);
 
             // Show the view and render Pagedown editor
@@ -104,7 +105,10 @@ define([
             this.editor = CodeMirror.fromTextArea(document.getElementById('editor--input'), {
                 mode          : {
                     name        : 'gfm',
-                    gitHubSpice : false
+                    gitHubSpice : false,
+                    // Marks (#, **, >) get a token of their own, so the
+                    // theme can set them back from the words
+                    highlightFormatting: true
                 },
 				keyMap: this.configs.textEditor || 'default',
                 lineNumbers   : false,
@@ -152,6 +156,21 @@ define([
                 }
             });
 
+            // `#word` is a tag here, `# word` a heading. Colour tags in
+            // the source so the difference shows while typing.
+            this.editor.addOverlay({
+                token: function(stream) {
+                    var before = stream.pos === 0 ? ' ' : stream.string.charAt(stream.pos - 1);
+
+                    if (/\s/.test(before) && stream.match(/^#[^\s#]\S*/)) {
+                        return 'hashtag';
+                    }
+
+                    stream.next();
+                    return null;
+                }
+            });
+
             window.dispatchEvent(new Event('resize'));
 
             // The source is set in the reading face, which may still
@@ -169,6 +188,17 @@ define([
 
             // Show the preview
             this.updatePreview();
+        },
+
+        /**
+         * Back from the rendered note: the source was hidden, so it
+         * has to be measured again before it can take the cursor.
+         */
+        onReading: function(reading) {
+            if (!reading && this.editor) {
+                this.editor.refresh();
+                this.editor.focus();
+            }
         },
 
         changeMode: function(mode) {
@@ -523,13 +553,19 @@ define([
                 );
             }
 
+            // Hashes typed without the space Markdown asks for
+            // (`##Title`) are not a heading yet: add the space and
+            // keep the level that was meant.
+            if (/^#{2,6}[^#\s]/.test(text)) {
+                return this.replaceRange(text.replace(/^(#+)/, '$1 '), i);
+            }
+
+            // The words without their marks
+            text = text.replace(/^#+\s*/, '');
+
             // Increase headline level up to 6th
             if (headingLvl < 6) {
-                text = headingLvl > 0 ? text.substr(headingLvl + 1) : text;
                 text = new Array(headingLvl + 2).join('#') + ' ' + text;
-            }
-            else {
-                text = text.substr(headingLvl + 1);
             }
 
             this.replaceRange(text, i);

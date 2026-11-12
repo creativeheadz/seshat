@@ -81,7 +81,8 @@ var map = {
     'transfer'       : 'download-simple',
     'modules'        : 'stack',
     'profiles'       : 'user',
-    'language'       : 'text-aa'
+    'language'       : 'text-aa',
+    'columns'        : 'columns'
 };
 
 function encode(svg) {

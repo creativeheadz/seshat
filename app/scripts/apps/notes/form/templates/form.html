@@ -5,6 +5,12 @@
     </div>
 
     <ul class="nav navbar-nav navbar-right header--right">
+        <li>
+            <button type="button" class="editor--read btn -note" aria-pressed="false">
+                <i class="icon-eye"></i>
+                <span class="hidden-xs">{{ i18n('Preview') }}</span>
+            </button>
+        </li>
         <li class="dropdown">
             <button type="button" title="{{ i18n('Default edit mode') }}" class="btn -note dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <i class="icon-squares"></i> <b class="caret hidden-xs"></b>
@@ -22,7 +28,7 @@
                 </li>
                 <li>
                     <a href="#" data-mode="preview">
-                        <i class="icon-eye"></i> {{ i18n('Preview') }}
+                        <i class="icon-columns"></i> {{ i18n('Fullscreen with preview') }}
                     </a>
                 </li>
             </ul>

@@ -68,12 +68,14 @@ define([
         ui: {
             // Form
             form       : '.editor--form',
+            readBtn    : '.editor--read',
             saveBtn    :  '.editor--save',
             title      : '#editor--input--title'
         },
 
         events: {
             'click .editor--mode a' : 'switchMode',
+            'click .editor--read'   : 'toggleReading',
 
             // Handle saving
             'submit @ui.form'      : 'save',
@@ -82,7 +84,7 @@ define([
         },
 
         initialize: function() {
-            _.bindAll(this, 'autoSave', 'save', 'cancel');
+            _.bindAll(this, 'autoSave', 'save', 'cancel', 'toggleReading');
 
             this.configs = Radio.request('configs', 'get:object');
             this.$body = $('body');
@@ -104,6 +106,7 @@ define([
         bindKeys: function() {
             Mousetrap.bindGlobal(['ctrl+s', 'command+s'], this.save);
             Mousetrap.bindGlobal(['esc'], this.cancel);
+            Mousetrap.bindGlobal(['ctrl+shift+e', 'command+shift+e'], this.toggleReading);
         },
 
         onRendered: function() {
@@ -120,6 +123,7 @@ define([
 
         onBeforeDestroy: function() {
             this._normalMode();
+            this.$body.removeClass('editor--reading');
 
             // Trigger an event
             Radio.trigger('notesForm', 'view:destroy');
@@ -130,7 +134,7 @@ define([
             .off('save:auto');
 
             // Destroy shortcuts
-            Mousetrap.unbind(['ctrl+s', 'command+s', 'esc']);
+            Mousetrap.unbind(['ctrl+s', 'command+s', 'esc', 'ctrl+shift+e', 'command+shift+e']);
         },
 
         showEditor: function(view) {
@@ -187,13 +191,50 @@ define([
             // Close a dropdown menu
             this.ui.form.trigger('click');
 
+            // Side by side already shows the rendered note
+            if (mode === 'preview') {
+                this.setReading(false);
+            }
+
             // Switch to another mode
             this['_' + mode + 'Mode'].apply(this);
 
             // Trigger an event
             Radio.trigger('notesForm', 'set:mode', mode);
 
+            // A layout picked from the menu is the one to come back to
+            if (typeof e !== 'string' && mode !== this.configs.editMode) {
+                this.configs.editMode = mode;
+                Radio.request('configs', 'save:object', {name: 'editMode', value: mode}, null, {
+                    profile: Radio.request('uri', 'profile')
+                });
+            }
+
             return false;
+        },
+
+        /**
+         * Swaps the Markdown source for the note as it will read,
+         * in place, and back.
+         */
+        toggleReading: function() {
+            // Nothing to swap when both are on show
+            if (this.$body.hasClass('-preview')) {
+                return false;
+            }
+
+            this.setReading(!this.$body.hasClass('editor--reading'));
+            return false;
+        },
+
+        setReading: function(reading) {
+            if (this.$body.hasClass('editor--reading') === reading) {
+                return;
+            }
+
+            this.$body.toggleClass('editor--reading', reading);
+            this.ui.readBtn.toggleClass('active', reading).attr('aria-pressed', reading);
+            Radio.trigger('notesForm', 'set:reading', reading);
         },
 
         _fullscreenMode: function() {

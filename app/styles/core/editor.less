@@ -87,6 +87,23 @@
 }
 
 /**
+ * Reading in place: the rendered note takes the source's spot
+ */
+.editor--reading:not(.-preview) {
+    .editor--layout.-left {
+        display: none;
+    }
+    .editor--preview {
+        display: block;
+    }
+}
+
+// The switch has nothing to do when both are on show
+.editor--fullscreen.-preview .editor--read {
+    display: none;
+}
+
+/**
  * Editor without the list
  */
 .editor--fullscreen {
