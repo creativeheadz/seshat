@@ -2,10 +2,16 @@
 # seshat-debug-update: keep the local install in step with the latest
 # code, not with the latest release.
 #
-# "Latest code" is this checkout's HEAD, or github/master when that is
-# ahead of it (a push from another machine). When the installed build
-# was made from a different commit, the script builds that commit,
-# bundles a .deb and installs it.
+# "Latest code" is this checkout's HEAD: what was committed, merged or
+# pulled on this machine. When the installed build was made from a
+# different commit, the script builds that commit, bundles a .deb and
+# installs it.
+#
+# It deliberately does not fetch. Building runs the project's install
+# and build scripts and the result is installed with sudo, so whatever
+# this follows can run code here. Following a remote would hand that
+# to anyone able to push to it (a stolen token, a bad merge). A commit
+# from another machine arrives when you pull it, which is a decision.
 #
 # The build happens in a private clone under ~/.cache/seshat-debug,
 # never in this working tree: uncommitted work is not built, and a
@@ -14,7 +20,7 @@
 # Triggers
 #   git hooks   post-commit, post-merge, post-rewrite; set up once with
 #               `scripts/seshat-debug-update.sh --install-hooks`
-#   cron        fallback, and what notices pushes from elsewhere:
+#   cron        fallback for anything the hooks miss:
 #               */30 * * * * /path/to/repo/scripts/seshat-debug-update.sh
 #
 # Usage
@@ -31,8 +37,6 @@ set -u
 # below at the wrong repository.
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX 2>/dev/null || true
 
-REMOTE="github"
-BRANCH="master"
 PKG="seshat"
 TAURI_CLI="@tauri-apps/cli@2.12.4"
 
@@ -53,20 +57,10 @@ mkdir -p "$STATE_DIR" "$CACHE_DIR"
 log() { echo "$(date -u +%FT%TZ) $1" | tee -a "$LOG"; }
 short() { printf '%s' "$1" | cut -c1-8; }
 
-# The commit the install should be built from.
+# The commit the install should be built from: local HEAD, nothing
+# fetched (see the note at the top).
 latest_commit() {
-    head="$(git -C "$REPO_DIR" rev-parse HEAD)" || return 1
-    want="$head"
-
-    if timeout 30 git -C "$REPO_DIR" fetch -q "$REMOTE" "$BRANCH" 2>/dev/null; then
-        remote="$(git -C "$REPO_DIR" rev-parse -q --verify "$REMOTE/$BRANCH" 2>/dev/null || true)"
-        if [ -n "$remote" ] && [ "$remote" != "$head" ] &&
-            git -C "$REPO_DIR" merge-base --is-ancestor "$head" "$remote"; then
-            want="$remote"
-        fi
-    fi
-
-    printf '%s' "$want"
+    git -C "$REPO_DIR" rev-parse HEAD
 }
 
 installed_commit() {

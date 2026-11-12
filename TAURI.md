@@ -80,17 +80,21 @@ like Wegweiser: no secrets in CI, no surprise bills.
 
 `scripts/seshat-debug-update.sh` keeps the local install in step with
 the latest code rather than the latest release. "Latest code" is this
-checkout's HEAD, or `github/master` when that is ahead of it (a push
-from another machine). When the installed build was made from another
+checkout's HEAD. When the installed build was made from another
 commit, the script builds that commit, bundles a `.deb` and
 `dpkg -i`s it.
+
+It never fetches. A build runs the project's install and build
+scripts and is installed with `sudo`, so the script only follows
+what is already on this machine: a commit made elsewhere is built
+after you pull it, not because someone could push it.
 
 - The build runs in a private clone under `~/.cache/seshat-debug`,
   never in the working tree: uncommitted work is not built, and a
   build cannot collide with your own gulp or test run.
 - Git hooks start it on every commit, merge and rebase; set them up
   once per clone with `scripts/seshat-debug-update.sh --install-hooks`.
-- Cron is the fallback and what notices pushes from elsewhere:
+- Cron is the fallback for anything the hooks miss:
   `*/30 * * * * /path/to/repo/scripts/seshat-debug-update.sh`.
 - `--status` shows the installed and the latest commit; `--force`
   rebuilds regardless.
