@@ -17,8 +17,12 @@ headless Chromium unless noted.
 
 - gh-992: encrypt setup garbles content (`### Unzipping` became
   transposed garbage; locked out via gh-407). No repro steps.
-  Fixture sketch: encrypt notes with markdown-heavy content,
-  wrong-password and re-encrypt paths.
+  NOT REPRODUCED (2026-11-12): the fixture now exists as the
+  Playwright case "notes survive turning encryption on, using
+  it and turning it off" (markdown-heavy and non-ASCII notes;
+  on, unlock, edit, wrong password, off; byte-identical
+  after). Still open for the re-encrypt (change password)
+  path, which that case does not cover.
 - gh-683 / gh-670 / gh-440: "all notes gone" (welcome screen or
   empty list, one with encryption+sync). No repro steps.
   Fixture sketch: profile mismatch and cleared-storage boots.

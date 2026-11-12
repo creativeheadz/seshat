@@ -511,6 +511,161 @@ test.describe('smoke', function() {
         })).toBe(0);
     });
 
+    // ---- encryption lifecycle (BACKLOG P0: gh-992 "encrypt setup
+    // garbles content"). On, unlock, use, wrong password, off: the
+    // notes must come back byte for byte, and never sit in the store
+    // in plain text while encryption is on.
+    test('notes survive turning encryption on, using it and turning it off', async function({page}) {
+        test.setTimeout(120000);
+
+        var seeded = [
+            {id: 'enc-1', title: 'Unzipping', tags: ['ops', 'dashboard'],
+                content: '### Unzipping\n\nRun `unzip -o file.zip` then:\n\n```bash\ntar -xzf a.tgz && echo "done" > /dev/null\n```\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n#ops #dashboard'},
+            {id: 'enc-2', title: 'Unicode', tags: [],
+                content: 'Gr\u00fc\u00dfe, \u65e5\u672c\u8a9e, emoji \ud83d\ude80, ampersand & less < more >.\n\n- [ ] task one\n- [x] task two\n\n> quote'},
+            {id: 'enc-3', title: 'Imported style', tags: [],
+                content: 'Body.\n\n**Tags:** #database #dashboard'},
+        ];
+
+        function stored() {
+            return page.evaluate(async function() {
+                var localforage = await new Promise(function(resolve, reject) {
+                    window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+                });
+                var notes = [], encrypt;
+                await localforage.createInstance({name: 'notes-db', storeName: 'notes'})
+                    .iterate(function(note) { notes.push(note); });
+                await localforage.createInstance({name: 'notes-db', storeName: 'configs'})
+                    .iterate(function(config) { if (config.name === 'encrypt') { encrypt = String(config.value); } });
+                return {notes: notes, encrypt: encrypt};
+            });
+        }
+
+        // What the app reads back, decrypted
+        function readBack() {
+            return page.evaluate(async function() {
+                var Radio = window.requirejs('backbone.radio'),
+                    coll  = await Radio.request('notes', 'fetch', {profile: 'notes-db'});
+                return (coll.fullCollection || coll).map(function(model) {
+                    return {id: model.id, content: model.get('content'), tags: model.get('tags')};
+                }).sort(function(a, b) { return a.id < b.id ? -1 : 1; });
+            });
+        }
+
+        var expected = seeded.map(function(note) {
+            return {id: note.id, content: note.content, tags: note.tags};
+        });
+
+        await page.evaluate(async function(seeded) {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            var notes = localforage.createInstance({name: 'notes-db', storeName: 'notes'});
+            for (var i = 0; i < seeded.length; i++) {
+                await notes.setItem(seeded[i].id, {
+                    id: seeded[i].id, type: 'notes', title: seeded[i].title,
+                    content: seeded[i].content, tags: seeded[i].tags,
+                    taskAll: 0, taskCompleted: 0, created: Date.now() - i * 1000, updated: Date.now(),
+                    notebookId: '0', isFavorite: 0, trash: 0, files: [],
+                });
+            }
+        }, seeded);
+        await page.reload();
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        expect(await readBack()).toEqual(expected);
+
+        // On
+        await page.goto('/#/settings/encryption');
+        await page.waitForSelector('#useEncryption');
+        await page.check('#useEncryption');
+        await page.fill('#encryptPass', 'first-pass');
+        await page.click('.settings--save');
+        await page.waitForSelector('#encryption-password input[name="password"]', {timeout: 20000});
+        await page.fill('#encryption-password input[name="password"]', 'first-pass');
+        await page.click('#encryption-password input[type="submit"]');
+        await page.waitForSelector('#btn--next', {timeout: 30000});
+        await page.click('#btn--next');
+
+        // Unlock
+        await page.waitForSelector('.-auth input[name="password"]', {timeout: 20000});
+        await page.fill('.-auth input[name="password"]', 'first-pass');
+        await page.click('.-auth button[type="submit"]');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+
+        // Nothing readable in the store; everything readable in the app
+        var locked = await stored();
+        expect(locked.encrypt).toBe('1');
+        locked.notes.forEach(function(note) {
+            var record = JSON.stringify(note);
+            expect(note.title).toBeUndefined();
+            expect(note.content).toBeUndefined();
+            ['Unzipping', 'Gr\u00fc\u00dfe', 'database', 'unzip -o'].forEach(function(word) {
+                expect(record).not.toContain(word);
+            });
+        });
+        expect(await readBack()).toEqual(expected);
+
+        // The list, a tag (one of them only in a note's text) and
+        // search in place all work on decrypted notes
+        await expect(page.locator('#header--count')).toHaveText('3');
+        await page.goto('/#/notes/f/tag/q/dashboard');
+        await expect(page.locator('#header--count')).toHaveText('2');
+        await page.goto('/#/notes');
+        await expect(page.locator('#header--count')).toHaveText('3');
+        await page.fill('#header--search--input', 'gr\u00fc\u00dfe');
+        await expect(page.locator('#header--count')).toHaveText('1');
+        await page.press('#header--search--input', 'Escape');
+
+        // An edit is stored encrypted
+        await page.goto('/#/notes/edit/enc-3');
+        await page.waitForSelector('#editor .CodeMirror');
+        await page.waitForFunction(function() {
+            return document.querySelector('#editor .CodeMirror').CodeMirror.getValue().length > 5;
+        });
+        await page.evaluate(function() {
+            var cm = document.querySelector('#editor .CodeMirror').CodeMirror;
+            cm.setValue(cm.getValue() + '\n\nEdited under encryption.');
+        });
+        await page.click('.editor--save');
+        await expect(page.locator('#note-enc-3 .list--item--text')).toContainText('Edited under');
+        expect(JSON.stringify((await stored()).notes)).not.toContain('Edited under');
+        expected[2].content += '\n\nEdited under encryption.';
+        // saving in the editor fills the tag field from the text
+        expected[2].tags = ['database', 'dashboard'];
+
+        // A new session: a wrong password opens nothing
+        await page.goto('/#/notes');
+        await page.evaluate(function() { window.sessionStorage.clear(); });
+        await page.reload();
+        await page.waitForSelector('.-auth input[name="password"]', {timeout: 20000});
+        await page.fill('.-auth input[name="password"]', 'not-the-password');
+        await page.click('.-auth button[type="submit"]');
+        await page.waitForTimeout(2000);
+        await expect(page.locator('.list--item.-note:visible')).toHaveCount(0);
+        await page.fill('.-auth input[name="password"]', 'first-pass');
+        await page.click('.-auth button[type="submit"]');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        expect(await readBack()).toEqual(expected);
+
+        // Off
+        await page.goto('/#/settings/encryption');
+        await page.waitForSelector('#useEncryption');
+        await page.uncheck('#useEncryption');
+        await page.click('.settings--save');
+        await page.waitForSelector('#encryption-password input[name="oldpass"]', {timeout: 20000});
+        await page.fill('#encryption-password input[name="oldpass"]', 'first-pass');
+        await page.click('#encryption-password input[type="submit"]');
+        await page.waitForSelector('#btn--next', {timeout: 30000});
+        await page.click('#btn--next');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+
+        var open = await stored();
+        expect(open.encrypt).toBe('0');
+        expect(open.notes.filter(function(note) { return note.id === 'enc-1'; })[0].content)
+            .toBe(seeded[0].content);
+        expect(await readBack()).toEqual(expected);
+    });
+
     // The desktop webview has no download manager: a blob link does
     // nothing there, so exports and the encryption backup were lost
     // without a word. They go to the shell's save_file command.

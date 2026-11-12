@@ -4,7 +4,7 @@ Revival plan for the Seshat fork of Laverna (renamed
 2026-11-11; do not ship new work under the Laverna
 name). Dossier: `DOSSIER.md`. Working prompts per
 phase: `PROMPTS.md`. Statuses verified against the
-tree on 2026-11-11 unless noted.
+tree on 2026-11-12 unless noted.
 
 ## Phase 0 - launch
 
@@ -80,16 +80,122 @@ overlap once the build is green.
 Non-goals for phase 1: framework rewrite, P2P sync,
 Cordova mobile, new features. Stabilize first.
 
-## Phase 2 - modernize
+## Where we are (2026-11-12)
+
+Phases 0 and 1 are done; v0.8.0-rc1 is out. Since then,
+work that was not on this roadmap landed on master and is
+in the debug install, but not in a release or the demo:
+
+- [x] Interface redesign for hundreds of notes: one
+      continuous list under date headings, search in
+      place, compact density, reading and writing on one
+      measure, day and night themes, self-hosted type,
+      new icons (2026-11-12). README has a Design section.
+- [x] Editor: one column with a Preview switch; side by
+      side is a remembered choice; heading button fixed
+      (2026-11-12).
+- [x] Desktop shell (Tauri v2, Linux deb), ahead of its
+      Phase 2 slot (2026-11-11). Exports and the
+      encryption backup save through a native dialog;
+      the webview has no download manager (2026-11-12).
+- [x] Obsidian vault importer (2026-11-11); notes keep
+      their file dates and the tags written in their
+      text (2026-11-12).
+- [x] Debug install follows the latest commit: git hooks
+      plus cron build and install it (2026-11-12).
+- [x] Speed: start-up at 3,000 notes 1.6 s to 0.8 s,
+      list switching 1.4 s to 0.65 s, typing in a long
+      note 4x less main-thread work (2026-11-12, numbers
+      in the commit).
+- [x] Encryption lifecycle proven end to end in a
+      browser test: on, unlock, tags, search, edit, wrong
+      password, off. Nothing readable in the store while
+      on; notes byte-identical after (2026-11-12). This
+      is the gh-992 fixture from BACKLOG.md; the garbling
+      did not reproduce.
+
+Suite: 23 Playwright cases and 31 Vitest cases, green in
+CI on every push.
+
+## Phase 2 - make it trustworthy, then release
+
+Ordered. Each line is done when a test or a run proves
+it, as in Phase 1.
+
+### 2a - trust (data safety first)
+
+- [ ] Remaining P0 fixtures from BACKLOG.md: "all notes
+      gone" on a profile mismatch or cleared storage
+      (gh-683, gh-670, gh-440); legacy database opened by
+      the current migrate (gh-864); desktop unlock with a
+      bad or empty key (gh-808, the shell now exists to
+      reproduce it).
+- [ ] KDF uplift for new setups. PBKDF2 runs at 10,000
+      iterations today, low for 2026. The SJCL reader
+      stays so every existing note still opens.
+- [ ] Turning encryption off leaves the old ciphertext
+      beside each plain note (`encryptedData`). Harmless
+      but stale; drop it on decrypt.
+- [ ] The derived key lives in sessionStorage for the
+      session. Decide whether the desktop app should lock
+      on idle or on window close only.
+
+### 2b - desktop shell
+
+- [ ] Audit the other browser assumptions the download
+      bug belonged to: links that should open in the
+      system browser, attachment drag and drop, the file
+      pickers for import, printing.
+- [ ] Storage and encryption run on the main thread in
+      WebKit (workers are switched off by an old Safari
+      workaround in app.js). Re-enable and test in the
+      real window.
+- [ ] Signing: macOS and Windows, pending Andrei's call
+      on which identities to reuse (see TAURI.md).
+- [ ] Full bundle matrix at v0.8.0 final (AppImage, RPM,
+      MSI, NSIS reject the -rc suffix).
+
+### 2c - Obsidian vault
+
+- [ ] Decide: stay a one-time copy, or become a link.
+      Today it is a copy, and importing twice duplicates
+      every note. A re-import that updates instead of
+      duplicating needs a stable key per file (its path).
+- [ ] Attachments: counted and skipped today.
+
+### 2d - release
+
+- [ ] Translate the strings added with the redesign
+      (five, English fallback in 30 locales).
+- [ ] v0.8.0-rc2 with everything above the line; refresh
+      the demo on gh-pages, which still shows the old
+      interface.
+- [ ] v0.8.0 after soak.
+- [ ] Create `creativeheadz/seshat` on Gitea and push
+      (carried over from Phase 0).
+
+### 2e - speed, when it is needed
+
+- [ ] Every list switch re-reads all notes and, with
+      encryption on, decrypts them again. One decrypted
+      copy in memory, filtered, makes switching instant.
+      Touches the code gh-932 lived in: do it as its own
+      pass with tests first.
+- [ ] Draw only the rows on screen. Not needed at
+      hundreds of notes; the next step past about 3,000.
+
+## Phase 3 - modernize
 
 - Marionette 2 to a current framework (the 17k-line
   job: 171 files verified in tree), keeping the
   IndexedDB format readable.
-- KaTeX for MathJax 2.6; PWA plus signed Tauri desktop.
-- KDF uplift for new notes with the SJCL reader kept.
-- Guaranteed v0.7.51 data import, fixture-tested.
+- KaTeX for MathJax 2.7.
+- PWA: a service worker in place of the app cache
+  manifest the build still writes (browsers dropped it).
+- Guaranteed v0.7.51 data import, fixture-tested beyond
+  the single note covered today.
 
-## Phase 3 - community
+## Phase 4 - community
 
 - Work the triaged backlog oldest-first; announce where
   notes-app users are; decide month 4+ with whoever
