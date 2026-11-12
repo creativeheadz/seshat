@@ -42,6 +42,17 @@ describe('vault mapper', function() {
             .toEqual(['A', 'B']);
     });
 
+    // The desktop shell sends each file's modification time; without
+    // it every imported note was dated the moment of the import.
+    it('dates a note by its file, falling back to now', function() {
+        expect(mapper.mapNote({path: 'a.md', content: 'x', mtime: 1700000000000}).created)
+            .toBe(1700000000000);
+
+        var before = Date.now(),
+            created = mapper.mapNote({path: 'a.md', content: 'x'}).created;
+        expect(created).toBeGreaterThanOrEqual(before);
+    });
+
     it('normalizes tags to lowercase uniq', function() {
         expect(mapper.normalizeTags(['B', 'b', ' a '])).toEqual(['b', 'a']);
         expect(mapper.normalizeTags('#Solo')).toEqual(['solo']);

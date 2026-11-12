@@ -25,6 +25,10 @@ struct VaultFile {
     /// Path relative to the vault root, `/`-separated.
     path: String,
     content: String,
+    /// Last modification, in milliseconds since the Unix epoch. The
+    /// note keeps this as its date, so an imported vault is spread
+    /// over the years it was written in, not stacked on import day.
+    mtime: Option<u64>,
 }
 
 #[derive(Serialize)]
@@ -52,6 +56,12 @@ fn is_markdown(name: &str) -> bool {
         Some(ext) => ext.eq_ignore_ascii_case("md") || ext.eq_ignore_ascii_case("markdown"),
         None => false,
     }
+}
+
+fn mtime_ms(path: &Path) -> Option<u64> {
+    let modified = std::fs::metadata(path).ok()?.modified().ok()?;
+    let since_epoch = modified.duration_since(std::time::UNIX_EPOCH).ok()?;
+    u64::try_from(since_epoch.as_millis()).ok()
 }
 
 fn rel_string(root: &Path, path: &Path) -> String {
@@ -91,6 +101,7 @@ fn walk(dir: &Path, root: &Path, files: &mut Vec<VaultFile>, skipped: &mut Vec<S
             files.push(VaultFile {
                 path: rel_string(root, &path),
                 content: String::from_utf8_lossy(&bytes).into_owned(),
+                mtime: mtime_ms(&path),
             });
         } else if is_skipped_file(&name) || !name.starts_with('.') {
             // Named attachment types plus any other visible non-markdown
