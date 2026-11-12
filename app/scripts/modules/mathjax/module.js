@@ -5,68 +5,109 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/* global define */
+/* global define, requirejs */
 define([
     'underscore',
-    'modules',
-    'backbone.radio',
-    'mathjax',
-    'modules/mathjax/libs/mathjax'
-], function(_, Modules, Radio, MathJax, math) {
+    'q',
+    'backbone.radio'
+], function(_, Q, Radio) {
     'use strict';
 
     /**
-     * MathJax module. Renders MathJax.
+     * Maths.
+     *
+     * TeX between dollar signs ($x^2$, $$...$$) is typeset with
+     * MathJax when a note that is being read or previewed contains
+     * any. MathJax is large, so nothing of it is loaded until then:
+     * a profile with no maths never downloads it.
+     *
+     * This used to be an optional module, off by default, so maths
+     * showed as its source unless a setting was found and switched
+     * on. The Markdown parser decides what is maths (it leaves prices
+     * and shell variables alone); this only draws it.
      */
-    var MathjaxModule = Modules.module('MathjaxModule', {});
+    var Maths = {
 
-    // Configure MathJax
-    MathJax.Hub.Config({
-        jax     : ['input/TeX', 'output/HTML-CSS'],
-        tex2jax : {
-            inlineMath     : [['$', '$']],
-            displayMath    : [['$$', '$$']],
-            processClass   : 'math',
-            ignoreClass    : 'layout',
-            processEscapes : true
+        // The note or preview on screen
+        view    : null,
+
+        loading : null,
+
+        /**
+         * Fetches MathJax and its helper, once.
+         */
+        load: function() {
+            if (Maths.loading) {
+                return Maths.loading;
+            }
+
+            var defer = Q.defer();
+
+            requirejs(['mathjax', 'modules/mathjax/libs/mathjax'], function(MathJax, helper) {
+                MathJax.Hub.Config({
+                    jax     : ['input/TeX', 'output/HTML-CSS'],
+                    tex2jax : {
+                        inlineMath     : [['$', '$']],
+                        displayMath    : [['$$', '$$']],
+                        processClass   : 'math',
+                        ignoreClass    : 'layout',
+                        processEscapes : true
+                    }
+                });
+
+                defer.resolve(helper);
+            }, function(e) {
+                // Let a later note try again
+                Maths.loading = null;
+                defer.reject(e);
+            });
+
+            Maths.loading = defer.promise;
+            return Maths.loading;
+        },
+
+        render: function(view) {
+            if (view && view.$el) {
+                Maths.view = view;
+            }
+
+            if (!Maths.view || !Maths.view.$el.find('.math').length) {
+                return;
+            }
+
+            return Maths.load()
+            .then(function(helper) {
+                if (Maths.view) {
+                    return helper.render(Maths.view);
+                }
+            })
+            .fail(function(e) {
+                console.error('Maths:', e);
+            });
+        },
+
+        forget: function() {
+            Maths.view = null;
         }
-    });
+    };
 
-    /**
-     * Initializers & finalizers of the module
-     */
-    MathjaxModule.on('start', function(view) {
-        // Render MathJax on start
-        math.render(view);
-
-        // Re-render MathJax every time when preview is refreshed.
-        Radio.on('editor', 'preview:refresh', _.debounce(math.render, 350), math);
-    });
-
-    MathjaxModule.on('stop', function() {
-        console.info('MathJax has stopped');
-
-        math.view = null;
-        Radio.off('editor', 'preview:refresh');
-    });
-
-    /**
-     * Start listening to events.
-     */
     Radio.request('init', 'add', 'module', function() {
 
-        // When a note is shown, start this module
+        // A note is shown
         Radio.on('noteView', {
-            'view:render'  : MathjaxModule.start,
-            'view:destroy' : MathjaxModule.stop
-        }, MathjaxModule);
+            'view:render'  : Maths.render,
+            'view:destroy' : Maths.forget
+        });
 
-        // When an editor view is shown, start this module
+        // The editor's preview is shown, then redrawn as you type
         Radio.on('editor', {
-            'view:render'  : MathjaxModule.start,
-            'view:destroy' : MathjaxModule.stop
-        }, MathjaxModule);
+            'view:render'     : Maths.render,
+            'view:destroy'    : Maths.forget,
+            'preview:refresh' : _.debounce(function() {
+                Maths.render();
+            }, 350)
+        });
     });
 
-    return MathjaxModule;
+    return Maths;
 });

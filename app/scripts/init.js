@@ -66,6 +66,7 @@ define([
 
         // Modules
         'modules/markdown/module',
+        'modules/mathjax/module',
         'modules/codemirror/module',
         'modules/linkDialog/module',
         'modules/fileDialog/module',

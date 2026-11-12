@@ -38,7 +38,7 @@ define([
         initialize: function(options) {
             _.bindAll(this, 'show', 'onFetch', 'requireView', 'redirect');
 
-            options.tab  = options.tab || 'modules';
+            options.tab  = options.tab || 'general';
             this.options = options;
             this.changes = {};
             this.saves   = {};

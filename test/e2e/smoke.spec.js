@@ -240,12 +240,60 @@ test.describe('smoke', function() {
         await expect(page.locator('#modal')).toContainText('not a Seshat backup', {timeout: 30000});
     });
 
+    // Maths used to be an optional module, off by default: TeX showed
+    // as its source unless a setting was switched on. It is drawn now
+    // whenever a note has some, and MathJax (large) is fetched only
+    // then.
+    test('maths is typeset when a note has some, and only then', async function({page}) {
+        var mathjaxRequests = 0;
+        page.on('request', function(req) {
+            if (req.url().indexOf('/vendor/MathJax/') !== -1) {
+                mathjaxRequests++;
+            }
+        });
+
+        await page.evaluate(async function() {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            var notes = localforage.createInstance({name: 'notes-db', storeName: 'notes'});
+            await notes.setItem('plain', {
+                id: 'plain', type: 'notes', title: 'Prices',
+                content: 'It costs $5 and $10 at most. $HOME is a variable.',
+                taskAll: 0, taskCompleted: 0, created: Date.now(), updated: Date.now(),
+                notebookId: '0', tags: [], isFavorite: 0, trash: 0, files: [],
+            });
+            await notes.setItem('maths', {
+                id: 'maths', type: 'notes', title: 'Pythagoras',
+                content: 'Inline $x^2 + y^2 = z^2$ here.',
+                taskAll: 0, taskCompleted: 0, created: Date.now() - 1000, updated: Date.now(),
+                notebookId: '0', tags: [], isFavorite: 0, trash: 0, files: [],
+            });
+        });
+        await page.reload();
+        await page.waitForSelector('#note-plain', {timeout: 20000});
+
+        // Dollar amounts are not maths, and cost nothing
+        await page.click('#note-plain');
+        await page.waitForSelector('.content.-note[data-id="plain"] .prose');
+        await expect(page.locator('.content.-note .math')).toHaveCount(0);
+        await expect(page.locator('.content.-note .prose')).toContainText('It costs $5 and $10 at most.');
+        await page.waitForTimeout(1000);
+        expect(mathjaxRequests).toBe(0);
+
+        // A formula is drawn, with no setting touched
+        await page.click('#note-maths');
+        await page.waitForSelector('.content.-note[data-id="maths"] .prose');
+        await expect(page.locator('.content.-note .MathJax').first()).toBeVisible({timeout: 30000});
+        expect(mathjaxRequests).toBeGreaterThan(0);
+    });
+
     // Settings tabs are loaded by name at run time. The Editor tab
     // was left out of the build and showed a blank page in every
     // release; a missing tab fails this as a 404 (see afterEach).
     test('every settings tab opens in the built app', async function({page}) {
         var tabs = ['general', 'editor', 'encryption', 'keybindings', 'sync',
-            'profiles', 'modules', 'importExport'];
+            'profiles', 'importExport'];
 
         for (var i = 0; i < tabs.length; i++) {
             await page.goto('/#/settings/' + tabs[i]);

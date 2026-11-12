@@ -9,31 +9,26 @@
 define([
     'underscore',
     'q',
-    'backbone.radio',
-    'text!modules/modules.json'
-], function(_, Q, Radio, modules) {
+    'backbone.radio'
+], function(_, Q, Radio) {
     'use strict';
 
     /**
-     * Module loader.
+     * Loads the parts of the app that depend on a setting.
+     *
+     * There used to be a list of optional "modules" a profile could
+     * switch on (maths, a fuzzy title search, two that only ran under
+     * Electron). It was a list of feature flags, not a way to extend
+     * the app, and it is gone: maths loads itself when a note needs
+     * it, search is built in. What is left is the sync backend, which
+     * is only loaded when one is chosen.
      */
     var ModuleLoader = {
 
         init: function() {
-            var platform = Radio.request('global', 'platform');
-
-            // List of available modules
-            modules = _.filter(JSON.parse(modules), function(m) {
-                return _.indexOf(m.platforms, platform) > -1;
-            });
-            Radio.reply('global', 'modules', modules);
-
             return this.load();
         },
 
-        /**
-         * Load modules.
-         */
         load: function() {
             var defer = Q.defer();
 
@@ -44,21 +39,8 @@ define([
             return defer.promise;
         },
 
-        /**
-         * Return a list of modules which need to be loaded.
-         *
-         * @return array
-         */
         get: function() {
-            var modules2Load = Radio.request('configs', 'get:config', 'modules');
-
-            modules2Load = _.map(modules2Load, function(name) {
-                if (!name || !_.findWhere(modules, {id: name})) {
-                    return '';
-                }
-
-                return 'modules/' + name + '/module';
-            });
+            var modules2Load = [];
 
             switch (Radio.request('configs', 'get:config', 'cloudStorage')) {
                 case 'remotestorage':
@@ -71,7 +53,7 @@ define([
                     break;
             }
 
-            return _.compact(modules2Load);
+            return modules2Load;
         },
     };
 
@@ -81,5 +63,4 @@ define([
     });
 
     return ModuleLoader;
-
 });

@@ -27,8 +27,7 @@ define([
     Settings.Router = Marionette.AppRouter.extend({
 
         appRoutes: {
-            '(p/:profile/)settings(/:tab)'      : 'showSettings',
-            '(p/:profile/)settings/module/:tab' : 'showModule'
+            '(p/:profile/)settings(/:tab)'      : 'showSettings'
         },
 
         // Starts itself
@@ -52,18 +51,6 @@ define([
 
                 Settings.currentApp = Module;
                 Module.start(controller.getOptions(profile, tab));
-            });
-        },
-
-        showModule: function(profile, module) {
-            requirejs(['apps/settings/module/app'], function(Module) {
-                // Stop previously started module
-                if (Settings.currentApp) {
-                    Settings.currentApp.stop();
-                }
-
-                Settings.currentApp = Module;
-                Module.start({profile: profile, module: module});
             });
         },
 

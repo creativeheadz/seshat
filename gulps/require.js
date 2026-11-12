@@ -62,8 +62,6 @@ module.exports = function(gulp, plugins, argv) {
             // The list used to be written out by hand and missed
             // `editor`, which left that tab blank in every build.
             include        : settingsViews.concat([
-                'apps/settings/module/app',
-                'apps/settings/module/controller',
                 'views/loader',
 
                 'backbone.sync',

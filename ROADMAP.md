@@ -117,7 +117,15 @@ in the debug install, but not in a release or the demo:
       is the gh-992 fixture from BACKLOG.md; the garbling
       did not reproduce.
 
-Suite: 23 Playwright cases and 31 Vitest cases, green in
+- [x] The "modules" setting is gone (2026-11-12). It was a
+      list of four feature flags, not a way to extend the
+      app: two only ran under Electron and could not be
+      seen any more, the fuzzy title search was superseded
+      by search in place, and maths was off unless you
+      found the switch. Maths now draws itself when a note
+      has some and loads MathJax only then.
+
+Suite: 31 Playwright cases and 41 Vitest cases, green in
 CI on every push.
 
 ## Phase 2 - make it trustworthy, then release

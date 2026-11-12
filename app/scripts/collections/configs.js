@@ -69,6 +69,8 @@ define([
             'appKeyboardHelp'    : '?',
             'textEditor'         : 'default',
 
+            // No longer read: the optional modules are gone. The key
+            // stays so stored profiles and the defaults still agree.
             'modules'            : []
         },
 
