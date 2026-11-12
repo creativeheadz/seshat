@@ -228,6 +228,18 @@ test.describe('smoke', function() {
         });
     });
 
+    // Silent-import fix: a non-backup file must say so, not vanish.
+    test('importing a non-backup file reports an error', async function({page}) {
+        await page.goto('/#/settings/importExport');
+        await page.waitForSelector('#import-data-file', {state: 'attached'});
+        await page.locator('#import-data-file').setInputFiles({
+            name: 'note.txt',
+            mimeType: 'text/plain',
+            buffer: Buffer.from('# not a backup'),
+        });
+        await expect(page.locator('#modal')).toContainText('not a Seshat backup', {timeout: 30000});
+    });
+
     // Dropbox removal: sync settings render with no dropbox UI.
     test('settings sync view renders without dropbox', async function({page}) {
         await page.goto('/#/settings/sync');

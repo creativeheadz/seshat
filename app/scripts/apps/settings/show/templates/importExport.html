@@ -25,3 +25,19 @@
         <i class="icon-note"></i> {{ i18n('Export data') }}
     </button>
 </div>
+
+<% if (isTauri) { %>
+<div class="center-block">
+    <header>
+        <h3>{{ i18n('Import Obsidian vault') }}</h3>
+    </header>
+
+    <p class="help-block">{{ i18n('vault help') }}</p>
+    <button id="do-import-vault" type="button" class="btn btn-default btn-block">
+        <i class="icon-note"></i> {{ i18n('Import Obsidian vault') }}
+    </button>
+    <div id="import-vault-progress" class="progress hidden">
+        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+    </div>
+</div>
+<% } %>

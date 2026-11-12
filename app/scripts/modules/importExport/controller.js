@@ -4,9 +4,10 @@ define([
     'q',
     'marionette',
     'backbone.radio',
+    'i18next',
     'jszip',
     'helpers/fileSaver'
-], function(_, Q, Marionette, Radio, JSZip, fileSaver) {
+], function(_, Q, Marionette, Radio, i18n, JSZip, fileSaver) {
     'use strict';
 
     /**
@@ -28,6 +29,7 @@ define([
             if (!this.options.files || !this.options.files.length ||
                (this.options.files[0].type !== 'application/zip' &&
                _.last(this.options.files[0].name.split('.')) !== 'zip')) {
+                this.report(i18n.t('Import failed'), i18n.t('Not a Seshat backup'));
                 return;
             }
 
@@ -39,14 +41,20 @@ define([
             reader.onload = function(evt) {
                 try {
                     self.zip.load(evt.target.result);
-
-                    // Start importing process
-                    self.importData()
-                    .then(function() {
-                        document.location.reload();
-                    });
                 } catch (e) {
+                    self.report(i18n.t('Import failed'), String(e.message || e));
+                    return;
                 }
+
+                // Start importing process
+                self.importData()
+                .then(function(summary) {
+                    self.finishImport(summary);
+                })
+                .fail(function(e) {
+                    console.error('importProfiles:', e);
+                    self.report(i18n.t('Import failed'), String(e.message || e));
+                });
             };
 
             reader.readAsArrayBuffer(this.options.files[0]);
@@ -54,36 +62,102 @@ define([
 
         /**
          * Import data from a loaded ZIP archive to DB.
+         * Resolves a summary; per-file failures are collected,
+         * never silent and never fatal to the rest.
          */
         importData: function() {
-            var self     = this,
-                promises = [];
+            var self    = this,
+                chain   = new Q(),
+                summary = {notes: 0, collections: 0, skipped: 0, failed: 0, errors: []};
 
             _.each(this.zip.files, function(file) {
 
                 // Ignore directories and non JSON files
                 if (file.dir || _.last(file.name.split('.')) !== 'json') {
+                    summary.skipped++;
                     return;
                 }
 
-                var path = file.name.split('/');
+                chain = chain.then(function() {
+                    var path = file.name.split('/'),
+                        text;
 
-                // Notes should be imported differently
-                if (path[2] === 'notes') {
-                    return promises.push(function() {
-                        return self.importNote(path[1], file.name, self.zip.file(file.name).asText());
+                    try {
+                        text = self.zip.file(file.name).asText();
+                    } catch (e) {
+                        return self.failOne(summary, file.name, e);
+                    }
+
+                    // Notes should be imported differently
+                    if (path[2] === 'notes') {
+                        return Q.when(self.importNote(path[1], file.name, text))
+                        .then(function() {
+                            summary.notes++;
+                        }, function(e) {
+                            self.failOne(summary, file.name, e);
+                        });
+                    }
+
+                    // path[2].split('.json')[0] === [notebooks|tags|configs]
+                    var type = (path[2] || '').split('.json')[0];
+                    if (_.indexOf(['notebooks', 'tags', 'configs'], type) === -1) {
+                        summary.skipped++;
+                        return null;
+                    }
+
+                    return Q.when(self.importCollection(path[1], type, text))
+                    .then(function() {
+                        summary.collections++;
+                    }, function(e) {
+                        self.failOne(summary, file.name, e);
                     });
-                }
-
-                // path[2].split('.json')[0] === [notebooks|tags|configs]
-                promises.push(function() {
-                    return self.importCollection(path[1], path[2].split('.json')[0], self.zip.file(file.name).asText());
                 });
             });
 
-            return _.reduce(promises, Q.when, new Q())
-            .fail(function(e) {
-                console.error('importProfiles:', e);
+            return chain.then(function() {
+                return summary;
+            });
+        },
+
+        failOne: function(summary, name, err) {
+            summary.failed++;
+            summary.errors.push(name + ': ' + String((err && err.message) || err));
+            return null;
+        },
+
+        finishImport: function(summary) {
+            var total = summary.notes + summary.collections;
+
+            if (!total) {
+                this.report(
+                    i18n.t('Nothing importable found'),
+                    summary.errors.length ? summary.errors[0] :
+                        i18n.t('Not a Seshat backup')
+                );
+                return;
+            }
+
+            var content = i18n.t('import data summary')
+                .split('{{notes}}').join(summary.notes)
+                .split('{{collections}}').join(summary.collections);
+
+            if (summary.failed) {
+                content += '\n\n' + summary.failed + ' failed: ' + summary.errors[0];
+            }
+
+            this.report(i18n.t('Import complete'), content, true);
+        },
+
+        report: function(title, content, reload) {
+            Radio.request('Confirm', 'start', {
+                title   : title,
+                content : content,
+                onConfirm : reload ? function() {
+                    document.location.reload();
+                } : null,
+                onCancel  : reload ? function() {
+                    document.location.reload();
+                } : null,
             });
         },
 
