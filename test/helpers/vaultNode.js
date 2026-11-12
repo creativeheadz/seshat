@@ -53,7 +53,8 @@ function makeNodeSource(dir) {
 }
 
 // Writer straight to localforage (fake-indexeddb under Vitest).
-function makeWriter(localforage, profile) {
+// Pass the mapper to give it existing(), as the app's writer has.
+function makeWriter(localforage, profile, mapper) {
     var notes = localforage.createInstance({name: profile, storeName: 'notes'}),
         notebooks = localforage.createInstance({name: profile, storeName: 'notebooks'});
 
@@ -86,6 +87,22 @@ function makeWriter(localforage, profile) {
 
         saveNote: function(attrs) {
             return notes.setItem(attrs.id, attrs);
+        },
+
+        existing: function() {
+            if (!mapper) {
+                return Promise.resolve({});
+            }
+            return notes.keys().then(function(keys) {
+                return Promise.all(keys.map(function(key) { return notes.getItem(key); }));
+            })
+            .then(function(all) {
+                var map = {};
+                all.forEach(function(note) {
+                    map[mapper.fingerprint(note.title, note.content)] = note.id;
+                });
+                return map;
+            });
         },
     };
 }

@@ -18,7 +18,9 @@ define([
      * - source() resolves {files: [{path, content, mtime?}], skipped: []}
      *   or null when the user cancels.
      * - writer: {findNotebook(name, parentId), saveNotebook(attrs),
-     *   saveNote(attrs), saveTags(names)?}; attrs carry pre-minted ids.
+     *   saveNote(attrs), saveTags(names)?, existing()?}; attrs carry
+     *   pre-minted ids. existing() resolves a map of note fingerprint
+     *   (mapper.fingerprint) to the id of the note already stored.
      * - opts: {onProgress({done, total}), batchSize}.
      */
     function ensureNotebooks(specs, writer) {
@@ -78,16 +80,46 @@ define([
                 embeds     : 0,
                 unresolved : 0,
                 resolved   : 0,
+                duplicates : 0,
             };
 
-        return ensureNotebooks(specs, writer)
+        var index = mapper.buildTitleIndex(specs);
+
+        // The import is a one-time copy. Doing it again must not
+        // double every note: a file whose title and text are already
+        // here is left alone, and links to it point at the note that
+        // is here.
+        return Q.when(writer.existing ? writer.existing() : {})
+        .then(function(existing) {
+            _.each(specs, function(spec) {
+                var text = mapper.rewriteWikilinks(spec.content, index).text,
+                    id   = existing[mapper.fingerprint(spec.title, text)];
+
+                if (id) {
+                    spec.id        = id;
+                    spec.duplicate = true;
+                }
+            });
+
+            return ensureNotebooks(_.reject(specs, function(spec) {
+                return spec.duplicate;
+            }), writer);
+        })
         .then(function(notebookIds) {
-            var index = mapper.buildTitleIndex(specs),
-                chain = new Q(),
+            var chain = new Q(),
                 done  = 0;
 
             _.each(specs, function(spec, i) {
                 chain = chain.then(function() {
+                    if (spec.duplicate) {
+                        done++;
+                        summary.duplicates++;
+                        if (done % opts.batchSize === 0 || done === specs.length) {
+                            opts.onProgress({done: done, total: specs.length});
+                        }
+                        return;
+                    }
+
                     var link = mapper.rewriteWikilinks(spec.content, index),
                         notebookId = notebookIds[spec.notebookPath.join('/')] || '0';
 
@@ -127,7 +159,9 @@ define([
 
             // The tag list (Notebooks & tags) is a store of its own
             chain = chain.then(function() {
-                var tags = _.uniq(_.flatten(_.pluck(specs, 'tags')));
+                var tags = _.uniq(_.flatten(_.pluck(_.reject(specs, function(spec) {
+                    return spec.duplicate;
+                }), 'tags')));
                 return writer.saveTags && tags.length ? writer.saveTags(tags) : null;
             });
 

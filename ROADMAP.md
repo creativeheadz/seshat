@@ -138,12 +138,23 @@ it, as in Phase 1.
       (gh-864): covered by the migrate unit test.
 - [ ] Desktop unlock with a bad or empty key (gh-808):
       needs the real window.
-- [ ] KDF uplift for new setups. PBKDF2 runs at 10,000
-      iterations today, low for 2026. The SJCL reader
-      stays so every existing note still opens.
-- [ ] Turning encryption off leaves the old ciphertext
-      beside each plain note (`encryptedData`). Harmless
-      but stale; drop it on decrypt.
+- [ ] Key derivation. Looked into on 2026-11-12: the
+      iteration count (PBKDF2 at 10,000, low for 2026) is
+      the smaller half. To check a password the app keeps
+      its plain, unsalted SHA-256 in the configs store,
+      and writes it into exported settings and backups.
+      Whoever holds either can test passwords at SHA-256
+      speed and never touch PBKDF2. A real uplift is a
+      verifier derived through the KDF, more iterations
+      through WebCrypto (measured: 0.1 s for 600,000,
+      same key as SJCL, which stays as the fallback and
+      the reader), and exports without the verifier. It
+      changes how an existing profile is verified, so it
+      waits for Andrei's go-ahead and a verified backup.
+- [x] Checked 2026-11-12, nothing to fix: after turning
+      encryption off each note keeps an `encryptedData`
+      field, but it is empty, not old ciphertext, and
+      edits afterwards are stored as plain text.
 - [ ] The derived key lives in sessionStorage for the
       session. Decide whether the desktop app should lock
       on idle or on window close only.
@@ -174,8 +185,10 @@ it, as in Phase 1.
 
 - [x] Decided 2026-11-12: a one-time copy, never a link
       (DOSSIER.md). Seshat is not a front end for a vault.
-- [ ] A second import of the same vault must not double
-      every note: skip what is already here, and say so.
+- [x] A second import of the same vault adds nothing: a
+      file whose title and text are already here is left
+      alone and counted in the summary; links from new
+      notes point at the note that is here (2026-11-12).
 - [ ] Attachments: counted and skipped today.
 
 ### 2d - release

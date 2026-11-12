@@ -149,6 +149,27 @@ define([
             };
         },
 
+        /**
+         * What makes two notes the same note, for telling that a
+         * vault was imported before: its title and its text.
+         *
+         * Links between notes are left out of the comparison, since
+         * each import mints new ids for them, and so are white space
+         * and the entity escaping the store applies. Nothing is kept
+         * on the note to mark where it came from: with encryption on
+         * that would be a file name sitting in plain text.
+         */
+        fingerprint: function(title, content) {
+            function plain(str) {
+                return _.unescape(_.unescape(String(str || '')))
+                .replace(/\]\(#\/notes\/show\/[^)]*\)/g, ']()')
+                .replace(/\s+/g, ' ')
+                .trim();
+            }
+
+            return plain(title) + '\n' + plain(content);
+        },
+
         buildTitleIndex: function(specs) {
             var index = {};
             _.each(specs, function(spec) {

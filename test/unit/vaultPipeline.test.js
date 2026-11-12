@@ -13,12 +13,16 @@ import {makeNodeSource, makeWriter} from '../helpers/vaultNode.js';
 
 global.window = global;
 
-var runner, localforage;
+var runner, localforage, mapper;
 
 beforeAll(async function() {
-    var mods = await load(['modules/importExport/vault/runner', 'localforage']);
+    var mods = await load([
+        'modules/importExport/vault/runner', 'localforage',
+        'modules/importExport/vault/mapper',
+    ]);
     runner = mods[0];
     localforage = mods[1];
+    mapper = mods[2];
 });
 
 describe('vault pipeline', function() {
@@ -70,6 +74,56 @@ describe('vault pipeline', function() {
         expect(sub.parentId).toBe(diary.id);
         expect(dated.notebookId).toBe(diary.id);
         expect(dated.tags).toEqual(['journal', '2024']);
+    });
+
+    // The import is a one-time copy; doing it twice must not double
+    // every note.
+    it('a second import of the same vault adds nothing', async function() {
+        var dir = path.join(__dirname, '..', 'fixtures', 'vault'),
+            notes = localforage.createInstance({name: 'import-twice', storeName: 'notes'});
+
+        var first = await runner.run(
+            makeNodeSource(dir), makeWriter(localforage, 'import-twice', mapper), {}
+        );
+        expect(first.notes).toBe(4);
+        expect(first.duplicates).toBe(0);
+        expect((await notes.keys()).length).toBe(4);
+
+        var second = await runner.run(
+            makeNodeSource(dir), makeWriter(localforage, 'import-twice', mapper), {}
+        );
+        expect(second.notes).toBe(0);
+        expect(second.duplicates).toBe(4);
+        expect((await notes.keys()).length).toBe(4);
+    });
+
+    // A file that changed since the first import is a new note, and
+    // its links to notes already here point at the ones that are here.
+    it('a later import adds only what is new and links to what is here', async function() {
+        var notes = localforage.createInstance({name: 'import-later', storeName: 'notes'});
+
+        function source(files) {
+            return function() { return Promise.resolve({files: files, skipped: []}); };
+        }
+
+        await runner.run(source([
+            {path: 'A.md', content: 'first text'},
+        ]), makeWriter(localforage, 'import-later', mapper), {});
+        var keys = await notes.keys(),
+            a    = await notes.getItem(keys[0]);
+
+        var summary = await runner.run(source([
+            {path: 'A.md', content: 'first text'},
+            {path: 'B.md', content: 'see [[A]]'},
+        ]), makeWriter(localforage, 'import-later', mapper), {});
+
+        expect(summary.notes).toBe(1);
+        expect(summary.duplicates).toBe(1);
+
+        var all = await Promise.all((await notes.keys()).map(function(k) { return notes.getItem(k); })),
+            b   = all.filter(function(n) { return n.title === 'B'; })[0];
+        expect(all.length).toBe(2);
+        expect(b.content).toBe('see [A](#/notes/show/' + a.id + ')');
     });
 
     it('reports cancellation as cancelled, not an error', async function() {

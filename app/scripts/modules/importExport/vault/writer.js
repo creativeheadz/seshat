@@ -9,8 +9,9 @@
 define([
     'underscore',
     'q',
-    'backbone.radio'
-], function(_, Q, Radio) {
+    'backbone.radio',
+    'modules/importExport/vault/mapper'
+], function(_, Q, Radio, mapper) {
     'use strict';
 
     /**
@@ -49,6 +50,23 @@ define([
 
             saveNote: function(attrs) {
                 return Q.when(Radio.request('notes', 'save:raw', attrs, {profile: profile}));
+            },
+
+            // Fingerprint of every note in the profile (decrypted, not
+            // in the trash), mapped to its id
+            existing: function() {
+                return Q.when(Radio.request('notes', 'fetch', {profile: profile}))
+                .then(function(collection) {
+                    var map = {};
+
+                    (collection.fullCollection || collection).each(function(note) {
+                        if (Number(note.get('trash')) === 0) {
+                            map[mapper.fingerprint(note.get('title'), note.get('content'))] = note.id;
+                        }
+                    });
+
+                    return map;
+                });
             },
 
             saveTags: function(names) {

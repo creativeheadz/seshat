@@ -132,6 +132,12 @@ define([
                 skipped   : summary.skipped
             });
 
+            if (summary.duplicates) {
+                content += '\n\n' + i18n.t('vault duplicates', {
+                    duplicates : summary.duplicates
+                });
+            }
+
             if (summary.unresolved) {
                 content += '\n\n' + i18n.t('unresolved links', {
                     unresolved : summary.unresolved

@@ -937,4 +937,53 @@ test.describe('smoke', function() {
         await expect(page.locator('.list--item--title').filter({hasText: 'Welcome'})).toHaveCount(1);
         await expect(page.locator('.list--item--title').filter({hasText: 'Second'})).toHaveCount(1);
     });
+
+    // The import is a one-time copy: running it again on the same
+    // vault must not double every note.
+    test('importing the same vault twice adds nothing the second time', async function({page}) {
+        await page.addInitScript(function() {
+            window.__TAURI_INTERNALS__ = {
+                invoke: function(cmd) {
+                    if (cmd !== 'import_vault') {
+                        return Promise.reject(new Error('unexpected: ' + cmd));
+                    }
+                    return Promise.resolve({
+                        root: '/vault',
+                        files: [
+                            {path: 'Welcome.md', content: '# Welcome\n\nSee [[Second]] & <b>bold</b> "quotes".', mtime: 1700000000000},
+                            {path: 'Diary/Second.md', content: 'body here #tagged', mtime: 1700000100000},
+                        ],
+                        skipped: [],
+                    });
+                }
+            };
+        });
+        await page.reload();
+        await page.waitForSelector('#header--add', {timeout: 20000});
+        await dismissWizard(page);
+
+        async function importVault() {
+            await page.goto('/#/settings/importExport');
+            await page.waitForSelector('#do-import-vault', {timeout: 20000});
+            await page.click('#do-import-vault');
+            var modal = page.locator('#modal');
+            await expect(modal).toContainText('notes in', {timeout: 30000});
+            var text = await modal.textContent();
+            // the dialog reloads the app when it is closed
+            await modal.locator('button[data-event="confirm"]').click();
+            await page.waitForSelector('#modal .modal-dialog', {state: 'detached', timeout: 20000});
+            await page.waitForSelector('#do-import-vault', {timeout: 20000});
+            return text;
+        }
+
+        expect(await importVault()).toContain('2 notes in 1 notebooks');
+
+        var again = await importVault();
+        expect(again).toContain('0 notes in');
+        expect(again).toContain('2 already here');
+
+        await page.goto('/#/notes');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        await expect(page.locator('.list--item.-note')).toHaveCount(2);
+    });
 });
