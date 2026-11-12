@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# Time: Wed Nov 11 2026 21:58:54 GMT+0000 (Greenwich Mean Time)
+# Time: Thu Nov 12 2026 12:05:48 GMT+0000 (Greenwich Mean Time)
 
 CACHE:
 404.html
@@ -57,6 +57,7 @@ locales/zh_tw/translation.json
 manifest.webapp
 migrate.html
 robots.txt
+scripts/boot.js
 scripts/classes/sjcl.js
 scripts/classes/sjcl.worker.js
 scripts/helpers/db.js
@@ -76,6 +77,7 @@ scripts/modules/fuzzySearch/controllers/main.js
 scripts/modules/fuzzySearch/module.js
 scripts/modules/fuzzySearch/regions/sidebar.js
 scripts/modules/fuzzySearch/templates/composite.html
+scripts/modules/fuzzySearch/templates/empty.html
 scripts/modules/fuzzySearch/templates/item.html
 scripts/modules/fuzzySearch/views/composite.js
 scripts/modules/fuzzySearch/views/item.js
@@ -89,16 +91,46 @@ scripts/modules/mathjax/module.js
 scripts/modules/modules.json
 scripts/workers/localForage.js
 scripts/workers/sjcl.js
-styles/core/fontello/font/fontello.eot
-styles/core/fontello/font/fontello.svg
-styles/core/fontello/font/fontello.ttf
-styles/core/fontello/font/fontello.woff
 styles/core.css
 styles/theme-default.css
 vendor/backbone/backbone.js
 vendor/backbone.radio/build/backbone.radio.min.js
 vendor/bluebird/js/browser/bluebird.min.js
 vendor/dompurify/dist/purify.min.js
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-cyrillic-400-italic.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-cyrillic-400-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-cyrillic-600-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-cyrillic-ext-400-italic.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-cyrillic-ext-400-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-cyrillic-ext-600-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-400-italic.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-600-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-ext-400-italic.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-ext-400-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-ext-600-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-vietnamese-400-italic.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-vietnamese-400-normal.woff2
+vendor/fonts/ibm-plex-mono/ibm-plex-mono-vietnamese-600-normal.woff2
+vendor/fonts/libre-franklin/libre-franklin-cyrillic-ext-wght-normal.woff2
+vendor/fonts/libre-franklin/libre-franklin-cyrillic-wght-normal.woff2
+vendor/fonts/libre-franklin/libre-franklin-latin-ext-wght-normal.woff2
+vendor/fonts/libre-franklin/libre-franklin-latin-wght-normal.woff2
+vendor/fonts/libre-franklin/libre-franklin-vietnamese-wght-normal.woff2
+vendor/fonts/literata/literata-cyrillic-ext-opsz-italic.woff2
+vendor/fonts/literata/literata-cyrillic-ext-opsz-normal.woff2
+vendor/fonts/literata/literata-cyrillic-opsz-italic.woff2
+vendor/fonts/literata/literata-cyrillic-opsz-normal.woff2
+vendor/fonts/literata/literata-greek-ext-opsz-italic.woff2
+vendor/fonts/literata/literata-greek-ext-opsz-normal.woff2
+vendor/fonts/literata/literata-greek-opsz-italic.woff2
+vendor/fonts/literata/literata-greek-opsz-normal.woff2
+vendor/fonts/literata/literata-latin-ext-opsz-italic.woff2
+vendor/fonts/literata/literata-latin-ext-opsz-normal.woff2
+vendor/fonts/literata/literata-latin-opsz-italic.woff2
+vendor/fonts/literata/literata-latin-opsz-normal.woff2
+vendor/fonts/literata/literata-vietnamese-opsz-italic.woff2
+vendor/fonts/literata/literata-vietnamese-opsz-normal.woff2
 vendor/jquery/dist/jquery.js
 vendor/localforage/dist/localforage.js
 vendor/markdown-it/dist/browser/markdown-it.umd.min.js
@@ -124,4 +156,4 @@ FALLBACK:
 SETTINGS:
 prefer-online
 
-# hash: b7e2bbf63019292dfed7b00062d8d8ed1cd0b909daa1ec52fcfc1f0693e2d2d3
+# hash: 4a75f633240e0e8ee8b28f531a775b633d92313a9f847120b16c9031de3ef421
