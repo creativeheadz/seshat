@@ -25,6 +25,15 @@ define([
         template  : _.template(Tmpl),
         className : 'rail--nav',
 
+        events: {
+            'click .rail--mark': 'showAbout'
+        },
+
+        showAbout: function(e) {
+            e.preventDefault();
+            Radio.request('Help', 'show:about');
+        },
+
         serializeData: function() {
             return {
                 uri : Radio.request('uri', 'link:profile', '/')
@@ -40,7 +49,7 @@ define([
             // Boot lands on an empty fragment showing notes.
             // Rail hrefs carry a leading slash (#/notes).
             var fragment = '#/' + (Backbone.history.getFragment() || 'notes');
-            this.$('a').each(function() {
+            this.$('.rail--item').each(function() {
                 var $a = $(this);
                 $a.toggleClass('active', $a.attr('href') === fragment);
             });

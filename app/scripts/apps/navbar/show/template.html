@@ -1,37 +1,36 @@
-<nav class="header navbar navbar-default navbar-static-top -left" id="sidebar--nav">
-<div class="container-fluid header--container -left">
+<nav class="header navbar navbar-static-top -left" id="sidebar--nav">
+<div class="header--container -left">
 
-    <ul class="nav navbar-nav navbar-left header--col--left">
-        <li class="header--col--left--drawer">
-            <a href="#{{args.currentUrl}}" class="btn-link header--title sidemenu--open -text-elipsis">
-                <i class="icon-menu header--icon"></i>
-                <span id="header--title" class="hidden-xs hidden-sm">
-                    {{i18n(args.title)}}
-                </span>
-            </a>
-        </li>
-        <li class="header--col--left--search">
-            <button id="header--sbtn" class="btn navbar-btn header--sbtn" title="{{i18n('Search')}}">
-                <i class="icon-search"></i>
+    <div class="header--row">
+        <a href="#{{args.currentUrl}}" class="header--title sidemenu--open" title="{{i18n('Notebooks')}}">
+            <i class="icon-menu header--icon"></i>
+            <span id="header--title">{{i18n(args.title)}}</span>
+        </a>
+        <span id="header--count" class="header--count">{{count}}</span>
+
+        <div class="header--tools">
+            <button id="header--density" type="button" class="btn header--tool<% if (compact) { %> active<% } %>"
+                title="{{i18n('Compact list')}}" aria-pressed="{{compact}}">
+                <i class="icon-rows"></i>
             </button>
-        </li>
-    </ul>
+            <% if (isSyncEnabled()) { %>
+            <button class="btn header--tool" id="header--sync" type="button">
+                <span id="header--sync--icon" class="icon-arrows"></span>
+            </button>
+            <% } %>
+            <button id="header--add" type="button" class="header--add btn btn-success" title="{{i18n('appCreateNote')}}">
+                <span class="icon-doc-new"></span>
+            </button>
+        </div>
+    </div>
 
     <form id="header--search" class="header--search" role="search">
+        <i class="icon-search header--search--icon"></i>
         <input id="header--search--input" class="header--search--input form-control"
-            type="text" placeholder="{{i18n('Search')}}" value="{{args.query}}" />
+            type="search" placeholder="{{i18n('Search')}}" value="{{searchQuery()}}"
+            aria-label="{{i18n('Search')}}" autocomplete="off" spellcheck="false" />
+        <kbd class="header--search--key">{{configs.appSearch}}</kbd>
     </form>
-
-    <div class="navbar-right header--right navbar-btn">
-        <% if (isSyncEnabled()) { %>
-        <button class="btn header--sbtn col-xs-6" id="header--sync">
-            <span id="header--sync--icon" class="icon-arrows"></span>
-        </button>
-        <% } %>
-        <button id="header--add" class="header--add btn btn-success">
-            <span class="icon-doc-new"></span>
-        </button>
-    </div>
 
 </div>
 </nav>
@@ -39,7 +38,6 @@
 <div class="sidemenu">
     <div class="list-group">
         <div class="list-group-item sidemenu--item -disabled sidemenu--close">
-            <i class="icon-left-open-big"></i>
             {{i18n('Close')}}
             <button type="button" class="close" aria-hidden="true">
                 &times;
@@ -50,7 +48,7 @@
             <i class="icon-note"></i> {{i18n('All notes')}}
         </a>
         <a class="list-group-item sidemenu--item" href="#{{uri}}notes/f/favorite">
-            <i class="icon-favorite"></i> {{i18n('Favourites')}}
+            <i class="icon-star-empty"></i> {{i18n('Favourites')}}
         </a>
         <a class="list-group-item sidemenu--item" href="#{{uri}}notes/f/trashed">
             <i class="icon-trashed"></i> {{i18n('Trash')}}
@@ -59,7 +57,7 @@
             <i class="icon-notebook"></i> {{i18n('Notebooks & tags')}}
         </a>
         <a class="list-group-item sidemenu--item" href="#{{ uri }}notes/f/task">
-            <i class="icon-ok"></i> {{ i18n('Open tasks') }}
+            <i class="icon-tasks"></i> {{ i18n('Open tasks') }}
         </a>
 
         <% if (notebooks !== null && notebooks.length) { %>

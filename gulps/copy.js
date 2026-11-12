@@ -47,7 +47,6 @@ module.exports = function(gulp, plugins, argv) {
             './app/locales/**',
             './app/.htaccess',
             './app/*.+(xml|ico|txt|webapp)',
-            './app/styles/**/*.+(eot|svg|ttf|woff)',
         ], {base: './app', encoding: false})
         .pipe(gulp.dest('./dist'));
     }
@@ -65,6 +64,7 @@ module.exports = function(gulp, plugins, argv) {
             './app/scripts/classes/sjcl.js',
             './app/scripts/classes/sjcl.worker.js',
 
+            './app/scripts/boot.js',
             './app/scripts/helpers/db.js',
             './app/scripts/helpers/migrate.js',
             './app/scripts/migrate.js',
@@ -119,6 +119,8 @@ module.exports = function(gulp, plugins, argv) {
         return gulp.src([
             './app/vendor/markdown-it/dist/browser/markdown-it.umd.min.js',
             './app/vendor/dompurify/dist/purify.min.js',
+            // Self-hosted type (see scripts/vendor.js)
+            './app/vendor/fonts/**/*.woff2',
         ], options)
         .pipe(gulp.dest('./dist/vendor/'));
     }

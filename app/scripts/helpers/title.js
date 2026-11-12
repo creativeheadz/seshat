@@ -84,8 +84,21 @@ define([
 
         _makeTitle: function(args) {
             // Translate the title to other languages
-            var title = args.title || (args.filter && args.filter !== 'active' ? args.filter : 'All notes');
-            title = $.t(title.substr(0, 1).toUpperCase() + title.substr(1));
+            var names = {
+                    favorite : 'Favourites',
+                    trashed  : 'Trash',
+                    task     : 'Open tasks',
+                    search   : 'Search'
+                },
+                title = args.title;
+
+            // The built-in lists have names of their own
+            if (!title) {
+                title = (args.filter && args.filter !== 'active' ? args.filter : 'All notes');
+                title = names[title] || (title.substr(0, 1).toUpperCase() + title.substr(1));
+            }
+
+            title = $.t(title);
 
             if (!args.title && args.query && args.filter !== 'search') {
                 title = args.query;

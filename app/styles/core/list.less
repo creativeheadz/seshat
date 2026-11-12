@@ -5,39 +5,77 @@
 }
 
 .list--group {
-    margin-bottom: 0;
-    position: relative;
-
-    &:last-child .list--item {
-        border-bottom-width: 1px;
-    }
+    margin-bottom : 0;
+    position      : relative;
 }
 
+// A row. The date sits on the title's baseline; the excerpt runs
+// underneath on one line.
 .list--item {
-    border-right-width  : 0;
-    border-bottom-width : 0;
+    display  : block;
+    position : relative;
+    border   : 0;
 }
 
 .list--item.-note {
-    min-height: 60px;
-    max-height: 60px;
+    display               : grid;
+    grid-template-columns : minmax(0, 1fr) auto;
+    grid-template-areas   : "title date";
+    column-gap            : 12px;
+    align-items           : baseline;
+
+    // Rows off screen are not laid out or painted, which is what
+    // keeps a list of several hundred notes cheap to scroll.
+    content-visibility    : auto;
+    contain-intrinsic-size: auto 4.25rem;
+    scroll-margin         : 2.25rem 0 0.5rem;
 }
 
 .list--item--title.-note {
-    overflow    : hidden;
+    grid-area : title;
+    &:extend(.-text-elipsis);
+}
+
+.list--item--date {
+    grid-area   : date;
     white-space : nowrap;
-    width       : 90%;
-    &:extend(.pull-left);
+}
+
+// The excerpt runs the full width of the row and keeps a slot at
+// its end for the star, so excerpts end on one line down the list.
+.list--item--text {
+    grid-row      : 2;
+    grid-column   : ~"1 / -1";
+    padding-right : 1.5rem;
+    &:extend(.-text-elipsis);
 }
 
 .list--item--favorite {
-    width: 7%;
-    &:extend(.pull-right);
+    grid-row     : 2;
+    grid-column  : ~"1 / -1";
+    justify-self : end;
 }
 
-.list--item--text {
-    max-width: 80%;
-    &:extend(.-text-elipsis);
+// Compact density: titles and dates only
+.layout--sidebar.-compact {
+    .list--item.-note {
+        grid-template-areas    : "title star date";
+        grid-template-columns  : minmax(0, 1fr) auto auto;
+        contain-intrinsic-size : auto 2.25rem;
+    }
+    .list--item--text {
+        display: none;
+    }
+    .list--item--favorite {
+        grid-area: star;
+    }
+}
+
+// Date and letter headings stay in view while their notes scroll
+.list--heading {
+    position : sticky;
+    top      : 0;
+    z-index  : 2;
 }
 
 // Button groups
@@ -52,15 +90,7 @@
 .list--navbar {
     z-index       : inherit;
     margin-bottom : 0;
-    padding-top   : 20px;
 }
 .list--nav {
     margin-right: 2px;
-}
-
-// Pagination bar
-.list--pager {
-    margin-top   : 15px;
-    margin-left  : 10px;
-    margin-right : 10px;
 }

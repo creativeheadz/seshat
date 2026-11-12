@@ -34,6 +34,10 @@ Vitest + Playwright suite green in CI, and has had its dependency CVEs swept
 ## Features
 
 - Markdown editor with live preview, distraction-free and normal modes
+- Built for reading: notes are set in a book face on a measure of about
+  68 characters, with day and night themes
+- One continuous list that stays quick with hundreds of notes: date
+  headings, search as you type, a compact density
 - Client-side AES encryption (PBKDF2 key, random IV per note)
 - Fully offline: notes live in IndexedDB/localStorage, no account needed
 - Notebooks, tags, favorites, tasks, file attachments
@@ -109,6 +113,26 @@ lint, build, smoke, unit, and e2e on every push. Please keep it green:
 prove behavior changes with a test or a run, keep MPL-2.0 headers on
 touched files, and never break reading v0.7.51 user data.
 
+## Design
+
+The interface was redrawn in 2026 around the words: one text block on a
+fixed measure, the same face and size for writing as for reading.
+
+- **Colour** comes from the emblem and the hero art: lapis by day, the
+  logo's gold on night by night. Every colour is a custom property in
+  `app/styles/theme-default/tokens.less`; nothing else names a hex value,
+  which is what lets one set of rules serve both themes.
+- **Type** is self-hosted, so the app stays offline: Literata for
+  anything you read or write, Libre Franklin for the controls around it,
+  IBM Plex Mono for code. `scripts/vendor.js` copies the font files from
+  the pinned npm packages and writes their `@font-face` rules.
+- **Icons** are Phosphor outlines drawn through CSS masks, plus Seshat's
+  own seven-pointed star for favourites. Edit the map in
+  `scripts/icons.js` and run `npm run icons`; the generated
+  `app/styles/core/icons.less` is checked in.
+- **Geometry** (rail, list column, measure) lives in
+  `app/styles/core/variables.less`.
+
 ## Acknowledgments
 
 Seshat stands on [Laverna](https://github.com/Laverna/laverna) by
@@ -119,6 +143,8 @@ ships under the Seshat name only. All original MPL-2.0 headers are intact.
 
 ## License
 
-[MPL-2.0](LICENSE). Shipped third-party libraries are MIT, BSD, Apache-2.0,
-MPL-2.0, or public domain — see the license BOM note in
+[MPL-2.0](LICENSE). The typefaces (Literata, Libre Franklin, IBM Plex Mono)
+are under the SIL Open Font License 1.1 and the icon outlines
+([Phosphor](https://phosphoricons.com)) are MIT. Shipped third-party
+libraries are MIT, BSD, Apache-2.0, MPL-2.0, or public domain — see the license BOM note in
 [ROADMAP.md](ROADMAP.md).

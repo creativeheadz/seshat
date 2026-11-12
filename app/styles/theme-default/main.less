@@ -1,37 +1,43 @@
 /**
- * Default theme
+ * Default theme: appearance.
+ *
+ * Read tokens.less first. Everything visible takes its colour from
+ * the custom properties defined there, which is what lets the day
+ * and night themes share one set of rules.
  */
 @import "bootstrap/less/variables.less";
 @import "bootstrap/less/mixins.less";
+@import '../core/variables.less';
 
-// Variables
-@import 'variables.less';
+// Colour and type
+@import 'tokens.less';
+@import 'base.less';
 
-// Core
-@import 'layout.less';
-@import 'utils.less';
-@import 'forms.less';
-@import 'modal.less';
-@import 'buttons.less';
-@import 'checkbox.less';
-
-// Navbars
-@import 'header.less';
-@import 'sidemenu.less';
+// The frame
 @import 'rail.less';
-
-// List of notes, notebooks, etc.
+@import 'header.less';
 @import 'list.less';
+@import 'sidemenu.less';
 
-// Settings
-@import 'settings.less';
+// The page: reading
+@import 'note.less';
+@import 'prose.less';
+@import 'checkbox.less';
+@import 'prism.less';
 
-// Codemirror editor
+// The page: writing
 @import 'editor.less';
 @import 'codemirror.less';
 @import 'dropzone.less';
 
-@import 'prism.less';
+// Controls
+@import 'buttons.less';
+@import 'forms.less';
+@import 'modal.less';
+@import 'settings.less';
 
-// Loading animation
+// Lock screen and loading
+@import 'layout.less';
 @import 'loading-animation.less';
+
+@import 'utils.less';

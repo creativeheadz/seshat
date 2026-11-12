@@ -28,6 +28,7 @@ define([
             'cloudStorage'       : '0',
             'pagination'         : '10',
             'sortnotes'          : 'created',
+            'theme'              : 'auto',
             'sortnotebooks'      : 'name',
             'navbarNotebooksMax' : '5',
             'useDefaultConfigs'  : '1',

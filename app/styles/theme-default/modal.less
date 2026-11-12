@@ -1,27 +1,126 @@
 /**
  * Modal windows
  */
-.modal--body.modal-body {
-    padding: 0 15px;
-}
+.modal-backdrop {
+    background: #04060c;
 
-.modal--group.form-group {
-    border-bottom: 1px solid #e5e5e5;
-    overflow: hidden;
-    margin-left    : -30px;
-    margin-right   : -30px;
-    margin-bottom  : 0;
-    padding-top    : 5px;
-    padding-bottom : 5px;
-    &:last-child {
-        border-bottom-width: 0;
+    &.in {
+        opacity: 0.55;
     }
 }
 
-.modal--input {
-    border-width: 0;
+.modal-dialog {
+    @media (min-width: @screen-sm-min) {
+        width      : 30rem;
+        margin-top : 12vh;
+    }
 
-    &, &:hover, &:focus {
+    &.modal-lg {
+        @media (min-width: @screen-md-min) {
+            width: 44rem;
+        }
+    }
+}
+
+.modal-content {
+    border        : 1px solid var(--rule);
+    border-radius : 14px;
+    background    : var(--raised);
+    box-shadow    : var(--shadow);
+    color         : var(--ink);
+}
+
+.modal-header {
+    padding       : 1.25rem 1.5rem 0.5rem;
+    border-bottom : 0;
+
+    .close {
+        margin-top : 2px;
+        font-size  : 22px;
+    }
+}
+
+.modal-title {
+    color          : var(--ink);
+    font-family    : var(--serif);
+    font-size      : @size--21;
+    font-weight    : 600;
+    line-height    : 1.25;
+    letter-spacing : -0.008em;
+
+    small {
+        .meta--type();
+        color: var(--ink-3);
+    }
+}
+
+.modal-body {
+    padding     : 0.5rem 1.5rem 1rem;
+    color       : var(--ink-2);
+    font-size   : @size--14;
+    line-height : 1.6;
+
+    h3 {
+        margin      : 1rem 0 0.4rem;
+        font-family : var(--sans);
+        font-size   : @size--13;
+        font-weight : 600;
+        color       : var(--ink-3);
+    }
+
+    strong {
+        color: var(--ink);
+    }
+}
+
+.modal-footer {
+    padding    : 0.5rem 1.5rem 1.25rem;
+    border-top : 0;
+}
+
+// Forms laid out as rows inside a dialog
+.modal--body.modal-body {
+    padding: 0.5rem 1.5rem 1rem;
+}
+.modal--container {
+    padding: 0;
+}
+.modal--group.form-group {
+    margin        : 0 0 0.75rem;
+    padding       : 0;
+    border-bottom : 0;
+    overflow      : visible;
+}
+.modal--input {
+    &, &:hover {
         box-shadow: none;
+    }
+}
+
+// First start
+#welcome--page,
+#welcome--settings,
+#welcome--backup {
+    .modal-title {
+        font-size: @size--24;
+    }
+    .modal-footer {
+        display         : flex;
+        justify-content : center;
+        gap             : 0.5rem;
+
+        &:before,
+        &:after {
+            display: none;
+        }
+
+        > div {
+            float   : none;
+            width   : auto;
+            padding : 0;
+        }
+        .btn {
+            float: none !important;
+        }
     }
 }

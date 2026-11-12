@@ -136,6 +136,11 @@ define([
          * Then, it overwrites models of the current collection.
          */
         getPage: function(number) {
+            // An address may still carry a page number from when
+            // the list was split into pages; never page past the end.
+            var lastPage = Math.max((this.state.totalPages || 1) - 1, this.state.firstPage);
+            number       = Math.min(Math.max(Number(number) || 0, this.state.firstPage), lastPage);
+
             // Calculate page number
             var pageStart = this.getOffset(number);
 
@@ -160,7 +165,7 @@ define([
         },
 
         hasNextPage: function() {
-            return this.state.currentPage !== this.state.totalPages - 1;
+            return this.state.currentPage < this.state.totalPages - 1;
         },
 
         /**

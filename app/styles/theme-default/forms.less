@@ -2,22 +2,93 @@
  * Form styles
  */
 .form-control {
+    border        : 1px solid var(--rule-2);
+    border-radius : 8px;
+    background    : var(--raised);
+    color         : var(--ink);
+    font-family   : var(--sans);
+    font-size     : @size--14;
+    box-shadow    : none;
+    transition    : border-color 0.12s ease;
+
+    &::placeholder {
+        color   : var(--ink-3);
+        opacity : 1;
+    }
+
     &:focus {
-        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(189, 189, 189, 0.6);
-        border-color: #BDBDBD;
-        outline: 0px none;
+        border-color : var(--accent);
+        box-shadow   : 0 0 0 1px var(--accent);
+        outline      : 0;
+    }
+
+    &[disabled],
+    &[readonly],
+    fieldset[disabled] & {
+        background : var(--desk);
+        color      : var(--ink-3);
     }
 }
 
+select.form-control {
+    cursor: pointer;
+}
+
+textarea.form-control {
+    font-family : var(--mono);
+    font-size   : @size--13;
+    line-height : 1.6;
+}
+
+label,
+.control-label {
+    color       : var(--ink);
+    font-weight : 500;
+}
+
+legend {
+    margin        : 0 0 1rem;
+    padding       : 0 0 0.5rem;
+    border-bottom : 1px solid var(--rule);
+    color         : var(--ink);
+    font-family   : var(--serif);
+    font-size     : @size--18;
+    font-weight   : 600;
+}
+
+.help-block {
+    color     : var(--ink-3);
+    font-size : @size--13;
+}
+
+.text-warning {
+    color: var(--star);
+}
+.text-danger,
+.has-error .help-block,
+.has-error .control-label {
+    color: var(--danger);
+}
+.has-error .form-control {
+    border-color : var(--danger);
+    box-shadow   : none;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--accent);
+}
+
+.input-group-addon {
+    border-color : var(--rule-2);
+    background   : var(--desk);
+    color        : var(--ink-2);
+}
+
 input.-borderless {
-    // Borders
     border-radius : 0;
     box-shadow    : none;
     border        : none;
-
-    // Font
-    font-weight : 700;
-    font-size   : 1.8em;
 
     &:hover,
     &:focus {
@@ -26,69 +97,86 @@ input.-borderless {
 }
 
 /**
- * Brand forms
+ * Tables, progress, alerts in the app's own screens
  */
-.input--brand {
-    background    : transparent;
+.table {
+    color: var(--ink);
+
+    > thead > tr > th {
+        border-bottom : 1px solid var(--ink-3);
+        color         : var(--ink-2);
+        font-weight   : 600;
+    }
+    > tbody > tr > td,
+    > tbody > tr > th {
+        border-top-color: var(--rule);
+    }
+}
+.table-striped > tbody > tr:nth-of-type(odd),
+.table-hover > tbody > tr:hover {
+    background: transparent;
+}
+
+.progress {
+    height        : 6px;
+    border-radius : 3px;
+    background    : var(--rule);
     box-shadow    : none;
-    border        : none;
-    border-bottom : 2px solid #FFF;
-    color         : #FFF;
-    border-radius : 0;
-    text-align    : center;
-    .placeholder(darken(#FFF, 10));
-
-    &:hover,
-    &:focus,
-    &.focus {
-        box-shadow   : none;
-        border-color : #FFF;
-    }
+}
+.progress-bar {
+    background  : var(--accent);
+    box-shadow  : none;
+    color       : transparent;
+    font-size   : 0;
+    line-height : 6px;
 }
 
-.btn--brand {
-    margin-top     : 33px;
-    padding-top    : 17px;
-    padding-bottom : 17px;
-
-    border         : none;
-    border-radius  : 9px;
-    border         : 2px solid #fff;
-
-    background     : transparent;
-    box-shadow     : 0;
-    color          : #fff;
-
-    font-variant   : small-caps;
-    font-size      : 1.5em;
-
-    &:hover, &:focus, &:active {
-        background : #fff;
-        color      : #303030;
-        outline    : none;
-    }
+.alert {
+    border-radius: 10px;
+}
+.alert-warning {
+    border-color : var(--rule-2);
+    background   : var(--desk);
+    color        : var(--ink);
+}
+.alert-danger {
+    border-color : var(--danger);
+    background   : var(--danger-soft);
+    color        : var(--danger);
 }
 
+.badge {
+    background  : var(--desk-2);
+    color       : var(--ink-2);
+    font-weight : 500;
+}
+
+.thumbnail {
+    border-color : var(--rule);
+    background   : var(--raised);
+}
+
+/**
+ * Find in page (desktop shell)
+ */
 #module--electronSearch {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 9999;
+    position : absolute;
+    top      : 0;
+    left     : 0;
+    z-index  : 9999;
 
     .search--close {
-        font-size: 21px;
-        line-height: 1;
-        font-weight: bold;
+        font-size   : 21px;
+        line-height : 1;
     }
 
     .electron--search {
-        border-radius: 0 0 8px 0;
-
-        border: 1px solid #ccc;
-        border-top-width: 0;
-        border-left-width: 0;
-        background: #fff;
-        padding: 8px;
+        padding       : 8px;
+        border        : 1px solid var(--rule);
+        border-top    : 0;
+        border-left   : 0;
+        border-radius : 0 0 10px 0;
+        background    : var(--raised);
+        box-shadow    : var(--shadow);
     }
 }
-

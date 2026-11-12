@@ -1,36 +1,68 @@
 /**
- * Sidemenu
+ * Sidemenu: the drawer
  */
 .sidemenu {
-    background: @sidemenu--bg;
-}
+    background   : var(--desk);
+    border-right : 1px solid var(--rule);
+    box-shadow   : var(--shadow);
 
-.sidemenu--item.list-group-item {
-    // Sizing
-    min-height   : 50px;
-    max-height   : 50px;
-    padding-left : 20px;
-    padding-top  : 15px;
-
-    // Colors
-    background : @sidemenu--item;
-    color      : @sidemenu--item--color;
-    border     : @sidemenu--item--border;
-
-    &.active,
-    &:hover {
-        background : @sidemenu--item--hover;
-        color      : @sidemenu--item--hover--color;
+    .list-group {
+        margin  : 0;
+        padding : 8px 0 20px;
     }
 }
 
-.sidemenu--item.-disabled,
-.sidemenu--item.-disabled:hover {
-    background : @sidemenu--disabled;
-    color      : @sidemenu--disabled--color;
-    font-size  : 1.3em;
+.sidemenu--item.list-group-item {
+    margin        : 0 8px;
+    padding       : 8px 12px;
+    border        : 0;
+    border-radius : 8px;
+    background    : transparent;
+    color         : var(--ink);
+    font-size     : @size--14;
+
+    [class^="icon-"] {
+        margin-right : 8px;
+        color        : var(--ink-3);
+    }
+
+    &:hover,
+    &:focus {
+        background : var(--desk-2);
+        color      : var(--ink);
+    }
+
+    &.active {
+        background : var(--accent-soft);
+        color      : var(--ink);
+        box-shadow : inset 2px 0 0 var(--accent);
+    }
 }
 
-.sidemenu--close {
-    cursor: pointer;
+// Section labels
+.sidemenu--item.-disabled,
+.sidemenu--item.-disabled:hover {
+    .meta--type();
+    margin-top  : 12px;
+    padding     : 6px 12px 4px;
+    background  : transparent;
+    color       : var(--ink-3);
+    font-size   : @size--12;
+    font-weight : 600;
+}
+
+.sidemenu--close.sidemenu--item.-disabled {
+    display     : flex;
+    align-items : center;
+    height      : @rail--width - 16px;
+    margin-top  : 0;
+    cursor      : pointer;
+    font-size   : @size--13;
+
+    .close {
+        margin-left : auto;
+        color       : var(--ink-3);
+        opacity     : 1;
+        text-shadow : none;
+    }
 }

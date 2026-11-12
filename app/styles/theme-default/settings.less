@@ -1,21 +1,127 @@
 /**
  * Settings
  */
-// List of settings
-.list--settings {
-    &:extend(.sidemenu--item all);
+// Sections, in the list column
+.list-group.list--settings {
+    margin  : 0;
+    padding : 6px 0 20px;
+}
 
-    &.list-group-item.active {
-        background : lighten(@sidemenu--item--hover, 2%);
+.list-group-item.list--settings {
+    display       : block;
+    margin        : 0 8px;
+    padding       : 8px 12px;
+    border        : 0;
+    border-radius : 8px;
+    background    : transparent;
+    color         : var(--ink);
+    font-size     : @size--14;
+
+    [class^="icon-"] {
+        margin-right : 8px;
+        color        : var(--ink-3);
+    }
+
+    &:hover,
+    &:focus {
+        background : var(--desk-2);
+        color      : var(--ink);
+    }
+
+    &.active,
+    &.active:hover,
+    &.active:focus {
+        background : var(--accent-soft);
+        color      : var(--ink);
+        box-shadow : inset 2px 0 0 var(--accent);
+
+        [class^="icon-"] {
+            color: var(--accent);
+        }
+    }
+
+    // Section label
+    &.-disabled,
+    &.-disabled:hover {
+        .meta--type();
+        margin-top  : 12px;
+        padding     : 6px 12px 4px;
+        background  : transparent;
+        color       : var(--ink-3);
+        font-size   : @size--12;
+        font-weight : 600;
+        list-style  : none;
     }
 }
 
-// Back button
-.header--settings--back:hover {
-    background: #f8f8f8;
+// Title row of the settings column
+.header--settings {
+    .navbar-nav {
+        display     : flex;
+        align-items : center;
+        float       : none;
+        height      : @navbar-height;
+        margin      : 0;
+        padding     : 0 8px;
+
+        > li {
+            float: none;
+        }
+        > li > a {
+            display       : flex;
+            align-items   : center;
+            height        : 40px;
+            padding       : 0 10px;
+            border-radius : 8px;
+            line-height   : 40px;
+        }
+    }
+    .header--title {
+        font-size: @size--18;
+    }
 }
 
 // Content
+.layout--body.-settings {
+    background: var(--paper);
+}
 .container-fluid.-settings {
-    padding: 40px 30px;
+    max-width : 46rem;
+    margin    : 0;
+    padding   : 2.5rem 2.5rem 6rem;
+
+    @media (max-width: @screen-xs-max) {
+        padding: 1.5rem 1.5rem 4rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.1rem;
+    }
+    .control-label {
+        padding-top : 8px;
+        text-align  : left;
+
+        @media (min-width: @screen-sm-min) {
+            width: 34%;
+        }
+    }
+    .col-sm-10 {
+        @media (min-width: @screen-sm-min) {
+            width: 66%;
+        }
+    }
+    fieldset {
+        margin-bottom: 2rem;
+    }
+
+    h1, h2, h3, h4 {
+        margin      : 2rem 0 0.75rem;
+        font-family : var(--serif);
+        font-size   : @size--21;
+        font-weight : 600;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
 }

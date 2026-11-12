@@ -1,29 +1,47 @@
 /**
- * Navbar styles
+ * Bars: the list header and the bar over the page
  */
 .header {
+    min-height : @navbar-height;
+    border     : 0;
 }
 
-/**
- * "Grid" system for elements in the navbar
- */
-.header--col--left {
-    max-width: 70%;
+// The list header is two rows: a title row and the search field
+.header--container {
+    display        : flex;
+    flex-direction : column;
+    padding        : 0;
+}
 
-    .header--col--left--drawer {
-      max-width: 85%;
-    }
+.header--row {
+    display     : flex;
+    align-items : center;
+    height      : @navbar-height;
+    padding     : 0 12px 0 8px;
+}
 
-    .header--col--left--search {
-      max-width: 15%;
-    }
+.header--title {
+    display     : flex;
+    align-items : center;
+    flex        : 1 1 auto;
+    min-width   : 0;
+}
+
+#header--title {
+    &:extend(.-text-elipsis);
+}
+
+.header--tools {
+    display     : flex;
+    align-items : center;
+    flex        : none;
 }
 
 /**
  * Fix margins and paddings of .navbar-right or .navbar-left
  */
 .header--right {
-    margin-right : 2px;
+    margin-right : 0;
     margin-left  : auto;
 }
 .header--left {
@@ -35,37 +53,21 @@
  */
 .header--btn {
     &:extend(.navbar-btn);
-    margin-left: 5px;
-}
-// Search button
-.header--sbtn {
-    background-color: transparent;
+    margin-left: 6px;
 }
 
 /**
- * Search form
+ * Search form: always there, under the title row
  */
 .header--search {
-    &:extend(.navbar-form);
-    display : none;
-    width   : 100%;
-}
-.header--search--input {
+    position : relative;
+    display  : block;
+    margin   : 0;
+    padding  : 0 12px 4px;
 }
 
-/**
- * Hide everything else in the navbar and
- * show the search form.
- */
-.header.-search {
-    .navbar-right,
-    .navbar-left {
-        display: none;
-    }
-
-    .header--search {
-        display: block;
-    }
+.header--search--input.form-control {
+    width: 100%;
 }
 
 /**
@@ -77,19 +79,31 @@
     }
 }
 
-.header--container {
-    display: flex;
-}
+// The bar over the page
+.header.-note,
+.header.-form,
+.header.-settings {
+    > .container-fluid {
+        display     : flex;
+        align-items : center;
+        height      : @navbar-height;
+        padding     : 0 16px;
 
-/**
- * Navbar title
- */
-.header--title {
-    font-size: 18px;
-    margin-left: 0;
-    width: 100%;
-}
+        &:before,
+        &:after {
+            display: none;
+        }
+    }
 
-#header--title {
-    margin-left: 15px;
+    .navbar-left,
+    .navbar-right {
+        float  : none !important;
+        margin : 0;
+    }
+
+    .navbar-right {
+        margin-left : auto;
+        display     : flex;
+        align-items : center;
+    }
 }

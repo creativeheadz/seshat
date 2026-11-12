@@ -13,8 +13,9 @@ define([
     'i18next',
     'text!locales/locales.json',
     'apps/settings/show/formBehavior',
+    'helpers/theme',
     'text!apps/settings/show/templates/general.html'
-], function(_, Marionette, Radio, i18n, locales, FormBehavior, Tmpl) {
+], function(_, Marionette, Radio, i18n, locales, FormBehavior, Theme, Tmpl) {
     'use strict';
 
     /**
@@ -27,6 +28,20 @@ define([
             FormBehavior: {
                 behaviorClass: FormBehavior
             }
+        },
+
+        events: {
+            'change #theme': 'previewTheme'
+        },
+
+        // Show the theme as soon as it is picked; closing settings
+        // without saving puts the saved one back.
+        previewTheme: function(e) {
+            Theme.apply(e.target.value);
+        },
+
+        onDestroy: function() {
+            Theme.init();
         },
 
         serializeData: function() {

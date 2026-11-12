@@ -12,9 +12,10 @@ define([
     'marionette',
     'backbone.radio',
     'behaviors/content',
+    'helpers/when',
     'text!apps/notes/show/templates/item.html',
     'mousetrap'
-], function(_, $, Marionette, Radio, Behavior, Tmpl, Mousetrap) {
+], function(_, $, Marionette, Radio, Behavior, When, Tmpl, Mousetrap) {
     'use strict';
 
     /**
@@ -144,11 +145,12 @@ define([
          * Update progress bar when the status of a task was changed
          */
         onTaskCompleted: function() {
-            var percent = Math.floor(
-                this.model.get('taskCompleted') * 100 / this.model.get('taskAll')
-            );
-            this.ui.progress.css({width: percent + '%'});
-            this.ui.percent.html(percent + '%');
+            var done    = this.model.get('taskCompleted'),
+                all     = this.model.get('taskAll'),
+                percent = Math.floor(done * 100 / all);
+
+            this.ui.progress.css({width: percent + '%'}).attr('aria-valuenow', done);
+            this.ui.percent.text(done + ' / ' + all);
         },
 
         serializeData: function() {
@@ -163,7 +165,17 @@ define([
         templateHelpers: function() {
             return {
                 createdDate: function() {
-                    return new Date(this.created).toLocaleDateString();
+                    return When.long(this.created);
+                },
+
+                updatedDate: function() {
+                    return When.long(this.updated);
+                },
+
+                // Worth a line of its own only if it was a later day
+                isEdited: function() {
+                    return Boolean(this.updated) &&
+                        When.long(this.updated) !== When.long(this.created);
                 },
 
                 getProgress: function() {

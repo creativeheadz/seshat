@@ -1,0 +1,149 @@
+/**
+ * Tokens.
+ *
+ * The palette comes from Seshat's own emblem and hero art: a night
+ * sky in lapis, stars in gold, a scroll of pale paper. Lapis is the
+ * working colour by day; gold takes over at night, as in the logo.
+ * Gold by day is kept for one thing only: the favourite star.
+ */
+
+.day() {
+    color-scheme : light;
+
+    // Surfaces
+    --paper      : #fdfdfb;   // the page you read and write on
+    --desk       : #f1f2f6;   // the ground behind the list and rail
+    --desk-2     : #e6e8ef;   // a pressed or hovered patch of desk
+    --raised     : #ffffff;   // menus, dialogs, fields
+
+    // Ink
+    --ink        : #14182b;
+    --ink-2      : #454b63;
+    --ink-3      : #5e647b;
+    --rule       : #dcdfe8;
+    --rule-2     : #c3c7d5;
+
+    // Lapis
+    --accent       : #2b3f8c;
+    --accent-hover : #223273;
+    --accent-ink   : #ffffff;
+    --accent-soft  : #e3e7f4;
+    --select       : #cdd5f1;
+
+    // Star gold, deepened so it holds on paper
+    --star       : #a87a1f;
+
+    --danger      : #a3311f;
+    --danger-soft : #f6e6e2;
+
+    // Code
+    --code-bg    : #f2f3f7;
+    --code-key   : #2b3f8c;
+    --code-str   : #2f6b4f;
+    --code-num   : #8a5a12;
+    --code-fn    : #6b2f7a;
+    --code-com   : #6e7489;
+
+    --shadow     : 0 1px 2px rgba(20, 24, 43, 0.06), 0 10px 30px rgba(20, 24, 43, 0.12);
+    --veil       : rgba(20, 24, 43, 0.32);
+}
+
+.night() {
+    color-scheme : dark;
+
+    --paper      : #0e121e;
+    --desk       : #0a0d14;   // the logo's ground
+    --desk-2     : #151a28;
+    --raised     : #171c2c;
+
+    --ink        : #e7e4da;
+    --ink-2      : #b4b6c2;
+    --ink-3      : #8b8fa3;
+    --rule       : #20263a;
+    --rule-2     : #323a55;
+
+    // Gold
+    --accent       : #d4b163;   // the logo's gold
+    --accent-hover : #e2c482;
+    --accent-ink   : #14182b;
+    --accent-soft  : #1b2340;
+    --select       : #2b3a70;
+
+    --star       : #d4b163;
+
+    --danger      : #e58b7e;
+    --danger-soft : #36191a;
+
+    --code-bg    : #131827;
+    --code-key   : #9db0f0;
+    --code-str   : #9ccfae;
+    --code-num   : #d4b163;
+    --code-fn    : #d2a4de;
+    --code-com   : #7b8098;
+
+    --shadow     : 0 1px 2px rgba(0, 0, 0, 0.5), 0 14px 36px rgba(0, 0, 0, 0.55);
+    --veil       : rgba(4, 6, 12, 0.6);
+}
+
+:root {
+    .day();
+
+    // Type
+    --serif : @font-family-serif;
+    --sans  : @font-family-sans-serif;
+    --mono  : @font-family-monospace;
+
+    // Body text grows a little with the window: 17px on a small
+    // laptop, 18px at 1440, 19px on a wide display. The measure is
+    // set in ems, so line length in characters stays put.
+    --text  : ~"clamp(1.0625rem, 0.9rem + 0.25vw, 1.1875rem)";
+}
+
+// Follow the system unless the reader chose a theme in settings
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="day"]) {
+        .night();
+    }
+}
+:root[data-theme="night"] {
+    .night();
+}
+
+/**
+ * The scale, after Bringhurst's classical series:
+ * 12 14 16 18 21 24 36. Chrome is set in rems; anything inside the
+ * page is set in ems of the body text so it scales with --text.
+ */
+@size--12 : 0.75rem;
+@size--13 : 0.8125rem;
+@size--14 : 0.875rem;
+@size--16 : 1rem;
+@size--18 : 1.125rem;
+@size--21 : 1.3125rem;
+@size--24 : 1.5rem;
+@size--36 : 2.25rem;
+
+/**
+ * Where the text block sits on the page. The side margins split
+ * the spare width 2 : 3, so the block stands a little towards the
+ * list and leaves the wider margin outside for notes about the
+ * note. The same two values place the title field and the editor,
+ * which is why the text does not jump when you press Edit.
+ */
+@page--pad   : 1.5rem;
+@page--left  : ~"max(@{page--pad}, calc((100% - @{measure}) * 0.4))";
+@page--right : ~"max(@{page--pad}, calc((100% - @{measure}) * 0.6))";
+
+.page--block() {
+    margin-left  : @page--left;
+    margin-right : @page--right;
+}
+
+// Small sans text for dates, counts and labels
+.meta--type() {
+    font-family          : var(--sans);
+    font-size            : @size--13;
+    font-weight          : 400;
+    font-variant-numeric : tabular-nums;
+    letter-spacing       : 0.005em;
+}

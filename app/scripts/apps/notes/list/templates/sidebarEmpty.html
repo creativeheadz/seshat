@@ -1,0 +1,7 @@
+<div class="list--empty">
+    <i class="list--empty--mark icon-star-empty"></i>
+    <p class="list--empty--title">{{ i18n('Nothing here yet') }}</p>
+    <% if (canCreate) { %>
+    <p class="list--empty--hint"><kbd>{{ key }}</kbd> {{ i18n('appCreateNote') }}</p>
+    <% } %>
+</div>

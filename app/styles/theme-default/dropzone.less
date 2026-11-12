@@ -2,14 +2,17 @@
  * Dropzone styles.
  */
 .dropzone--container {
-    margin: 20px auto;
-    border: 10px dashed lighten(#ccc, 8%);
+    margin        : 1rem 0 0;
+    border        : 1.5px dashed var(--rule-2);
+    border-radius : 10px;
+    background    : var(--desk);
 }
 
 .dropzone {
     min-height : 100px;
     cursor     : pointer;
     padding    : 20px;
+    color      : var(--ink-2);
 
     .dz-default.dz-message {
         margin-bottom : 16px;
@@ -27,7 +30,7 @@
     }
 
     .dz-image img {
-        border-radius : 5px;
+        border-radius : 6px;
         cursor        : auto;
     }
 

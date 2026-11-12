@@ -51,19 +51,23 @@ define([
         },
 
         ui: {
-            navbar : '#sidebar--nav',
-            search : '#header--search--input',
-            title  : '#header--title',
-            icon   : '#header--icon',
-            sync   : '#header--sync--icon'
+            navbar  : '#sidebar--nav',
+            search  : '#header--search--input',
+            title   : '#header--title',
+            count   : '#header--count',
+            density : '#header--density',
+            icon    : '#header--icon',
+            sync    : '#header--sync--icon'
         },
 
         events: {
             'click #header--add'     : 'navigateAdd',
-            'click #header--sbtn'    : 'showSearch',
+            'click #header--density' : 'toggleDensity',
             'click #header--about'   : 'showAbout',
+            'focus @ui.search'       : 'onSearchFocus',
             'blur @ui.search'        : 'hideSearch',
-            'keyup @ui.search'       : 'searchKeyup',
+            'input @ui.search'       : 'onSearchInput',
+            'keydown @ui.search'     : 'onSearchKeydown',
             'submit #header--search' : 'searchSubmit',
             'click #header--sync'    : 'triggerSync'
         },
@@ -81,10 +85,56 @@ define([
 
             // Re-render the view when notebooks collection has changed
             this.listenTo(this.options.notebooks, 'change add remove', this.render);
+
+            // The list says how many notes it holds
+            this.listenTo(Radio.channel('appNote'), 'list:count', this.setCount);
+
+            // Picking a title match ends the search from outside
+            this.listenTo(Radio.channel('global'), 'search:hidden', function() {
+                this._searching = false;
+            });
+        },
+
+        onRender: function() {
+            $('#sidebar').toggleClass('-compact', this.isCompact());
         },
 
         onDestroy: function() {
-            Radio.trigger('global', 'search:hidden');
+            this.stopSearch();
+        },
+
+        /**
+         * How many notes the list holds, next to its title.
+         */
+        setCount: function(count) {
+            this.count = count;
+            if (this.ui.count.length) {
+                this.ui.count.text(_.isNumber(count) ? count : '');
+            }
+        },
+
+        /**
+         * List density is a preference of this device, not a
+         * setting that travels with the notes.
+         */
+        isCompact: function() {
+            try {
+                return window.localStorage.getItem('seshat.density') === 'compact';
+            } catch (e) {
+                return false;
+            }
+        },
+
+        toggleDensity: function() {
+            var compact = !this.isCompact();
+
+            try {
+                window.localStorage.setItem('seshat.density', compact ? 'compact' : 'comfortable');
+            } catch (e) {}
+
+            $('#sidebar').toggleClass('-compact', compact);
+            this.ui.density.toggleClass('active', compact).attr('aria-pressed', compact);
+            return false;
         },
 
         triggerSync: function() {
@@ -92,12 +142,10 @@ define([
         },
 
         onSyncStart: function() {
-            console.log('start spin');
             this.ui.sync.toggleClass('animate-spin', true);
         },
 
         onSyncStop: function() {
-            console.log('stop spin');
             this.ui.sync.toggleClass('animate-spin', false);
         },
 
@@ -118,30 +166,93 @@ define([
             this.ui.title.text($.t(options.title));
             this.ui.icon.attr('class', icon);
             this.options.args = options.args;
+
+            // Another list: the field follows it
+            if (!this.ui.search.is(':focus')) {
+                this.ui.search.val(this.templateHelpers().searchQuery.apply(options));
+            }
         },
 
         searchSubmit: function() {
+            var text = this.ui.search.val().trim();
             this.ui.search.blur();
 
-            if (this.ui.search.val().trim().length) {
-                this.trigger('search:submit', this.ui.search.val().trim());
+            if (text.length) {
+                this.trigger('search:submit', text);
+            }
+            else {
+                this.clearSearch();
             }
 
-            Radio.trigger('global', 'search:hidden');
+            this.stopSearch();
 
             return false;
         },
 
-        showSearch: function() {
-            this.ui.navbar.addClass('-search');
-            this.ui.search.focus().select();
-            Radio.trigger('global', 'search:shown');
+        /**
+         * An emptied field while search results are listed means
+         * the search is over: back to all notes.
+         */
+        clearSearch: function() {
+            if (this.options.args && this.options.args.filter === 'search') {
+                Radio.request('uri', 'navigate', '/notes', {includeProfile: true});
+            }
+        },
 
+        /**
+         * The search key jumps to the field.
+         */
+        showSearch: function() {
+            this.ui.search.focus().select();
             return false;
+        },
+
+        onSearchFocus: function() {
+            this.ui.navbar.addClass('-search');
         },
 
         hideSearch: function() {
             this.ui.navbar.removeClass('-search');
+        },
+
+        /**
+         * Title matches appear while typing. They start with the
+         * first character and go away when the field is emptied.
+         */
+        startSearch: function() {
+            if (!this._searching) {
+                this._searching = true;
+                Radio.trigger('global', 'search:shown');
+            }
+        },
+
+        stopSearch: function() {
+            if (this._searching) {
+                this._searching = false;
+                Radio.trigger('global', 'search:hidden');
+            }
+        },
+
+        onSearchInput: function() {
+            var text = this.ui.search.val().trim();
+
+            if (!text.length) {
+                return this.stopSearch();
+            }
+
+            this.startSearch();
+            Radio.trigger('global', 'search:change', text);
+        },
+
+        onSearchKeydown: function(e) {
+            // Escape clears the field and gives the list back
+            if (e.which === 27) {
+                this.ui.search.val('');
+                this.stopSearch();
+                this.ui.search.blur();
+                this.clearSearch();
+                return false;
+            }
         },
 
         showAbout: function(e) {
@@ -149,18 +260,17 @@ define([
             Radio.request('Help', 'show:about');
         },
 
-        searchKeyup: function(e) {
-            if (e.which === 27) {
-                Radio.trigger('global', 'search:hidden');
-                return this.ui.search.blur();
-            }
-            Radio.trigger('global', 'search:change', this.ui.search.val());
-        },
-
         serializeData: function() {
             var maxNotebooks = parseInt(Radio.request('configs', 'get:config', 'navbarNotebooksMax'), 10);
+            // Ask the list in case it was shown before this bar
+            if (_.isUndefined(this.count)) {
+                this.count = Radio.request('appNote', 'list:count');
+            }
+
             return {
                 args      : this.options.args,
+                count     : _.isNumber(this.count) ? this.count : '',
+                compact   : this.isCompact(),
                 configs   : this.collection.getConfigs(),
                 profiles  : this.options.profiles.getValueJSON(),
                 notebooks : _.first(this.options.notebooks.toJSON(), maxNotebooks),
@@ -175,6 +285,11 @@ define([
                     return 'icon-' + (
                         !this.args.filter ? 'note' : this.args.filter
                     );
+                },
+
+                // The words of the search being shown, if any
+                searchQuery: function() {
+                    return (this.args && this.args.filter === 'search' && this.args.query) || '';
                 },
 
                 isSyncEnabled: function() {

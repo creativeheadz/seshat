@@ -6,11 +6,11 @@
     overflow: hidden;
 }
 .-scroll {
-    overflow: hidden;
-    overflow-y: scroll;
+    overflow   : hidden;
+    overflow-y : auto;
 }
 .-scroll-x {
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 // Hide text that doesn't fit
@@ -20,16 +20,9 @@
     text-overflow: ellipsis;
 }
 
-// Default view for all tables inside of notes
+// Images never push the measure
 .layout--body.-note,
 .layout--body.-form {
-    table {
-        &:extend(.table all);
-        &:extend(.table-bordered all);
-        &:extend(.table-striped all);
-        &:extend(.table-hover all);
-        width: auto;
-    }
     img {
         &:extend(.img-responsive);
     }

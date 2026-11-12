@@ -268,6 +268,115 @@ test.describe('smoke', function() {
         await expect(item).toContainText('Fixture note');
     });
 
+    // ---- 2026 redesign: one continuous list, search in place ----
+
+    // Writes `count` plain notes straight into the store, a day
+    // apart, newest first; one of them mentions a needle.
+    async function seedNotes(page, count) {
+        await page.evaluate(async function(count) {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            var notes = localforage.createInstance({name: 'notes-db', storeName: 'notes'}),
+                now   = Date.now();
+            for (var i = 0; i < count; i++) {
+                await notes.setItem('list-' + i, {
+                    id: 'list-' + i, type: 'notes', title: 'Listed note ' + i,
+                    content: i === 17 ? 'a needle in the haystack' : 'plain hay ' + i,
+                    taskAll: 0, taskCompleted: 0,
+                    created: now - i * 86400000, updated: now - i * 86400000,
+                    notebookId: '0', tags: [], isFavorite: 0, trash: 0, files: [],
+                });
+            }
+        }, count);
+        await page.reload();
+        await page.waitForSelector('#header--add', {timeout: 20000});
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+    }
+
+    var shownRows = '.list--group:not(.hidden) .list--item.-note';
+
+    // The list used to stop at ten notes per page.
+    test('lists every note on one page under date headings', async function({page}) {
+        await seedNotes(page, 30);
+        await expect(page.locator('.list--item.-note')).toHaveCount(30);
+        await expect(page.locator('#pageNav')).toHaveCount(0);
+        await expect(page.locator('#header--count')).toHaveText('30');
+        // Today, yesterday, then weeks and months
+        expect(await page.locator('.list--heading').count()).toBeGreaterThan(3);
+        await expect(page.locator('.list--heading').first()).toHaveText('Today');
+    });
+
+    // Bookmarks from the paged list (#/notes/p3) must not open an
+    // empty list.
+    test('an address with an old page number still lists the notes', async function({page}) {
+        await seedNotes(page, 30);
+        await page.goto('/#/notes/p3');
+        await page.reload();
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        await expect(page.locator('.list--item.-note')).toHaveCount(30);
+    });
+
+    test('typing in search narrows the list in place', async function({page}) {
+        await seedNotes(page, 30);
+        await page.fill('#header--search--input', 'needle');
+        await expect(page.locator(shownRows)).toHaveCount(1);
+        await expect(page.locator(shownRows).locator('.list--item--title')).toHaveText('Listed note 17');
+        await expect(page.locator('#header--count')).toHaveText('1');
+        // Escape gives the whole list back
+        await page.press('#header--search--input', 'Escape');
+        await expect(page.locator(shownRows)).toHaveCount(30);
+        await expect(page.locator('#header--search--input')).toHaveValue('');
+    });
+
+    test('compact list is remembered on this device', async function({page}) {
+        await seedNotes(page, 5);
+        await page.click('#header--density');
+        await expect(page.locator('#sidebar')).toHaveClass(/-compact/);
+        await expect(page.locator('.list--item--text').first()).toBeHidden();
+        await page.reload();
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        await expect(page.locator('#sidebar')).toHaveClass(/-compact/);
+    });
+
+    // The measure: body text must not run the width of the window.
+    test('a note is read on a measure of about 68 characters', async function({page}) {
+        await seedNotes(page, 3);
+        await page.setViewportSize({width: 1920, height: 1080});
+        await page.click('.list--item.-note >> nth=0');
+        await page.waitForSelector('.content.-note .prose');
+        var ems = await page.evaluate(function() {
+            var prose = document.querySelector('.content.-note .prose');
+            return prose.getBoundingClientRect().width /
+                parseFloat(window.getComputedStyle(prose).fontSize);
+        });
+        expect(ems).toBeGreaterThan(30);
+        expect(ems).toBeLessThanOrEqual(36.1);
+    });
+
+    // Theme setting: pinned with an attribute, mirrored for boot.js
+    // so the next load paints the right theme from the first frame.
+    test('theme chosen in settings is pinned on the next load', async function({page}) {
+        await page.evaluate(async function() {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            var configs = localforage.createInstance({name: 'notes-db', storeName: 'configs'});
+            await configs.setItem('theme', {name: 'theme', value: 'night'});
+        });
+        await page.reload();
+        await page.waitForSelector('#header--add', {timeout: 20000});
+        await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
+        expect(await page.evaluate(function() {
+            return window.localStorage.getItem('seshat.theme');
+        })).toBe('night');
+        // Night paper is dark
+        var paper = await page.evaluate(function() {
+            return window.getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+        });
+        expect(paper).toBe('#0e121e');
+    });
+
     // Vault importer: stubbed Tauri scan must interpolate the summary
     // counts (i18n.t without values blanks {{...}} placeholders).
     test('vault import reports interpolated counts', async function({page}) {

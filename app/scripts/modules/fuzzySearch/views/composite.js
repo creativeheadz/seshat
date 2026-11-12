@@ -11,10 +11,10 @@ define([
     'underscore',
     'marionette',
     'backbone.radio',
-    'views/loader',
     'modules/fuzzySearch/views/item',
-    'text!modules/fuzzySearch/templates/composite.html'
-], function($, _, Marionette, Radio, LoaderView, ItemView, Tmpl) {
+    'text!modules/fuzzySearch/templates/composite.html',
+    'text!modules/fuzzySearch/templates/empty.html'
+], function($, _, Marionette, Radio, ItemView, Tmpl, EmptyTmpl) {
     'use strict';
 
     /**
@@ -26,7 +26,10 @@ define([
         childView          : ItemView,
         childViewContainer : '.notes-list',
         childViewOptions   : {},
-        emptyView          : LoaderView
+        // No title matches; Enter still searches the text
+        emptyView          : Marionette.ItemView.extend({
+            template: _.template(EmptyTmpl)
+        })
     });
 
     return CompositeView;

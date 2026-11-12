@@ -1,97 +1,30 @@
-/*!
- * Load Awesome v1.1.0 (http://github.danielcardoso.net/load-awesome/)
- * Copyright 2015 Daniel Cardoso <@DanielCardoso>
- * Licensed under MIT
+/**
+ * Loading: a thin gold ring on the night ground
  */
 .loading--circle {
-    display: block;
-    font-size: 0;
-    color: #fff;
-}
-.loading--circle > div {
-    display: inline-block;
-    float: none;
-    background-color: currentColor;
-    border: 0 solid currentColor;
-}
-.loading--circle {
-    width: 96px;
-    height: 96px;
-}
-.loading--circle > div {
-    width: 96px;
-    height: 96px;
-    background: transparent;
-    border-width: 6px;
-    border-bottom-color: transparent;
-    border-radius: 100%;
-    -webkit-animation: ball-clip-rotate .75s linear infinite;
-       -moz-animation: ball-clip-rotate .75s linear infinite;
-         -o-animation: ball-clip-rotate .75s linear infinite;
-            animation: ball-clip-rotate .75s linear infinite;
-}
-/*
- * Animation
- */
-@-webkit-keyframes ball-clip-rotate {
-    0% {
-        -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-    }
-    50% {
-        -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
+    display : block;
+    width   : 44px;
+    height  : 44px;
+    color   : #d4b163;
+
+    > div {
+        width               : 44px;
+        height              : 44px;
+        border              : 2px solid currentColor;
+        border-bottom-color : transparent;
+        border-radius       : 100%;
+        background          : transparent;
+        animation           : loading-rotate 0.9s linear infinite;
     }
 }
-@-moz-keyframes ball-clip-rotate {
-    0% {
-        -moz-transform: rotate(0deg);
-             transform: rotate(0deg);
-    }
-    50% {
-        -moz-transform: rotate(180deg);
-             transform: rotate(180deg);
-    }
-    100% {
-        -moz-transform: rotate(360deg);
-             transform: rotate(360deg);
-    }
+
+@keyframes loading-rotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
 }
-@-o-keyframes ball-clip-rotate {
-    0% {
-        -o-transform: rotate(0deg);
-           transform: rotate(0deg);
-    }
-    50% {
-        -o-transform: rotate(180deg);
-           transform: rotate(180deg);
-    }
-    100% {
-        -o-transform: rotate(360deg);
-           transform: rotate(360deg);
-    }
-}
-@keyframes ball-clip-rotate {
-    0% {
-        -webkit-transform: rotate(0deg);
-           -moz-transform: rotate(0deg);
-             -o-transform: rotate(0deg);
-                transform: rotate(0deg);
-    }
-    50% {
-        -webkit-transform: rotate(180deg);
-           -moz-transform: rotate(180deg);
-             -o-transform: rotate(180deg);
-                transform: rotate(180deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-           -moz-transform: rotate(360deg);
-             -o-transform: rotate(360deg);
-                transform: rotate(360deg);
+
+@media (prefers-reduced-motion: reduce) {
+    .loading--circle > div {
+        animation-duration: 3s;
     }
 }

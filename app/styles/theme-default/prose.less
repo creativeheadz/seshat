@@ -1,0 +1,252 @@
+/**
+ * Prose: the typography of a rendered note. Used by the reading
+ * page and by the editor's preview, so both look the same.
+ *
+ * Sizes are ems of the body text, on the scale 14 16 18 21 24.
+ */
+.prose {
+    color         : var(--ink);
+    font-family   : var(--serif);
+    font-size     : 1em;
+    line-height   : 1.6;
+    overflow-wrap : break-word;
+    text-wrap     : pretty;
+
+    font-variant-numeric : oldstyle-nums proportional-nums;
+    hanging-punctuation  : first;
+
+    > :first-child {
+        margin-top: 0;
+    }
+    > :last-child {
+        margin-bottom: 0;
+    }
+
+    p {
+        margin: 0 0 1.05em;
+    }
+
+    /**
+     * Headings. A note's own title is the page title, so the first
+     * level here is already a section.
+     */
+    h1, h2, h3, h4, h5, h6 {
+        margin         : 1.9em 0 0.55em;
+        color          : var(--ink);
+        font-family    : var(--serif);
+        font-weight    : 600;
+        line-height    : 1.25;
+        letter-spacing : -0.008em;
+        word-spacing   : 0.04em;
+        text-wrap      : balance;
+    }
+    h1 {
+        font-size : 1.3333em;
+    }
+    h2 {
+        font-size : 1.1667em;
+    }
+    h3 {
+        font-size : 1em;
+        font-weight : 700;
+        letter-spacing: 0;
+    }
+    h4 {
+        font-size   : 1em;
+        font-style  : italic;
+        font-weight : 500;
+        letter-spacing: 0;
+    }
+    h5, h6 {
+        font-family    : var(--sans);
+        font-size      : 0.7778em;
+        font-weight    : 600;
+        letter-spacing : 0.01em;
+        color          : var(--ink-2);
+    }
+    h1 + h2, h2 + h3, h3 + h4 {
+        margin-top: 0.9em;
+    }
+
+    a {
+        color                     : var(--accent);
+        text-decoration           : underline;
+        text-decoration-thickness : 0.055em;
+        text-underline-offset     : 0.2em;
+        text-decoration-color     : var(--rule-2);
+        transition                : text-decoration-color 0.12s ease;
+
+        &:hover,
+        &:focus {
+            color                 : var(--accent);
+            text-decoration-color : currentColor;
+        }
+    }
+
+    strong, b {
+        font-weight: 700;
+    }
+
+    /**
+     * Lists
+     */
+    ul, ol {
+        margin  : 0 0 1.05em;
+        padding : 0 0 0 1.5em;
+
+        ul, ol {
+            margin: 0.25em 0 0.25em;
+        }
+    }
+    li {
+        margin  : 0.25em 0;
+        padding : 0 0 0 0.2em;
+
+        &::marker {
+            color                : var(--ink-3);
+            font-variant-numeric : tabular-nums;
+        }
+
+        > p {
+            margin-bottom: 0.5em;
+        }
+    }
+
+    /**
+     * Quotation: italic, with the accent as a rule in the margin
+     */
+    blockquote {
+        margin      : 1.5em 0;
+        padding     : 0 0 0 1.2em;
+        border      : 0;
+        border-left : 2px solid var(--accent);
+        color       : var(--ink-2);
+        font-size   : 1em;
+        font-style  : italic;
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        em, i {
+            font-style: normal;
+        }
+    }
+
+    // A short centred rule, as between sections of a book
+    hr {
+        width      : 5em;
+        margin     : 2.4em auto;
+        border     : 0;
+        border-top : 1px solid var(--rule-2);
+    }
+
+    /**
+     * Code
+     */
+    code, kbd, samp {
+        font-family          : var(--mono);
+        font-size            : 0.8333em;
+        font-variant-numeric : normal;
+    }
+    :not(pre) > code {
+        padding       : 0.1em 0.35em;
+        border-radius : 4px;
+        background    : var(--code-bg);
+        color         : var(--ink);
+        white-space   : break-spaces;
+    }
+    pre {
+        margin        : 1.5em 0;
+        padding       : 1em 1.2em;
+        border        : 0;
+        border-radius : 8px;
+        background    : var(--code-bg);
+        color         : var(--ink);
+        font-family   : var(--mono);
+        font-size     : 0.7778em;
+        line-height   : 1.6;
+        overflow-x    : auto;
+        tab-size      : 4;
+        white-space   : pre;
+        word-wrap     : normal;
+
+        code {
+            padding     : 0;
+            background  : none;
+            font-size   : 1em;
+            white-space : inherit;
+        }
+    }
+
+    /**
+     * Tables: rules under the head and between rows, nothing else
+     */
+    .table-responsive {
+        margin     : 1.5em 0;
+        border     : 0;
+        overflow-x : auto;
+    }
+    table {
+        width           : 100%;
+        margin          : 0;
+        border-collapse : collapse;
+        font-family     : var(--sans);
+        font-size       : 0.8333em;
+        line-height     : 1.5;
+
+        font-variant-numeric : tabular-nums lining-nums;
+    }
+    th, td {
+        padding        : 0.55em 1.2em 0.55em 0;
+        border         : 0;
+        border-bottom  : 1px solid var(--rule);
+        text-align     : left;
+        vertical-align : top;
+
+        &:last-child {
+            padding-right: 0;
+        }
+    }
+    th {
+        border-bottom-color : var(--ink-3);
+        color               : var(--ink-2);
+        font-weight         : 600;
+    }
+    tr:last-child td {
+        border-bottom: 0;
+    }
+
+    /**
+     * Pictures and attached files
+     */
+    img {
+        margin        : 0.6em 0;
+        border-radius : 6px;
+    }
+
+    // Tags written in the text
+    .label {
+        padding       : 0;
+        border-radius : 0;
+        background    : none;
+        color         : var(--ink-3);
+        font-family   : var(--sans);
+        font-size     : 0.7778em;
+        font-weight   : 500;
+        text-decoration: none;
+        white-space   : nowrap;
+
+        &:hover,
+        &:focus {
+            background : none;
+            color      : var(--accent);
+        }
+    }
+
+    // Math
+    .math.block {
+        margin     : 1.5em 0;
+        overflow-x : auto;
+    }
+}

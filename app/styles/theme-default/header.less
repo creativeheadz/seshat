@@ -1,56 +1,173 @@
 /**
- * Header module
+ * Header module: the list header and the bar over the page
  */
-.header--bg(@bg, @shadow, @border, @color) {
-    background : @bg;
-    box-shadow : @shadow;
-    border     : @border;
-    color      : @color;
+.header {
+    background    : transparent;
+    box-shadow    : none;
+    border-radius : 0;
+    margin        : 0;
+    color         : var(--ink);
+}
 
-    .header--title {
-        &:hover,
-        &:focus {
-            background-color: darken(@bg, 5%);
-        }
+/**
+ * List header
+ */
+.header--title {
+    height        : 40px;
+    padding       : 0 10px 0 8px;
+    border-radius : 8px;
+    color         : var(--ink);
+    font-family   : var(--serif);
+    font-size     : @size--18;
+    font-weight   : 600;
+    line-height   : 40px;
+    word-spacing  : 0.05em;
+    transition    : background-color 0.12s ease;
+
+    &:hover,
+    &:focus {
+        background      : var(--desk-2);
+        color           : var(--ink);
+        text-decoration : none;
+    }
+}
+
+.header--icon {
+    flex         : none;
+    margin-right : 10px;
+    color        : var(--ink-3);
+    font-size    : 15px;
+    line-height  : 1;
+}
+
+// How many notes are in the list
+.header--count {
+    .meta--type();
+    flex       : none;
+    margin     : 2px 8px 0 2px;
+    color      : var(--ink-3);
+}
+
+.header--count:empty + .header--tools #header--density {
+    display: none;
+}
+
+.header--tool.btn {
+    width         : 36px;
+    height        : 36px;
+    padding       : 0;
+    border        : 0;
+    border-radius : 8px;
+    background    : transparent;
+    color         : var(--ink-3);
+    font-size     : 15px;
+    box-shadow    : none;
+
+    &:hover,
+    &:focus {
+        background : var(--desk-2);
+        color      : var(--ink);
     }
 
-    .navbar-nav > li > a,
-    .navbar-btn,
-    .navbar-link,
-    .navbar-text,
-    .btn-link {
-        color : @color;
-        &:hover,
-        &:focus {
-            color : @color;
-        }
+    &.active {
+        background : var(--accent-soft);
+        color      : var(--accent);
+        box-shadow : none;
+    }
+}
+
+.header--add.btn {
+    width         : 36px;
+    height        : 36px;
+    margin-left   : 6px;
+    padding       : 0;
+    border-radius : 8px;
+    font-size     : 15px;
+}
+
+/**
+ * Search field
+ */
+.header--search--icon {
+    position       : absolute;
+    left           : 23px;
+    top            : 9px;
+    color          : var(--ink-3);
+    font-size      : 14px;
+    line-height    : 1;
+    pointer-events : none;
+}
+
+.header--search--input.form-control {
+    height        : 36px;
+    padding       : 0 2.4rem 0 2.25rem;
+    border        : 1px solid transparent;
+    border-radius : 8px;
+    background    : var(--desk-2);
+    color         : var(--ink);
+    font-size     : @size--14;
+    box-shadow    : none;
+
+    &::placeholder {
+        color   : var(--ink-3);
+        opacity : 1;
+    }
+
+    &::-webkit-search-cancel-button {
+        display: none;
+    }
+
+    &:focus {
+        border-color : var(--accent);
+        background   : var(--raised);
+        box-shadow   : none;
+    }
+}
+
+// The key that jumps here
+.header--search--key {
+    position       : absolute;
+    right          : 20px;
+    top            : 7px;
+    pointer-events : none;
+}
+.header--search--input:focus ~ .header--search--key,
+.header--search--input:not(:placeholder-shown) ~ .header--search--key {
+    display: none;
+}
+@media (hover: none) {
+    .header--search--key {
+        display: none;
     }
 }
 
 /**
- * Left Navbar
+ * The bar over the page
  */
-.header.-left {
-    .header--bg(@header--left--bg, @header--left--shadow, @header--left--border, @header--left--color);
-}
-.header--container.-left {
-    padding-left: 0;
-}
-.header--search {
-    padding-right: 0;
+.header.-note,
+.header.-form,
+.header.-settings,
+.header.-right {
+    background    : var(--paper);
+    border-bottom : 1px solid transparent;
 }
 
-/**
- * Right Navbar
- */
-.header.-right,
-.header.-note {
-    .header--bg(@header--right--bg, @header--right--shadow, @header--right--border, @header--right--color);
+.header.-form,
+.header.-settings {
+    border-bottom-color: var(--rule);
 }
 
-/**
- * The main navbar in note form, pagedown
- */
-.header.-form {
-    .header--bg(@header--right--bg, @header--right--shadow, @header--right--border, @header--right--color);
+.header.-settings .navbar-right .btn + .btn {
+    margin-left: 8px;
+}
+
+// Back button in settings
+.header--settings {
+    .navbar-nav > li > a {
+        color: var(--ink);
+    }
+    .settings--cancel:hover,
+    .settings--cancel:focus {
+        background: var(--desk-2);
+    }
 }

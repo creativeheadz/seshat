@@ -153,6 +153,16 @@ define([
             });
 
             window.dispatchEvent(new Event('resize'));
+
+            // The source is set in the reading face, which may still
+            // be loading: measure the lines again once it has arrived.
+            if (document.fonts && document.fonts.ready) {
+                var editor = this.editor;
+                document.fonts.ready.then(function() {
+                    editor.refresh();
+                });
+            }
+
             this.editor.on('change', this.onChange);
             this.editor.on('scroll', this.onScroll);
             this.editor.on('cursorActivity', this.onCursor);

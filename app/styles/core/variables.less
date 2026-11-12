@@ -1,18 +1,43 @@
 /**
+ * Geometry and Bootstrap overrides shared by both bundles
+ * (theme-default/main.less imports this file too).
  */
-// Basic variables
-@grid-float-breakpoint: 0;
-@border-radius-base: 3px;
 
-// Icon rail width (sidebar offsets must match)
-@rail--width: 54px;
+// One unit runs through the frame: the rail is as wide as the
+// bars are tall, so the top-left corner is a square.
+@unit        : 56px;
+@rail--width : @unit;
 
-// System font stack (overrides Bootstrap default)
-@font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+// The list column is a fixed measure, not a share of the window:
+// titles keep the same line length on every screen.
+@list--width     : 22rem;
+@list--width--md : 19rem;
 
-// List group
-@list-group-border-radius: 0;
+// The reading measure, in ems of the body text (about 68 characters)
+@measure : 36em;
+
+// Bootstrap
+@grid-float-breakpoint : 0;
+@navbar-height         : @unit;
+@navbar-margin-bottom  : 0;
+
+@font-family-sans-serif : "Libre Franklin Variable", "Libre Franklin", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+@font-family-serif      : "Literata Variable", Literata, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+@font-family-monospace  : "IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+
+@font-size-base   : 14px;
+@text-color       : #14182b;
+@body-bg          : #fdfdfb;
+@link-color       : #2b3f8c;
+@link-hover-color : #233374;
+
+@border-radius-base  : 6px;
+@border-radius-small : 4px;
+@border-radius-large : 10px;
+
+@list-group-border-radius : 0;
 
 // Z-indexes
-@zindex--backdrop: @zindex-navbar-fixed + 1;
-@zindex--sidemenu: @zindex-navbar-fixed + 2;
+@zindex--rail     : @zindex-navbar-fixed;
+@zindex--backdrop : @zindex-navbar-fixed + 1;
+@zindex--sidemenu : @zindex-navbar-fixed + 2;

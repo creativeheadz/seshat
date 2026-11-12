@@ -40,6 +40,7 @@ define([
         'helpers/uri',
         'helpers/title',
         'helpers/i18next',
+        'helpers/theme',
         'helpers/keybindings',
 
         // Classes

@@ -1,85 +1,237 @@
 /**
- * Editor module
+ * The page: a note, written.
+ *
+ * Writing happens on the same measure, in the same face and at the
+ * same size as reading, and the text block stands in the same
+ * place, so pressing Edit changes the tools and not the page.
  */
-#editor--input--title {
-    height    : auto;
-    padding   : 0;
-    font-size : 36px;
-}
-
-// Leave some space from the top
-.editor--container {
-    &:first-child {
-        margin-top: 30px;
-    }
-}
-
-// Remove borders from Pagedown bar
-.editor--bar {
-    border-right-width : 0;
-    border-left-width  : 0;
-
-    // Hide some buttons on small screens
-    max-height : @navbar-height - 6px;
-    height     : @navbar-height - 6px;
-    overflow   : hidden;
-}
-.editor--btns {
-    margin-top: 2px;
-    margin-bottom: 2px;
-}
-
-.editor--fullscreen .layout--body.-form {
-    top: @navbar-height + 40px;
-}
-
-.editor--fullscreen.-preview .layout--content {
-    background: @layout--form--bg;
+.layout--body.-scroll.-form {
+    background : var(--paper);
+    color      : var(--ink);
+    font-size  : var(--text);
 }
 
 /**
- * Editor WYSIWG bar
+ * Title field
  */
-.editor--bar,
-.editor--fullscreen .editor--bar {
-    // Colors
-    background : @pagedown--bar--bg;
-    color      : @pagedown--bar--color;
+.editor--container {
+    .page--block();
+    max-width : @measure;
+    padding   : 1.4em 0 0;
+}
 
-    border-top-width    : 1px;
-    border-bottom-width : 1px;
-    border-style        : solid;
-    border-color        : @pagedown--bar--border;
-    border-radius       : 0;
-
-    // Sizing
-    padding-top    : 2px;
-    padding-bottom : 2px;
-    min-height     : 20px;
+#editor--input--title,
+#editor--input--title.form-control {
     height         : auto;
+    padding        : 0;
+    border         : 0;
+    border-radius  : 0;
+    background     : transparent;
+    box-shadow     : none;
+    color          : var(--ink);
+    font-family    : var(--serif);
+    font-size      : 2em;
+    font-weight    : 600;
+    line-height    : 1.15;
+    letter-spacing : -0.015em;
+
+    &::placeholder {
+        color   : var(--rule-2);
+        opacity : 1;
+    }
+
+    @media (max-width: @screen-xs-max) {
+        font-size: 1.65em;
+    }
 }
 
-// Fullscree mode
-.editor--fullscreen {
-    // Reduce font size of the title
-    #editor--input--title {
-        font-size: 1.8em;
-    }
+/**
+ * Text
+ */
+.editor--row {
+    .page--block();
+    max-width : @measure;
+    padding   : 0.9em 0 6em;
+}
 
-    // Remove space from the top
-    .editor--container {
-        margin-top: 0;
-    }
+/**
+ * Toolbar: one quiet row of marks under the bar
+ */
+.editor--bar {
+    min-height    : 0;
+    margin        : 0;
+    padding       : 5px 12px;
+    border        : 0;
+    border-bottom : 1px solid var(--rule);
+    border-radius : 0;
+    background    : var(--paper);
+    color         : var(--ink-2);
+    font-size     : @size--14;
+    white-space   : nowrap;
+    overflow-x    : auto;
+    scrollbar-width: none;
+}
 
-    // Remove shadows from the main navbar
-    .header.-form {
-        box-shadow: none;
+.editor--btns {
+    margin : 0 6px;
+    float  : none;
+
+    .btn {
+        float: none;
     }
 }
 
-// Preview mode
+/**
+ * WYSIWYG buttons
+ */
+.btn--wysiwyg.btn {
+    width         : 34px;
+    height        : 32px;
+    padding       : 0;
+    border        : 0;
+    border-radius : 6px !important;
+    background    : transparent;
+    color         : var(--ink-2);
+    font-size     : 15px;
+    line-height   : 32px;
+    box-shadow    : none;
+    transition    : background-color 0.12s ease, color 0.12s ease;
+
+    &:hover,
+    &:focus {
+        background : var(--desk);
+        color      : var(--ink);
+    }
+
+    // The mark under the cursor is in force
+    &.btn-primary {
+        background : var(--accent-soft);
+        color      : var(--accent);
+    }
+}
+
+/**
+ * Source | preview switch on small screens
+ */
+.editor--cols {
+    padding: 8px 12px 0;
+
+    .btn {
+        border-color : var(--rule);
+        background   : transparent;
+        color        : var(--ink-2);
+        box-shadow   : none;
+
+        &.active {
+            background : var(--accent-soft);
+            color      : var(--accent);
+        }
+    }
+}
+
+// Where the cursor is
+#editor--footer {
+    .meta--type();
+    margin        : 0 0 0 8px;
+    padding       : 3px 10px;
+    border-radius : 6px 6px 0 0;
+    background    : var(--paper);
+    color         : var(--ink-3);
+    font-size     : @size--12;
+}
+
+/**
+ * Notebook picker
+ */
+.header.-form .navbar-form {
+    padding    : 0;
+    border     : 0;
+    box-shadow : none;
+}
+
+.editor--notebooks--icon,
+.editor--notebooks--caret {
+    position       : absolute;
+    top            : 50%;
+    margin-top     : -0.6em;
+    color          : var(--ink-3);
+    line-height    : 1;
+    pointer-events : none;
+}
+.editor--notebooks--icon {
+    left      : 10px;
+    font-size : 13px;
+}
+.editor--notebooks--caret {
+    right     : 10px;
+    font-size : 10px;
+}
+.editor--notebooks--list.form-control {
+    height       : 34px;
+    padding      : 0 30px 0 32px;
+    border-color : transparent;
+    background   : var(--desk);
+    color        : var(--ink);
+    font-size    : @size--13;
+    font-weight  : 500;
+    box-shadow   : none;
+    cursor       : pointer;
+
+    &:hover {
+        background: var(--desk-2);
+    }
+    &:focus {
+        border-color : var(--accent);
+        box-shadow   : none;
+    }
+}
+
+/**
+ * Source and preview side by side
+ */
 .editor--fullscreen.-preview {
+    // The title sits over the source column
+    .editor--container {
+        max-width    : none;
+        margin-left  : 0;
+        margin-right : 50%;
+        padding      : 1.2em 2.5rem 0.6em;
+    }
     #editor--input--title {
-        padding: 0 12px;
+        font-size: 1.6em;
+    }
+
+    .editor--row {
+        max-width    : none;
+        margin-left  : 0;
+        margin-right : 0;
+        padding      : 0;
+    }
+
+    .editor--layout.-left {
+        border-right: 1px solid var(--rule);
+    }
+
+    .editor--preview {
+        padding: 0 2.5rem;
+    }
+    .editor--preview--block {
+        max-width : @measure;
+        padding   : 0.4em 0 6em;
+    }
+
+    // On a small screen only one column shows, so the title spans it
+    @media (max-width: @pagedown-breakpoint) {
+        .editor--container {
+            margin-right : 0;
+            padding      : 1em 1.5rem 0.4em;
+        }
+        .editor--layout.-left {
+            border-right: 0;
+        }
+        .editor--preview {
+            padding: 0 1.5rem;
+        }
     }
 }
+@pagedown-breakpoint: 500px;

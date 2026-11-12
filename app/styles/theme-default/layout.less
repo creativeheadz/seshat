@@ -1,79 +1,89 @@
 /**
- * Layout module
- */
-
-// Note layout styles
-.layout--body.-note {
-    // Colors
-    background : @layout--note--bg;
-    color      : @layout--note--color;
-}
-
-.container-fluid.-note {
-    padding-left   : 30px;
-    padding-right  : 30px;
-    padding-bottom : 50px;
-}
-
-.page-header.-note {
-    margin-top    : 30px;
-    border-bottom : none;
-}
-
-/**
- * Brand layout
+ * Lock screen and loading: the night sky, in both themes
  */
 .layout--brand {
-    background : @layout--brand--bg;
-    color      : @layout--brand--color;
+    background : #0a0d14;
+    color      : #e7e4da;
+}
+
+.container.-auth {
+    max-width      : 22rem;
+    padding-top    : 16vh;
+    padding-bottom : 2rem;
+}
+
+.header--brand {
+    margin         : 0 0 0.5rem;
+    color          : #e7e4da;
+    font-family    : var(--serif);
+    font-size      : @size--36;
+    font-weight    : 500;
+    letter-spacing : -0.015em;
+
+    &:first-child {
+        color     : #d4b163;
+        font-size : 2.75rem;
+    }
+    &:last-child {
+        margin-bottom: 2.5rem;
+    }
 }
 
 .form--icon {
     position: relative;
-    .icon {
-        z-index   : @zindex-navbar-fixed + 1;
-        position  : absolute;
-        top       : 10px;
-        left      : 6px;
-        font-size : 20px;
-        color     : #CCC;
+}
+
+/**
+ * Brand forms
+ */
+.input--brand.form-control {
+    height        : 3rem;
+    border        : 1px solid #323a55;
+    border-radius : 10px;
+    background    : #151a28;
+    color         : #e7e4da;
+    font-size     : @size--16;
+    text-align    : center;
+    box-shadow    : none;
+
+    &::placeholder {
+        color   : #8b8fa3;
+        opacity : 1;
     }
-    .input--icon {
-        padding-left: 30px;
+
+    &:hover,
+    &:focus,
+    &.focus {
+        border-color : #d4b163;
+        box-shadow   : 0 0 0 1px #d4b163;
     }
 }
 
-.header--brand {
-    font-size     : @navbar-height;
-    font-variant  : small-caps;
+.btn--brand.btn {
+    height        : 3rem;
+    margin-top    : 0.25rem;
+    border        : 0;
+    border-radius : 10px;
+    background    : #d4b163;
+    color         : #14182b;
+    font-size     : @size--16;
+    font-weight   : 600;
 
-    // Margins
-    margin-top    : 0;
-    margin-bottom : 10px;
-
-    &:last-child {
-        margin-bottom: 40px;
+    &:hover, &:focus, &:active {
+        background : #e2c482;
+        color      : #14182b;
     }
-}
-
-.container.-auth {
-    max-width      : 400px;
-    padding-top    : 10%;
-    padding-bottom : 20px;
+    &:focus-visible {
+        outline-color: #e7e4da;
+    }
 }
 
 // Loading
-.layout--brand.-loading {
-    &:after {
-        &:extend(.header--brand);
-    }
-}
-
 #loading--circle {
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	top: 0;
-	margin: auto;
+    position : absolute;
+    left     : 0;
+    right    : 0;
+    bottom   : 0;
+    top      : 0;
+    margin   : auto;
 }

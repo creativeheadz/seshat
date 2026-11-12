@@ -1,18 +1,173 @@
+/**
+ * The writing surface (CodeMirror, Markdown source).
+ *
+ * Source is set in the reading face at the reading size. Markdown
+ * marks stay visible but step back; headings take the sizes they
+ * will have when read; code is the only thing set in mono.
+ */
 .CodeMirror {
-    background  : white;
+    height      : auto;
+    background  : transparent;
+    color       : var(--ink);
+    font-family : var(--serif);
+    font-size   : 1em;
+    line-height : 1.6;
 }
 
-.cm-link {
-    color: @gray;
+.CodeMirror-lines {
+    padding: 0;
 }
-.cm-url {
-    color: @gray-light;
-}
-
-.cm-comment {
-    background-color: lighten(@gray-lighter, 2);
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+    padding     : 0;
+    font-family : inherit;
 }
 
-.cm-quote {
-    color: @gray-light;
+.CodeMirror-cursor {
+    border-left: 2px solid var(--accent);
+}
+
+.CodeMirror-selected,
+.CodeMirror-focused .CodeMirror-selected {
+    background: var(--select);
+}
+.CodeMirror-line::selection,
+.CodeMirror-line > span::selection,
+.CodeMirror-line > span > span::selection {
+    background: var(--select);
+}
+
+.CodeMirror-placeholder {
+    color: var(--ink-3);
+}
+
+/**
+ * Markdown tokens
+ */
+.cm-s-default {
+    .cm-header {
+        color          : var(--ink);
+        font-weight    : 600;
+        letter-spacing : -0.008em;
+        word-spacing   : 0.04em;
+    }
+    .cm-header-1 {
+        font-size   : 1.3333em;
+        line-height : 1.5;
+    }
+    .cm-header-2 {
+        font-size   : 1.1667em;
+        line-height : 1.6;
+    }
+    .cm-header-3 {
+        font-size   : 1em;
+        font-weight : 700;
+        line-height : 1.6;
+    }
+    .cm-header-4,
+    .cm-header-5,
+    .cm-header-6 {
+        font-size   : 1em;
+        font-style  : italic;
+        font-weight : 500;
+        line-height : 1.6;
+    }
+
+    .cm-strong {
+        font-weight: 700;
+    }
+    .cm-em {
+        font-style: italic;
+    }
+    .cm-strikethrough {
+        color           : var(--ink-3);
+        text-decoration : line-through;
+    }
+
+    .cm-quote {
+        color      : var(--ink-2);
+        font-style : italic;
+    }
+
+    .cm-link {
+        color           : var(--accent);
+        text-decoration : none;
+    }
+    .cm-url {
+        color: var(--ink-3);
+    }
+
+    // Inline code and fenced blocks
+    .cm-comment {
+        background           : var(--code-bg);
+        color                : var(--ink);
+        font-family          : var(--mono);
+        font-size            : 0.8333em;
+        font-variant-numeric : normal;
+    }
+
+    // List marks, rules, tags
+    .cm-variable-2,
+    .cm-variable-3,
+    .cm-keyword {
+        color: var(--ink);
+    }
+    .cm-hr {
+        color: var(--ink-3);
+    }
+    .cm-tag,
+    .cm-attribute,
+    .cm-bracket {
+        color: var(--ink-3);
+    }
+    .cm-atom,
+    .cm-number,
+    .cm-string,
+    .cm-property,
+    .cm-meta {
+        color: var(--ink-2);
+    }
+}
+
+div.CodeMirror span.CodeMirror-matchingbracket {
+    color      : var(--accent);
+    background : var(--accent-soft);
+}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {
+    color: var(--danger);
+}
+.CodeMirror-activeline-background {
+    background: var(--desk);
+}
+
+// Vim and friends
+.CodeMirror-dialog {
+    background  : var(--raised);
+    color       : var(--ink);
+    font-family : var(--mono);
+    font-size   : @size--13;
+
+    input {
+        color: var(--ink);
+    }
+}
+.cm-fat-cursor .CodeMirror-cursor {
+    background: var(--accent-soft);
+}
+
+/**
+ * Side by side: the source column scrolls on its own
+ */
+.editor--fullscreen.-preview {
+    .CodeMirror-lines {
+        max-width : ~"calc(@{measure} + 5rem)";
+        padding   : 0.4em 2.5rem 6em;
+    }
+
+    @media (max-width: @pagedown-breakpoint) {
+        .CodeMirror-lines {
+            padding-left  : 1.5rem;
+            padding-right : 1.5rem;
+        }
+    }
 }

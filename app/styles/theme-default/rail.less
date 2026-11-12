@@ -1,18 +1,15 @@
 /**
  * Icon rail (persistent slim navigation).
- * Width must match the sidebar offset in core/layout.less.
+ * Width comes from core/variables.less.
  */
-@rail--width: 54px;
-
 .layout--rail {
-    position : fixed;
-    left     : 0;
-    top      : 0;
-    bottom   : 0;
-    width    : @rail--width;
-    z-index  : 1030; // below backdrop (1031) and sidemenu (1032)
-    background-color: #fff;
-    border-right: 1px solid #ececea;
+    background   : var(--desk);
+    border-right : 1px solid var(--rule);
+
+    @media (max-width: @screen-xs-max) {
+        border-right : 0;
+        border-top   : 1px solid var(--rule);
+    }
 }
 
 .rail--nav {
@@ -21,7 +18,40 @@
     align-items    : center;
     height         : 100%;
     width          : 100%;
-    padding        : 10px 0;
+    padding        : 0 0 10px;
+
+    @media (max-width: @screen-xs-max) {
+        flex-direction  : row;
+        justify-content : space-around;
+        padding         : 0 6px;
+    }
+}
+
+// Seshat's emblem in the corner square, level with the list title
+.rail--mark {
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    flex            : none;
+    width           : @rail--width;
+    height          : @rail--width;
+    margin-bottom   : 2px;
+    color           : var(--star);
+    font-size       : 22px;
+
+    &:hover,
+    &:focus {
+        color           : var(--star);
+        text-decoration : none;
+    }
+    &:focus-visible {
+        outline-offset : -10px;
+        border-radius  : 16px;
+    }
+
+    @media (max-width: @screen-xs-max) {
+        display: none;
+    }
 }
 
 .rail--item {
@@ -30,24 +60,30 @@
     display         : flex;
     align-items     : center;
     justify-content : center;
+    flex            : none;
     font-size       : 17px;
-    color           : #6b6f6e;
+    color           : var(--ink-3);
     border-radius   : 10px;
     margin          : 2px 0;
+    transition      : background-color 0.12s ease, color 0.12s ease;
 }
 
 .rail--item:hover,
 .rail--item:focus {
-    background      : #f1f0eb;
-    color           : #222;
+    background      : var(--desk-2);
+    color           : var(--ink);
     text-decoration : none;
 }
 
 .rail--item.active {
-    color      : @color--brand;
-    background : lighten(@color--brand, 52%);
+    color      : var(--accent);
+    background : var(--accent-soft);
 }
 
 .rail--spacer {
     flex: 1 1 auto;
+
+    @media (max-width: @screen-xs-max) {
+        display: none;
+    }
 }

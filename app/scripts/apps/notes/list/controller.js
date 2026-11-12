@@ -91,7 +91,9 @@ define([
 
             // Show the navbar
             Radio.request('navbar', 'start', options);
-            options.pageSize = this.configs.pagination;
+            // The whole list is one page: the view lists every note
+            // under date headings instead of paging through them.
+            options.pageSize = Number.MAX_SAFE_INTEGER;
             this.options = options;
 
             // Fetch data

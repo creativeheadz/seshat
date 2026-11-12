@@ -1,24 +1,18 @@
 /**
- * Side menu
+ * Side menu: the drawer with notebooks and profiles
  */
 .sidemenu {
-    .make-xs-column(8);
-    .make-md-column(3);
-    .make-sm-column(3);
-    .make-lg-column(3);
-}
-.sidemenu {
-    background-color: #fff;
-
     // Position and z-index
     position : fixed;
     top      : 0;
     bottom   : 0;
+    left     : 0;
     z-index  : @zindex--sidemenu;
 
     // Size
-    height  : 100%;
-    padding : 0;
+    width     : 20rem;
+    max-width : 86vw;
+    padding   : 0;
 
     // Show scrollbars
     overflow-y : auto;
@@ -26,14 +20,18 @@
 
     // Slide open from left
     visibility : hidden;
-    transition : all 0.3s ease;
-    .make-xs-column-push(-8);
-    .make-md-column-push(-3);
-    .make-sm-column-push(-3);
-    .make-lg-column-push(-3);
+    transform  : translateX(-100%);
+    transition : transform 0.22s ease, visibility 0s linear 0.22s;
 
     &.-show {
-        visibility: visible;
-        left: 0;
+        visibility : visible;
+        transform  : none;
+        transition : transform 0.22s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        &, &.-show {
+            transition: none;
+        }
     }
 }

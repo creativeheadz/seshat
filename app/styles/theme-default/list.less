@@ -1,63 +1,299 @@
 /**
- * List module
+ * List module: the notes, and the notebook and tag lists
  */
 
-.list--item {
-    border-color: @list--border--color;
+/**
+ * A note in the list
+ */
+.list--item.-note,
+.list--item.-note.list-group-item {
+    margin        : 0 8px;
+    padding       : 10px 12px 11px;
+    border        : 0;
+    border-radius : 8px;
+    background    : transparent;
+    color         : var(--ink);
+    transition    : background-color 0.1s ease;
+
+    &:hover,
+    &:focus {
+        background      : var(--desk-2);
+        color           : var(--ink);
+        text-decoration : none;
+    }
+
+    &:focus-visible {
+        outline-offset: -2px;
+    }
+
+    // The open note
+    &.active,
+    &.active:hover,
+    &.active:focus {
+        background : var(--accent-soft);
+        color      : var(--ink);
+        box-shadow : inset 2px 0 0 var(--accent);
+    }
+}
+
+.list--item--title.-note {
+    color          : var(--ink);
+    font-family    : var(--serif);
+    font-size      : @size--16;
+    font-weight    : 560;
+    line-height    : 1.4;
+    word-spacing   : 0.06em;
+}
+
+.list--item--date {
+    .meta--type();
+    font-size : @size--12;
+    color     : var(--ink-3);
+}
+
+.list--item--text {
+    margin      : 1px 0 0;
+    color       : var(--ink-2);
+    font-family : var(--serif);
+    font-size   : @size--14;
+    line-height : 1.45;
+}
+
+// The star: gold when set, a faint outline on the row under the
+// pointer, and otherwise out of the way.
+.list--item--favorite {
+    align-self : center;
+    padding    : 0;
+    border     : 0;
+    background : none;
+    color      : var(--ink-3);
+    font-size  : 13px;
+    line-height: 1;
+    cursor     : pointer;
+    opacity    : 0;
+    transition : opacity 0.1s ease, color 0.1s ease;
+
+    &:hover {
+        color: var(--star);
+    }
+
+    &.icon-favorite {
+        color   : var(--star);
+        opacity : 1;
+    }
+}
+.list--item.-note:hover .list--item--favorite,
+.list--item.-note:focus .list--item--favorite {
+    opacity: 1;
+}
+@media (hover: none) {
+    .list--item--favorite {
+        opacity: 0.55;
+    }
+}
+
+/**
+ * Compact density
+ */
+.layout--sidebar.-compact {
+    .list--item.-note,
+    .list--item.-note.list-group-item {
+        padding-top    : 6px;
+        padding-bottom : 6px;
+        column-gap     : 8px;
+    }
+    .list--item--title.-note {
+        font-size   : @size--14;
+        font-weight : 500;
+    }
+}
+
+/**
+ * Headings inside the list: Today, October, 2025, a letter
+ */
+.list--heading {
+    .meta--type();
+    margin      : 0;
+    padding     : 14px 20px 6px;
+    background  : var(--desk);
+    color       : var(--ink-3);
+    font-size   : @size--12;
+    font-weight : 600;
+}
+
+/**
+ * Nothing to show
+ */
+.list--empty {
+    padding    : 3.5rem 2rem;
+    color      : var(--ink-3);
+    text-align : center;
+}
+.list--empty--mark {
+    display       : block;
+    margin-bottom : 0.75rem;
+    color         : var(--rule-2);
+    font-size     : 28px;
+    line-height   : 1;
+}
+.list--empty--title {
+    margin      : 0 0 0.25rem;
+    color       : var(--ink-2);
+    font-family : var(--serif);
+    font-size   : @size--16;
+    font-weight : 500;
+}
+.list--empty--hint {
+    margin    : 0;
+    font-size : @size--13;
+}
+
+// What Enter does, under the title matches
+.list--hint {
+    .meta--type();
+    margin  : 0;
+    padding : 12px 20px 20px;
+    color   : var(--ink-3);
+}
+
+/**
+ * Notebooks, tags, search results
+ */
+.list--item.list-group-item {
+    margin        : 0 8px;
+    padding       : 8px 44px 8px 12px;
+    border        : 0;
+    border-radius : 8px;
+    background    : transparent;
+    color         : var(--ink);
+    font-size     : @size--14;
+
+    &:hover,
+    &:focus {
+        background : var(--desk-2);
+        color      : var(--ink);
+    }
 
     &.active,
     &.active:hover,
     &.active:focus {
-        background-color : @list--active--bg;
-        border-color     : @list--active--border;
-        box-shadow       : none;
+        background : var(--accent-soft);
+        color      : var(--ink);
+        box-shadow : inset 2px 0 0 var(--accent);
+    }
+
+    > [class^="icon-"] {
+        margin-right : 8px;
+        color        : var(--ink-3);
+    }
+
+    .badge {
+        .meta--type();
+        margin-top  : 2px;
+        padding     : 0;
+        background  : none;
+        color       : var(--ink-3);
+        font-size   : @size--12;
     }
 }
 
-// List of notes
-.list--item.-note {
-    padding-top    : 25px;
-    padding-bottom : 15px;
-    max-height     : 80px;
-    min-height     : 80px;
+.list--item.-notebook,
+.list--item.-tag {
+    display     : flex;
+    align-items : center;
+    font-family : var(--serif);
+    font-size   : @size--16;
+
+    .badge {
+        float       : none !important;
+        margin      : 0 0 0 auto;
+        padding-left: 12px;
+    }
 }
 
-// Note excerpts
-.list--item--text {
-    color     : #6b6f6e;
-    font-size : 13px;
-}
-
-a.list--item:hover {
-    background-color: #f7f6f2;
-}
-
-// Pagination buttons
-.list--pager--btn {
-    padding    : 15px;
-    background : transparent;
-}
-
-// List of notebooks
+// Nested notebooks
 .list--nested {
-    padding-left: 30px;
+    padding-left: 20px;
+}
 
-    .list--item {
-        border-left-color: transparent;
-        margin-left: -30px * 4;
-        padding-left: 30px * 4;
-        &:last-child {
-            border-bottom-color: transparent;
+// Edit / remove menu on a notebook or tag
+.list--buttons {
+    padding : 5px 6px 0 0;
+
+    .drop-edit {
+        width         : 30px;
+        height        : 30px;
+        padding       : 0;
+        border        : 0;
+        border-radius : 6px;
+        background    : transparent;
+        color         : var(--ink-3);
+        box-shadow    : none;
+        opacity       : 0;
+
+        &:hover,
+        &:focus {
+            background : var(--rule);
+            color      : var(--ink);
+            opacity    : 1;
+        }
+    }
+    &.open .drop-edit {
+        opacity: 1;
+    }
+}
+.list--group:hover .list--buttons .drop-edit {
+    opacity: 1;
+}
+@media (hover: none) {
+    .list--buttons .drop-edit {
+        opacity: 1;
+    }
+}
+
+// Section heading with its own action (Tags)
+.list--navbar {
+    display     : flex;
+    align-items : center;
+    min-height  : 0;
+    margin      : 18px 0 4px;
+    padding     : 0 12px 0 20px;
+    border      : 0;
+    background  : transparent;
+    color       : var(--ink);
+
+    .list--nav {
+        float  : none !important;
+        margin : 0 0 0 auto;
+    }
+
+    .btn {
+        width         : 30px;
+        height        : 30px;
+        padding       : 0;
+        border        : 0;
+        border-radius : 6px;
+        background    : transparent;
+        color         : var(--ink-3);
+
+        &:hover,
+        &:focus {
+            background : var(--desk-2);
+            color      : var(--ink);
         }
     }
 }
-
-// Navbars
-.list--navbar {
-    color         : @list--navbar--color;
-    background    : @list--navbar--bg;
-}
 .list--brand {
-    font-variant : small-caps;
-    color        : @list--navbar--brand;
+    .meta--type();
+    float       : none;
+    height      : auto;
+    padding     : 0;
+    color       : var(--ink-3);
+    font-size   : @size--12;
+    font-weight : 600;
+    line-height : 30px;
+}
+
+#notebooks {
+    padding-top: 6px;
 }
