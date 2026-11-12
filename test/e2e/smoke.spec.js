@@ -267,4 +267,40 @@ test.describe('smoke', function() {
         await item.waitFor({timeout: 20000});
         await expect(item).toContainText('Fixture note');
     });
+
+    // Vault importer: stubbed Tauri scan must interpolate the summary
+    // counts (i18n.t without values blanks {{...}} placeholders).
+    test('vault import reports interpolated counts', async function({page}) {
+        await page.addInitScript(function() {
+            window.__TAURI_INTERNALS__ = {
+                invoke: function(cmd) {
+                    if (cmd !== 'import_vault') {
+                        return Promise.reject(new Error('unexpected: ' + cmd));
+                    }
+                    return Promise.resolve({
+                        root: '/vault',
+                        files: [
+                            {path: 'Welcome.md', content: '# Welcome\n\nSee [[Missing]] and [[Second]].'},
+                            {path: 'Diary/Second.md', content: '# Titled\n\nbody here'},
+                        ],
+                        skipped: ['pic.png'],
+                    });
+                }
+            };
+        });
+        await page.reload();
+        await page.waitForSelector('#header--add', {timeout: 20000});
+        await dismissWizard(page);
+        await page.goto('/#/settings/importExport');
+        await page.waitForSelector('#do-import-vault', {timeout: 20000});
+        await page.click('#do-import-vault');
+        var modal = page.locator('#modal');
+        await expect(modal).toContainText('2 notes in 1 notebooks (1 skipped)', {timeout: 30000});
+        await expect(modal).toContainText('1 wikilinks left as text');
+        await modal.locator('button[data-event="confirm"]').click();
+        await page.goto('/#/notes');
+        await page.waitForSelector('#header--add', {timeout: 20000});
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        await expect(page.locator('.list--item--title').first()).toContainText('Welcome');
+    });
 });

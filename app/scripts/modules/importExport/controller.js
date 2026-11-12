@@ -137,9 +137,10 @@ define([
                 return;
             }
 
-            var content = i18n.t('import data summary')
-                .split('{{notes}}').join(summary.notes)
-                .split('{{collections}}').join(summary.collections);
+            var content = i18n.t('import data summary', {
+                notes       : summary.notes,
+                collections : summary.collections
+            });
 
             if (summary.failed) {
                 content += '\n\n' + summary.failed + ' failed: ' + summary.errors[0];

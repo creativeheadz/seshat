@@ -126,14 +126,16 @@ define([
         },
 
         reportVault: function(summary) {
-            var content = i18n.t('vault import summary')
-                .split('{{notes}}').join(summary.notes)
-                .split('{{notebooks}}').join(summary.notebooks)
-                .split('{{skipped}}').join(summary.skipped);
+            var content = i18n.t('vault import summary', {
+                notes     : summary.notes,
+                notebooks : summary.notebooks,
+                skipped   : summary.skipped
+            });
 
             if (summary.unresolved) {
-                content += '\n\n' + i18n.t('unresolved links')
-                    .split('{{unresolved}}').join(summary.unresolved);
+                content += '\n\n' + i18n.t('unresolved links', {
+                    unresolved : summary.unresolved
+                });
             }
 
             Radio.request('Confirm', 'start', {
