@@ -77,9 +77,26 @@ like Wegweiser: no secrets in CI, no surprise bills.
 
 ## Debug install (Andrei's rig)
 
-`scripts/seshat-debug-update.sh` keeps a local install tracking the
-newest release, prereleases included: it compares the installed
-version against the GitHub releases API (no auth needed) and
-`dpkg -i`s a newer `*_amd64.deb` when one lands. Runs every
-30 minutes via cron; log at `~/.local/share/seshat-debug/update.log`.
-Restart the app after an upgrade to switch builds.
+`scripts/seshat-debug-update.sh` keeps the local install in step with
+the latest code rather than the latest release. "Latest code" is this
+checkout's HEAD, or `github/master` when that is ahead of it (a push
+from another machine). When the installed build was made from another
+commit, the script builds that commit, bundles a `.deb` and
+`dpkg -i`s it.
+
+- The build runs in a private clone under `~/.cache/seshat-debug`,
+  never in the working tree: uncommitted work is not built, and a
+  build cannot collide with your own gulp or test run.
+- Git hooks start it on every commit, merge and rebase; set them up
+  once per clone with `scripts/seshat-debug-update.sh --install-hooks`.
+- Cron is the fallback and what notices pushes from elsewhere:
+  `*/30 * * * * /path/to/repo/scripts/seshat-debug-update.sh`.
+- `--status` shows the installed and the latest commit; `--force`
+  rebuilds regardless.
+- About shows the running build as `0.8.0-rc1+<commit>`.
+
+A warm build takes about a minute; the first one compiles the Rust
+shell from cold. Log at `~/.local/share/seshat-debug/update.log`,
+the last build's output beside it in `build.log`. A commit whose
+build fails is not retried until the next commit or `--force`.
+Restart the app after an update to switch builds.
