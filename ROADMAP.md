@@ -127,12 +127,17 @@ it, as in Phase 1.
 
 ### 2a - trust (data safety first)
 
-- [ ] Remaining P0 fixtures from BACKLOG.md: "all notes
-      gone" on a profile mismatch or cleared storage
-      (gh-683, gh-670, gh-440); legacy database opened by
-      the current migrate (gh-864); desktop unlock with a
-      bad or empty key (gh-808, the shell now exists to
-      reproduce it).
+- [x] Changing the encryption password: covered by a
+      browser test, including a wrong old password and a
+      change abandoned half way (2026-11-12).
+- [x] "All notes gone" (gh-683, gh-670, gh-440): an
+      address naming a profile that does not exist made
+      an empty database and showed an empty list. It
+      falls back to the default profile (2026-11-12).
+- [x] Legacy database opened by the current migrate
+      (gh-864): covered by the migrate unit test.
+- [ ] Desktop unlock with a bad or empty key (gh-808):
+      needs the real window.
 - [ ] KDF uplift for new setups. PBKDF2 runs at 10,000
       iterations today, low for 2026. The SJCL reader
       stays so every existing note still opens.

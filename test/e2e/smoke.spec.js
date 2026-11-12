@@ -708,6 +708,152 @@ test.describe('smoke', function() {
         expect(await page.evaluate(function() { return window.__opened.length; })).toBe(1);
     });
 
+    // "All my notes are gone" (gh-683, gh-670, gh-440): an address
+    // naming a profile that does not exist used to create an empty
+    // database and show an empty list, with nothing to say why.
+    test('an unknown profile in the address shows the default profile', async function({page}) {
+        await seedNotes(page, 3);
+
+        // The app reloads itself when the profile in the address changes
+        await page.goto('/#/p/ghost/notes').catch(function() {});
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        await expect(page.locator('.list--item.-note')).toHaveCount(3);
+        expect(page.url()).not.toContain('/p/ghost');
+
+        // and no database was made for it
+        expect(await page.evaluate(async function() {
+            return (await window.indexedDB.databases()).map(function(db) { return db.name; });
+        })).not.toContain('ghost');
+
+        // A profile that was made in settings still opens as itself
+        await page.evaluate(async function() {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            await localforage.createInstance({name: 'notes-db', storeName: 'configs'})
+                .setItem('appProfiles', {name: 'appProfiles', value: JSON.stringify(['notes-db', 'work'])});
+        });
+        await page.goto('/#/p/work/notes').catch(function() {});
+        await page.waitForFunction(function() {
+            return window.location.hash.indexOf('/p/work') !== -1 &&
+                document.getElementById('header--count') &&
+                document.getElementById('header--count').textContent === '0';
+        }, null, {timeout: 20000});
+        await expect(page.locator('.list--item.-note')).toHaveCount(0);
+    });
+
+    // ---- encryption: changing the password ----
+
+    // Plain notes straight into the store
+    async function seedPlainNotes(page, list) {
+        await page.evaluate(async function(list) {
+            var localforage = await new Promise(function(resolve, reject) {
+                window.requirejs(['localforage'], function(lf) { resolve(lf); }, reject);
+            });
+            var notes = localforage.createInstance({name: 'notes-db', storeName: 'notes'});
+            for (var i = 0; i < list.length; i++) {
+                await notes.setItem(list[i].id, {
+                    id: list[i].id, type: 'notes', title: list[i].title,
+                    content: list[i].content, tags: [],
+                    taskAll: 0, taskCompleted: 0, created: Date.now() - i * 1000, updated: Date.now(),
+                    notebookId: '0', isFavorite: 0, trash: 0, files: [],
+                });
+            }
+        }, list);
+        await page.reload();
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+    }
+
+    // Every note as the app reads it, decrypted
+    function decryptedNotes(page) {
+        return page.evaluate(async function() {
+            var Radio = window.requirejs('backbone.radio'),
+                coll  = await Radio.request('notes', 'fetch', {profile: 'notes-db'});
+            return (coll.fullCollection || coll).map(function(model) {
+                return {id: model.id, title: model.get('title'), content: model.get('content')};
+            }).sort(function(a, b) { return a.id < b.id ? -1 : 1; });
+        });
+    }
+
+    async function unlock(page, password) {
+        await page.waitForSelector('.-auth input[name="password"]', {timeout: 20000});
+        await page.fill('.-auth input[name="password"]', password);
+        await page.click('.-auth button[type="submit"]');
+    }
+
+    // Settings: type a password, save, answer the questions the
+    // encryption screen asks, leave the backup screen.
+    async function setPassword(page, newPassword, oldPassword) {
+        await page.goto('/#/settings/encryption');
+        await page.waitForSelector('#useEncryption');
+        await page.check('#useEncryption');
+        await page.fill('#encryptPass', newPassword);
+        await page.click('.settings--save');
+        await page.waitForSelector('#encryption-password input[name="password"]', {timeout: 20000});
+        if (oldPassword) {
+            await page.fill('#encryption-password input[name="oldpass"]', oldPassword);
+        }
+        await page.fill('#encryption-password input[name="password"]', newPassword);
+        await page.click('#encryption-password input[type="submit"]');
+    }
+
+    async function leaveBackupScreen(page) {
+        await page.waitForSelector('#btn--next', {timeout: 30000});
+        await page.click('#btn--next');
+    }
+
+    // The rest of gh-992 (BACKLOG P0): a new password re-encrypts
+    // every note. The notes must survive it, a wrong old password
+    // must change nothing, and a change abandoned half way must be
+    // finishable later.
+    test('changing the encryption password keeps every note', async function({page}) {
+        test.setTimeout(120000);
+
+        var notes = [
+            {id: 'pw-1', title: 'Unzipping', content: '### Unzipping\n\nRun `unzip -o file.zip`.\n\n#ops'},
+            {id: 'pw-2', title: 'Unicode', content: 'Gr\u00fc\u00dfe, \u65e5\u672c\u8a9e, \ud83d\ude80, & < >.'},
+        ];
+        await seedPlainNotes(page, notes);
+
+        await setPassword(page, 'first-pass');
+        await leaveBackupScreen(page);
+        await unlock(page, 'first-pass');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        expect(await decryptedNotes(page)).toEqual(notes);
+
+        // Change it
+        await setPassword(page, 'second-pass', 'first-pass');
+        await leaveBackupScreen(page);
+
+        // The old password is dead, the new one opens the same notes
+        await unlock(page, 'first-pass');
+        await page.waitForTimeout(2000);
+        await expect(page.locator('.list--item.-note:visible')).toHaveCount(0);
+        await unlock(page, 'second-pass');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        expect(await decryptedNotes(page)).toEqual(notes);
+
+        // A wrong old password does not start the re-encryption
+        await setPassword(page, 'third-pass', 'not-the-old-one');
+        await page.waitForTimeout(3000);
+        await expect(page.locator('#btn--next')).toHaveCount(0);
+        await expect(page.locator('#encryption-password input[name="oldpass"]')).toBeVisible();
+
+        // Give up there, come back in a new session: the app asks
+        // again and the change can be finished
+        await page.evaluate(function() { window.sessionStorage.clear(); });
+        await page.goto('/#/notes');
+        await page.reload();
+        await page.waitForSelector('#encryption-password input[name="oldpass"]', {timeout: 20000});
+        await page.fill('#encryption-password input[name="oldpass"]', 'second-pass');
+        await page.fill('#encryption-password input[name="password"]', 'third-pass');
+        await page.click('#encryption-password input[type="submit"]');
+        await leaveBackupScreen(page);
+        await unlock(page, 'third-pass');
+        await page.waitForSelector('.list--item.-note', {timeout: 20000});
+        expect(await decryptedNotes(page)).toEqual(notes);
+    });
+
     // The desktop webview has no download manager: a blob link does
     // nothing there, so exports and the encryption backup were lost
     // without a word. They go to the shell's save_file command.

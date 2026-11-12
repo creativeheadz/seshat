@@ -21,13 +21,25 @@ headless Chromium unless noted.
   Playwright case "notes survive turning encryption on, using
   it and turning it off" (markdown-heavy and non-ASCII notes;
   on, unlock, edit, wrong password, off; byte-identical
-  after). Still open for the re-encrypt (change password)
-  path, which that case does not cover.
+  after). The re-encrypt path is covered too: "changing the
+  encryption password keeps every note" (new password, old
+  one refused, wrong old password, change abandoned half way
+  and finished in a new session).
 - gh-683 / gh-670 / gh-440: "all notes gone" (welcome screen or
   empty list, one with encryption+sync). No repro steps.
-  Fixture sketch: profile mismatch and cleared-storage boots.
+  ONE CAUSE FOUND AND FIXED (2026-11-12): an address naming a
+  profile that does not exist (`#/p/typo/notes`) created an
+  empty database and showed an empty list. It falls back to
+  the default profile now; test "an unknown profile in the
+  address shows the default profile". The other mechanism,
+  storage that really is gone (another origin, cleared site
+  data), cannot be fixed in the app: only a backup or sync
+  helps there.
 - gh-864: v0.7.1 to v0.7.51 upgrade presented empty db.
-  Fixture sketch: legacy-shaped db opened by current migrate.
+  COVERED at unit level: `test/unit/migrate.test.js` opens a
+  legacy raw-IndexedDB database with the current migrate and
+  reads the notes back. Note the migration only runs from
+  `migrate.html`; the app does not run it on start.
 - gh-808: desktop unlock hangs silently. Desktop-only; needs
   the Tauri shell to repro. Fixture sketch: bad/empty key
   against encrypted notes-db.

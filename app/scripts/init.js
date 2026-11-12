@@ -75,9 +75,34 @@ define([
         var profile = document.location.hash.match(/\/?p\/([^/]*)\//);
         profile     = (!profile ? profile : profile[profile.index]);
 
-        console.warn('prof', profile);
-
         return storage.check()
+        .then(function() {
+            if (!profile || profile === 'notes-db') {
+                return;
+            }
+
+            /*
+             * An address can name a profile that does not exist: a
+             * typo, an old bookmark, a link from another install.
+             * Opening it would create a new, empty database and show
+             * an empty list with nothing to say why, which looks
+             * exactly like "all my notes are gone" (gh-683, gh-670,
+             * gh-440). Profiles are made in settings and listed in
+             * the default profile; anything else falls back to it.
+             */
+            return Radio.request('configs', 'get:model', {name: 'appProfiles', profile: 'notes-db'})
+            .then(function(model) {
+                if (model.getValueJSON().indexOf(profile) !== -1) {
+                    return;
+                }
+
+                console.warn('Unknown profile "' + profile + '": showing the default profile.');
+                window.history.replaceState(
+                    null, '', document.location.hash.replace(/\/?p\/[^/]*\//, '/')
+                );
+                profile = null;
+            });
+        })
         .then(function() {
             return Radio.request('configs', 'get:all', {profile: profile});
         })
